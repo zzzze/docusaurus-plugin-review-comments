@@ -1,0 +1,48 @@
+.toolbar {
+  z-index: 300;
+  pointer-events: auto;
+}
+
+.buttons {
+  display: flex;
+  gap: 2px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  padding: 4px;
+}
+
+.typeButton {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--ifm-font-color-base);
+  font-size: var(--ifm-font-size-small);
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.typeButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    position: fixed !important;
+    bottom: 56px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: auto !important;
+  }
+
+  .toolbarWithForm {
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    transform: none !important;
+    width: 100%;
+    padding: 0;
+  }
+}

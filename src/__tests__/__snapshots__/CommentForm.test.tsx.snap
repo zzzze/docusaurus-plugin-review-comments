@@ -1,0 +1,292 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommentForm snapshots > matches snapshot for create mode with text anchor 1`] = `
+<div
+  class="form"
+>
+  <div
+    class="segmentedControl"
+  >
+    <button
+      class="segment segmentActive"
+    >
+      Question
+    </button>
+    <button
+      class="segment "
+    >
+      Suggestion
+    </button>
+    <button
+      class="segment "
+    >
+      Issue
+    </button>
+  </div>
+  <div
+    class="scopeSelector"
+  >
+    <button
+      class="scopeButton scopeActive"
+    >
+      Text
+    </button>
+    <button
+      class="scopeButton "
+    >
+      Block
+    </button>
+    <button
+      class="scopeButton "
+    >
+      Document
+    </button>
+  </div>
+  <div
+    class="tabs"
+  >
+    <button
+      class="tab tabActive"
+    >
+      Write
+    </button>
+    <button
+      class="tab "
+    >
+      Preview
+    </button>
+  </div>
+  <textarea
+    class="textarea"
+    placeholder="Write a comment..."
+    rows="3"
+  />
+  <div
+    class="actions"
+  >
+    <span
+      class="hint"
+    >
+      Ctrl+Enter to submit
+    </span>
+    <button
+      class="cancelButton"
+      type="button"
+    >
+      <svg
+        class="lucide lucide-x"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      Cancel
+    </button>
+    <button
+      class="submitButton"
+      disabled=""
+      type="button"
+    >
+      <svg
+        class="lucide lucide-message-square"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        />
+      </svg>
+       Comment
+    </button>
+  </div>
+</div>
+`;
+
+exports[`CommentForm snapshots > matches snapshot for edit mode with initial content 1`] = `
+<div
+  class="form"
+>
+  <div
+    class="tabs"
+  >
+    <button
+      class="tab tabActive"
+    >
+      Write
+    </button>
+    <button
+      class="tab "
+    >
+      Preview
+    </button>
+  </div>
+  <textarea
+    class="textarea"
+    placeholder="Write a comment..."
+    rows="3"
+  >
+    Existing comment content
+  </textarea>
+  <div
+    class="actions"
+  >
+    <span
+      class="hint"
+    >
+      Ctrl+Enter to submit
+    </span>
+    <button
+      class="cancelButton"
+      type="button"
+    >
+      <svg
+        class="lucide lucide-x"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      Cancel
+    </button>
+    <button
+      class="submitButton"
+      type="button"
+    >
+      <svg
+        class="lucide lucide-check"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 6 9 17l-5-5"
+        />
+      </svg>
+       Save
+    </button>
+  </div>
+</div>
+`;
+
+exports[`CommentForm snapshots > matches snapshot for reply mode 1`] = `
+<div
+  class="form"
+>
+  <div
+    class="tabs"
+  >
+    <button
+      class="tab tabActive"
+    >
+      Write
+    </button>
+    <button
+      class="tab "
+    >
+      Preview
+    </button>
+  </div>
+  <textarea
+    class="textarea"
+    placeholder="Write a reply..."
+    rows="3"
+  />
+  <div
+    class="actions"
+  >
+    <span
+      class="hint"
+    >
+      Ctrl+Enter to submit
+    </span>
+    <button
+      class="cancelButton"
+      type="button"
+    >
+      <svg
+        class="lucide lucide-x"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      Cancel
+    </button>
+    <button
+      class="submitButton"
+      disabled=""
+      type="button"
+    >
+      <svg
+        class="lucide lucide-reply"
+        fill="none"
+        height="14"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="14"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <polyline
+          points="9 17 4 12 9 7"
+        />
+        <path
+          d="M20 18v-2a4 4 0 0 0-4-4H4"
+        />
+      </svg>
+       Reply
+    </button>
+  </div>
+</div>
+`;

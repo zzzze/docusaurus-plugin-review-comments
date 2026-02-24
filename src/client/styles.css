@@ -1,0 +1,77 @@
+/* Review Comments - Global Styles */
+
+:root {
+  --review-highlight-bg: rgba(255, 212, 0, 0.2);
+  --review-highlight-hover-bg: rgba(255, 212, 0, 0.4);
+  --review-panel-bg: var(--ifm-background-surface-color);
+  --review-card-border: var(--ifm-color-emphasis-300);
+  --review-btn-primary-bg: var(--ifm-color-primary);
+  --review-btn-primary-fg: #fff;
+}
+
+[data-theme="dark"] {
+  --review-highlight-bg: rgba(255, 212, 0, 0.15);
+  --review-highlight-hover-bg: rgba(255, 212, 0, 0.3);
+  --review-btn-primary-bg: var(--ifm-color-primary-light, var(--ifm-color-primary));
+  --review-btn-primary-fg: var(--ifm-background-color);
+}
+
+mark.review-highlight {
+  background: var(--review-highlight-bg);
+  cursor: pointer;
+  border-radius: 2px;
+  padding: 0;
+  scroll-margin-top: calc(var(--ifm-navbar-height, 60px) + 16px);
+}
+
+mark.review-highlight.review-highlight-hover {
+  background: var(--review-highlight-hover-bg);
+}
+
+@keyframes reviewHighlightPulse {
+  0% { background: var(--review-highlight-hover-bg); }
+  50% { background: rgba(255, 212, 0, 0.6); }
+  100% { background: var(--review-highlight-hover-bg); }
+}
+
+mark.review-highlight.review-highlight-pulse {
+  animation: reviewHighlightPulse 0.5s ease-in-out 3;
+}
+
+mark.review-highlight[data-comment-id="__pending__"] {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.review-block-highlight {
+  box-shadow: -6px 0 0 0 var(--review-highlight-hover-bg);
+  transition: box-shadow 0.15s ease;
+  scroll-margin-top: calc(var(--ifm-navbar-height, 60px) + 16px);
+}
+
+.review-block-highlight[data-block-highlight-id="__pending__"] {
+  box-shadow: -6px 0 0 0 rgba(59, 130, 246, 0.6);
+}
+
+.review-block-highlight.review-block-highlight-hover {
+  box-shadow: -6px 0 0 0 rgba(255, 212, 0, 0.7);
+}
+
+@keyframes reviewBlockPulse {
+  0% { box-shadow: -6px 0 0 0 rgba(255, 212, 0, 0.7); }
+  50% { box-shadow: -6px 0 0 0 rgba(255, 212, 0, 1); }
+  100% { box-shadow: -6px 0 0 0 rgba(255, 212, 0, 0.7); }
+}
+
+.review-block-highlight.review-block-highlight-pulse {
+  animation: reviewBlockPulse 0.5s ease-in-out 3;
+}
+
+@keyframes reviewCardPulse {
+  0% { background: transparent; }
+  50% { background: var(--review-highlight-bg); }
+  100% { background: transparent; }
+}
+
+.review-card-pulse {
+  animation: reviewCardPulse 0.5s ease-in-out 3;
+}

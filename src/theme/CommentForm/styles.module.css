@@ -1,0 +1,193 @@
+.form {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  padding: 12px;
+  min-width: 320px;
+  max-width: 420px;
+}
+
+.segmentedControl {
+  display: flex;
+  gap: 2px;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: var(--ifm-global-radius);
+  padding: 2px;
+  margin-bottom: 8px;
+}
+
+.segment {
+  flex: 1;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: var(--ifm-font-color-secondary);
+  font-size: var(--ifm-font-size-small);
+  border-radius: calc(var(--ifm-global-radius) - 2px);
+  cursor: pointer;
+}
+
+.segmentActive {
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.scopeSelector {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.scopeButton {
+  padding: 2px 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: transparent;
+  color: var(--ifm-font-color-secondary);
+  font-size: 0.75rem;
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+}
+
+.scopeButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.scopeActive {
+  background: var(--review-btn-primary-bg, var(--ifm-color-primary));
+  color: var(--review-btn-primary-fg, #fff);
+  border-color: var(--review-btn-primary-bg, var(--ifm-color-primary));
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  margin-bottom: 8px;
+}
+
+.tab {
+  padding: 4px 12px;
+  border: none;
+  background: transparent;
+  color: var(--ifm-font-color-secondary);
+  font-size: var(--ifm-font-size-small);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tabActive {
+  color: var(--ifm-color-primary);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 72px;
+  max-height: 240px;
+  padding: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font-family: inherit;
+  font-size: var(--ifm-font-size-small);
+  resize: none;
+  overflow-y: auto;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+}
+
+.preview {
+  min-height: 72px;
+  max-height: 240px;
+  padding: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  overflow-y: auto;
+  font-size: var(--ifm-font-size-small);
+}
+
+.previewEmpty {
+  color: var(--ifm-font-color-secondary);
+  font-style: italic;
+}
+
+.preview table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 4px 0;
+  font-size: inherit;
+}
+
+.preview th,
+.preview td {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.preview th {
+  background: var(--ifm-color-emphasis-100);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.hint {
+  font-size: 0.7rem;
+  color: var(--ifm-font-color-secondary);
+  margin-right: auto;
+}
+
+.cancelButton {
+  padding: 4px 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: transparent;
+  color: var(--ifm-font-color-base);
+  font-size: var(--ifm-font-size-small);
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.submitButton {
+  padding: 4px 12px;
+  border: none;
+  background: var(--review-btn-primary-bg, var(--ifm-color-primary));
+  color: var(--review-btn-primary-fg, #fff);
+  font-size: var(--ifm-font-size-small);
+  border-radius: var(--ifm-global-radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .form {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
