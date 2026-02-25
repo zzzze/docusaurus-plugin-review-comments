@@ -1,0 +1,125 @@
+{
+  "documentPath": "docs/guides/styling",
+  "comments": [
+    {
+      "id": "3aa65536-a04d-4522-a857-af597825a7e7",
+      "anchor": {
+        "scope": "text",
+        "exact": "common use case",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "issue",
+      "status": "open",
+      "content": "This code snippet is missing a closing bracket.",
+      "createdAt": "2026-02-06T22:56:00.000Z",
+      "replies": [
+        {
+          "id": "d4bba0d6-8290-4e13-b440-0274a63fb551",
+          "author": "Charlie",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-18T00:15:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "7f77390e-9922-4c05-8bf2-8c0dffc42f4c",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Diana",
+      "type": "question",
+      "status": "open",
+      "content": "Is this feature required or optional?",
+      "createdAt": "2026-02-06T20:55:00.000Z",
+      "replies": [
+        {
+          "id": "7a56571a-f6a2-4ef2-b96c-6bbbb9e2d517",
+          "author": "Frank",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-03T08:38:00.000Z"
+        },
+        {
+          "id": "8dbfcd86-44f2-4175-9634-a966add80abb",
+          "author": "Bob",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-02T19:58:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "a5864394-751a-4f2b-8fa9-1055df9ae929",
+      "anchor": {
+        "scope": "text",
+        "exact": "configuration options",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Adding a code snippet would help explain this feature.",
+      "createdAt": "2026-02-02T09:45:00.000Z",
+      "replies": [
+        {
+          "id": "bcb249ef-3c47-4b72-b0a9-ebf3b0b5446e",
+          "author": "Eve",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-16T15:33:00.000Z"
+        },
+        {
+          "id": "3a8cd65e-7ba9-432a-bbe6-ef2611e897ba",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-10T02:01:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "87ac2569-04a3-4c68-bfc9-68c0e2a1c3a0",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "question",
+      "status": "resolved",
+      "content": "Could you clarify what this feature means?",
+      "createdAt": "2026-02-11T14:45:00.000Z",
+      "replies": [
+        {
+          "id": "ccdcdcba-44d5-472a-b089-ff390cf76310",
+          "author": "Frank",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-05T02:46:00.000Z"
+        },
+        {
+          "id": "2be9a584-f796-4bb3-8a61-bd60af6d76a1",
+          "author": "Alice",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-09T09:42:00.000Z"
+        },
+        {
+          "id": "5254c289-2aab-4914-8555-067bec4f2c26",
+          "author": "Diana",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-13T08:24:00.000Z"
+        }
+      ]
+    }
+  ]
+}

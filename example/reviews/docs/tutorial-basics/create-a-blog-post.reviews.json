@@ -1,0 +1,82 @@
+{
+  "documentPath": "docs/tutorial-basics/create-a-blog-post",
+  "comments": [
+    {
+      "id": "f672ac82-7b34-4864-aca3-7d400e55bbca",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "question",
+      "status": "open",
+      "content": "Could you clarify what this feature means?",
+      "createdAt": "2026-02-07T19:40:00.000Z",
+      "replies": [
+        {
+          "id": "7ca9b593-b024-4470-a6e0-1a939277649b",
+          "author": "Bob",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-17T06:49:00.000Z"
+        },
+        {
+          "id": "92cf3e9c-d219-41aa-ac93-0dbd6df49541",
+          "author": "Alice",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-12T11:11:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "88743d41-7236-4a49-867d-beec26a7a493",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Consider adding a diagram to visualize this feature.",
+      "createdAt": "2026-02-16T12:19:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "fe0d7692-3a18-4f09-b2ec-02c1dc798b28",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "issue",
+      "status": "open",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-02T23:02:00.000Z",
+      "replies": [
+        {
+          "id": "05de282d-6b55-4262-9e4d-2cf55f01bdb0",
+          "author": "Alice",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-07T01:55:00.000Z"
+        },
+        {
+          "id": "0c24fc2e-311c-44aa-9ba1-4184872b1ac8",
+          "author": "Diana",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-18T11:13:00.000Z"
+        }
+      ]
+    }
+  ]
+}

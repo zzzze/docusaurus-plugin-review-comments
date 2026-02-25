@@ -1,0 +1,46 @@
+{
+  "documentPath": "docs/advanced/troubleshooting",
+  "comments": [
+    {
+      "id": "a2c08ef8-4b0e-4e79-888f-64aea55e6ebe",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "question",
+      "status": "open",
+      "content": "Could you clarify what this feature means?",
+      "createdAt": "2026-02-10T15:27:00.000Z",
+      "replies": [
+        {
+          "id": "bf15a283-cf21-49ef-a70b-e594e0a0e149",
+          "author": "Diana",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-10T06:35:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "d5c5a000-361c-49ea-86b0-3451ab104300",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 1
+      },
+      "author": "Alice",
+      "type": "suggestion",
+      "status": "open",
+      "content": "This section could benefit from more examples.",
+      "createdAt": "2026-02-08T15:34:00.000Z",
+      "replies": []
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "documentPath": "docs/guides/basic-usage",
+  "comments": [
+    {
+      "id": "79dad376-08dc-4061-b4ac-cc8adaf275e1",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 3
+      },
+      "author": "Eve",
+      "type": "question",
+      "status": "open",
+      "content": "What is the difference between this feature and the other approach?",
+      "createdAt": "2026-02-01T14:23:00.000Z",
+      "replies": [
+        {
+          "id": "288f35e6-db6c-4efd-8386-30efcd0875dd",
+          "author": "Eve",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-17T00:56:00.000Z"
+        },
+        {
+          "id": "5bd31539-b61f-4986-a692-32dfc5e765ff",
+          "author": "Frank",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-16T17:28:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "502319c2-00fc-4e9e-a74a-c0cf23ce2633",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 0
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Adding a code snippet would help explain this feature.",
+      "createdAt": "2026-02-08T07:06:00.000Z",
+      "replies": [
+        {
+          "id": "2fd540c5-7530-47a3-a2af-a7cd2dcea63f",
+          "author": "Bob",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-02T22:37:00.000Z"
+        },
+        {
+          "id": "5bb9ef06-820a-4b1e-854d-88a6d1f5b1fe",
+          "author": "Bob",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-11T20:53:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "4cbcd819-1459-4f3a-ab29-748800419705",
+      "anchor": {
+        "scope": "text",
+        "exact": "common use case",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "Consider adding a diagram to visualize this feature.",
+      "createdAt": "2026-02-03T20:58:00.000Z",
+      "replies": [
+        {
+          "id": "93a06613-0da3-45ab-896a-7801b112fa94",
+          "author": "Alice",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-08T01:35:00.000Z"
+        },
+        {
+          "id": "a5c0a475-a250-4e5c-a847-1ea4b051076c",
+          "author": "Alice",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-03T16:12:00.000Z"
+        },
+        {
+          "id": "95bfb38b-21ae-4bd0-8486-955a73e8d143",
+          "author": "Charlie",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-05T08:57:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "fb9c746d-f5f0-4370-83ed-2b50306d9a18",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 3
+      },
+      "author": "Diana",
+      "type": "question",
+      "status": "resolved",
+      "content": "What is the difference between this feature and the other approach?",
+      "createdAt": "2026-02-05T18:55:00.000Z",
+      "replies": [
+        {
+          "id": "4972f575-423a-4253-94e5-0fc117d16ca6",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-09T13:40:00.000Z"
+        },
+        {
+          "id": "8bd52c26-3b97-4ebc-8706-8c04180f357b",
+          "author": "Eve",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-16T15:37:00.000Z"
+        }
+      ]
+    }
+  ]
+}

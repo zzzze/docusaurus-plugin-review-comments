@@ -1,0 +1,148 @@
+{
+  "documentPath": "docs/tutorial-basics/deploy-your-site",
+  "comments": [
+    {
+      "id": "edee25ee-99d3-468f-9aaf-bcae89e727d3",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "question",
+      "status": "open",
+      "content": "What is the difference between this feature and the other approach?",
+      "createdAt": "2026-02-09T05:41:00.000Z",
+      "replies": [
+        {
+          "id": "7939648b-51ac-4fb6-a983-01a88a40aaa0",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-09T01:48:00.000Z"
+        },
+        {
+          "id": "9cbe9b11-3eb7-4c61-8275-503b931362ce",
+          "author": "Diana",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-01T06:44:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "2f51ea06-22bd-43d7-855d-6143fd6e8269",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "issue",
+      "status": "open",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-06T08:53:00.000Z",
+      "replies": [
+        {
+          "id": "6cef9be5-2d35-48b4-9938-858407f12518",
+          "author": "Bob",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-04T15:23:00.000Z"
+        },
+        {
+          "id": "98c9bae0-cd3c-4716-a809-f6aff9d80df2",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-03T22:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "f6b58746-4808-4931-9ef4-74014470f686",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 1
+      },
+      "author": "Diana",
+      "type": "issue",
+      "status": "open",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-01-28T03:12:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "9f20f2c6-760b-4342-9d14-d6ef6b55ed1d",
+      "anchor": {
+        "scope": "text",
+        "exact": "configuration options",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Diana",
+      "type": "issue",
+      "status": "resolved",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-12T14:26:00.000Z",
+      "replies": [
+        {
+          "id": "63fb2b0c-7260-4f6f-b14f-d8b41a0f7e46",
+          "author": "Alice",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-04T23:36:00.000Z"
+        },
+        {
+          "id": "e026e672-749b-4db4-a3e0-d638d71bf395",
+          "author": "Alice",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-02T08:37:00.000Z"
+        },
+        {
+          "id": "e5d5b0da-91d5-4f3b-981e-cfa09d5f8168",
+          "author": "Diana",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-07T16:26:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "5dfa2767-5e5d-436c-a4b7-6a31c6b6159e",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "issue",
+      "status": "open",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-03T05:37:00.000Z",
+      "replies": [
+        {
+          "id": "e6e8e1f8-d0bc-4f82-b480-00082c5bf8ad",
+          "author": "Diana",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-06T08:03:00.000Z"
+        },
+        {
+          "id": "5ad08db0-130d-405a-9bc1-b6431a0570f4",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-04T20:48:00.000Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "documentPath": "docs/guides/best-practices",
+  "comments": [
+    {
+      "id": "41f10e82-e10d-49c7-876e-ec86df923f1c",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "issue",
+      "status": "resolved",
+      "content": "This code snippet is missing a closing bracket.",
+      "createdAt": "2026-02-12T07:46:00.000Z",
+      "replies": [
+        {
+          "id": "832f8465-b3cc-42c4-86b1-d613193da331",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-17T09:37:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "55ccc8c9-6cc3-41ea-9ff2-bbff2150cb0e",
+      "anchor": {
+        "scope": "text",
+        "exact": "common use case",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Frank",
+      "type": "issue",
+      "status": "resolved",
+      "content": "This contradicts what was said in the previous section.",
+      "createdAt": "2026-01-26T08:52:00.000Z",
+      "replies": [
+        {
+          "id": "aeba53a7-efeb-4639-8d3d-5f21cafc53fd",
+          "author": "Bob",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-05T07:15:00.000Z"
+        },
+        {
+          "id": "ab276056-0a44-46ba-9024-e3b4cd8b39dc",
+          "author": "Eve",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-05T09:08:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "62494450-2bbe-4393-b4f7-b7eeb2d81f78",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "question",
+      "status": "open",
+      "content": "Is this feature required or optional?",
+      "createdAt": "2026-02-15T13:22:00.000Z",
+      "replies": [
+        {
+          "id": "5112fdc2-03ca-40a2-bb43-ed333a337f20",
+          "author": "Frank",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-12T13:46:00.000Z"
+        },
+        {
+          "id": "bc17439e-e0c1-4ba2-a32f-ded19d6d281b",
+          "author": "Charlie",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-02T13:10:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "caa8e9e7-57ce-4631-bced-eecd049f62c6",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 1
+      },
+      "author": "Charlie",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "Adding a code snippet would help explain this feature.",
+      "createdAt": "2026-02-02T18:06:00.000Z",
+      "replies": [
+        {
+          "id": "ae197dda-3a4c-4945-a755-959ba872f64e",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-17T04:12:00.000Z"
+        },
+        {
+          "id": "692a5ac5-7e9a-4b0a-a9bf-055cc7be92f8",
+          "author": "Charlie",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-02T14:33:00.000Z"
+        },
+        {
+          "id": "539f3c9c-5641-4a84-9ef8-bf72e1e807d6",
+          "author": "Alice",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-11T16:43:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "b1a27b34-f3a7-4fca-9150-191795b15b65",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 3
+      },
+      "author": "Charlie",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Adding a code snippet would help explain this feature.",
+      "createdAt": "2026-02-17T14:39:00.000Z",
+      "replies": []
+    }
+  ]
+}

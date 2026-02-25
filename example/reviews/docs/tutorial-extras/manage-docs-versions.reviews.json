@@ -1,0 +1,70 @@
+{
+  "documentPath": "docs/tutorial-extras/manage-docs-versions",
+  "comments": [
+    {
+      "id": "c886f61b-31a3-4d20-a8b4-bf75b2c1cfe6",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "This section could benefit from more examples.",
+      "createdAt": "2026-01-30T09:00:00.000Z",
+      "replies": [
+        {
+          "id": "a4d1a395-7515-4064-b083-e0da3cd1ba46",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-12T06:22:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "f9e9c8b4-8d06-487d-8479-c5792620b530",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "question",
+      "status": "open",
+      "content": "How does this feature work with the previous section?",
+      "createdAt": "2026-02-18T04:49:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "f734b04f-d225-40d7-be47-91cabb98c385",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 1
+      },
+      "author": "Diana",
+      "type": "question",
+      "status": "open",
+      "content": "Could you clarify what this feature means?",
+      "createdAt": "2026-02-11T01:07:00.000Z",
+      "replies": [
+        {
+          "id": "3bfec69f-315d-479e-8c30-e41e35873840",
+          "author": "Bob",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-10T07:38:00.000Z"
+        }
+      ]
+    }
+  ]
+}

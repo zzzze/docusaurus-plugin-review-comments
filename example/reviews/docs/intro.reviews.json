@@ -1,0 +1,142 @@
+{
+  "documentPath": "docs/intro",
+  "comments": [
+    {
+      "id": "f32f6449-18ac-4804-a664-17a4437829d0",
+      "anchor": {
+        "scope": "text",
+        "exact": "common use case",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "question",
+      "status": "resolved",
+      "content": "How does this feature work with the previous section?",
+      "createdAt": "2026-02-17T02:51:00.000Z",
+      "replies": [
+        {
+          "id": "96197d8c-b42b-4ee6-b959-e2a7fabafe14",
+          "author": "Diana",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-10T07:49:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "63b6d944-4a77-4402-83f9-568b49879f80",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 1
+      },
+      "author": "Charlie",
+      "type": "issue",
+      "status": "open",
+      "content": "This contradicts what was said in the previous section.",
+      "createdAt": "2026-02-09T00:16:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "2ffc894c-b072-41ea-97b5-130739c3267d",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "issue",
+      "status": "resolved",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-03T10:15:00.000Z",
+      "replies": [
+        {
+          "id": "7fb50ba2-3e34-41e3-adbe-2fae2c6d4f6f",
+          "author": "Frank",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-03T05:27:00.000Z"
+        },
+        {
+          "id": "e38e9e8d-c10b-43be-afbf-1d5391191e1b",
+          "author": "Frank",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-14T07:58:00.000Z"
+        },
+        {
+          "id": "fdc420f3-d829-42d3-9290-0ebfef5fb17d",
+          "author": "Eve",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-02T20:12:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "ff72b402-614b-4307-afa6-6373afd4c321",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "issue",
+      "status": "open",
+      "content": "The link to the API reference appears to be broken.",
+      "createdAt": "2026-02-10T17:00:00.000Z",
+      "replies": [
+        {
+          "id": "f21fd4c6-9ccc-4127-8609-0723b3f60b34",
+          "author": "Bob",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-08T12:49:00.000Z"
+        },
+        {
+          "id": "91b26c5c-64b3-4b69-a49f-325a0a4e1683",
+          "author": "Charlie",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-08T03:45:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "32039556-3e7b-430a-b62b-c09b8a42cbbd",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Consider adding a diagram to visualize this feature.",
+      "createdAt": "2026-01-30T11:11:00.000Z",
+      "replies": [
+        {
+          "id": "161edcb9-b128-446a-9777-7e901e8aeaed",
+          "author": "Diana",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-03T07:26:00.000Z"
+        },
+        {
+          "id": "06e9b3fc-12ff-4680-b9e3-2d99072c88e3",
+          "author": "Alice",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-05T08:19:00.000Z"
+        }
+      ]
+    }
+  ]
+}

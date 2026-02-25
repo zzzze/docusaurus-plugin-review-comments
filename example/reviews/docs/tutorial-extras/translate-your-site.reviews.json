@@ -1,0 +1,123 @@
+{
+  "documentPath": "docs/tutorial-extras/translate-your-site",
+  "comments": [
+    {
+      "id": "3df23da8-402d-4913-9f96-ff836ba8b9f9",
+      "anchor": {
+        "scope": "text",
+        "exact": "configuration options",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "question",
+      "status": "open",
+      "content": "Could you clarify what this feature means?",
+      "createdAt": "2026-02-13T09:45:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "1613ac27-19ac-4f61-b195-c74f7ffa90d4",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "question",
+      "status": "open",
+      "content": "Can you provide an example of this feature?",
+      "createdAt": "2026-02-06T21:02:00.000Z",
+      "replies": [
+        {
+          "id": "2877b47a-fbf0-46c6-866d-20f54d29385a",
+          "author": "Frank",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-15T02:14:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "68e4231d-a768-4668-912b-5ff312582d2f",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "issue",
+      "status": "resolved",
+      "content": "This code snippet is missing a closing bracket.",
+      "createdAt": "2026-01-29T02:28:00.000Z",
+      "replies": [
+        {
+          "id": "fe21a81f-954d-4862-b505-a2f7e9daec20",
+          "author": "Eve",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-04T14:25:00.000Z"
+        },
+        {
+          "id": "69e906e4-d296-49f0-870e-f7ee19238d07",
+          "author": "Charlie",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-01-31T22:19:00.000Z"
+        },
+        {
+          "id": "f6d6330c-8674-4d82-bc57-2375f8f48d22",
+          "author": "Frank",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-12T08:34:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "9eee6a0e-9ef1-4f75-ba62-9c53b4d9cb27",
+      "anchor": {
+        "scope": "text",
+        "exact": "common use case",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "Consider breaking this into smaller sections.",
+      "createdAt": "2026-02-04T12:23:00.000Z",
+      "replies": [
+        {
+          "id": "f7d43dde-4fed-482d-8bb5-1b18f0c20734",
+          "author": "Bob",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-02T00:50:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "253d475b-faa5-4e50-b49b-3d68b914d7e9",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 3
+      },
+      "author": "Alice",
+      "type": "issue",
+      "status": "open",
+      "content": "This contradicts what was said in the previous section.",
+      "createdAt": "2026-02-16T15:17:00.000Z",
+      "replies": []
+    }
+  ]
+}

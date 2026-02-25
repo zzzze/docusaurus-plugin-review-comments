@@ -1,0 +1,65 @@
+{
+  "documentPath": "docs/getting-started/configuration",
+  "comments": [
+    {
+      "id": "5b2f7e92-683e-4b7f-839a-56a4bc0adbfd",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "question",
+      "status": "resolved",
+      "content": "Can you provide an example of this feature?",
+      "createdAt": "2026-02-03T10:11:00.000Z",
+      "replies": [
+        {
+          "id": "501b575c-837d-46ef-980d-09a16617e820",
+          "author": "Charlie",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-10T03:15:00.000Z"
+        },
+        {
+          "id": "dd4c8e68-dfe9-4c43-8e20-fb275331c8bc",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-13T19:35:00.000Z"
+        },
+        {
+          "id": "20af3996-ae81-4d34-bdd5-c9b14fc1d74f",
+          "author": "Diana",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-07T04:10:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "cf87600a-8447-4e8d-a74c-aa4138101de0",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Bob",
+      "type": "question",
+      "status": "open",
+      "content": "How does this feature work with the previous section?",
+      "createdAt": "2026-02-03T07:43:00.000Z",
+      "replies": [
+        {
+          "id": "1ff375bf-578b-4d71-a0ed-1b2ef587ae2a",
+          "author": "Frank",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-08T12:42:00.000Z"
+        }
+      ]
+    }
+  ]
+}

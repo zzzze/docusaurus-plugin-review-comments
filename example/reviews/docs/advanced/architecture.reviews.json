@@ -1,0 +1,76 @@
+{
+  "documentPath": "docs/advanced/architecture",
+  "comments": [
+    {
+      "id": "65ce4421-d255-4d26-a667-04634b1c9c6b",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 0
+      },
+      "author": "Bob",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "Consider adding a diagram to visualize this feature.",
+      "createdAt": "2026-01-30T00:59:00.000Z",
+      "replies": [
+        {
+          "id": "d9ddea61-4095-443d-a763-9300e375363d",
+          "author": "Alice",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-02T13:09:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "7f929b9f-4ac1-4e5c-8310-4af90222aa41",
+      "anchor": {
+        "scope": "text",
+        "exact": "This is important",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Consider adding a diagram to visualize this feature.",
+      "createdAt": "2026-02-03T12:45:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "fec96e5f-2081-4f5f-87f2-bd4a6cfbffc6",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 3
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "open",
+      "content": "This section could benefit from more examples.",
+      "createdAt": "2026-02-16T07:31:00.000Z",
+      "replies": [
+        {
+          "id": "ec8121fa-6517-42a6-b572-8c7c6ff3eedd",
+          "author": "Charlie",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-02T23:08:00.000Z"
+        },
+        {
+          "id": "845a50e9-47e0-4dc7-9d7e-3f7802cba5c1",
+          "author": "Eve",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-16T07:40:00.000Z"
+        }
+      ]
+    }
+  ]
+}

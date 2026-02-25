@@ -1,0 +1,143 @@
+{
+  "documentPath": "docs/tutorial-basics/congratulations",
+  "comments": [
+    {
+      "id": "6153670e-ebae-4f96-bf95-7ce34d96d00f",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Diana",
+      "type": "question",
+      "status": "resolved",
+      "content": "How does this feature work with the previous section?",
+      "createdAt": "2026-02-13T02:19:00.000Z",
+      "replies": [
+        {
+          "id": "b6ece526-bf9c-4d8e-8c5d-4488d09d45fd",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-13T20:11:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "9bbe6623-73f7-46b6-b2a0-5728ef5f972d",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 0
+      },
+      "author": "Alice",
+      "type": "question",
+      "status": "open",
+      "content": "What is the difference between this feature and the other approach?",
+      "createdAt": "2026-02-13T02:16:00.000Z",
+      "replies": [
+        {
+          "id": "e8d66215-c836-49d1-87bd-00a690bc9110",
+          "author": "Alice",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-10T02:05:00.000Z"
+        },
+        {
+          "id": "3cec9342-483e-45ce-aaf0-99b2acb41eee",
+          "author": "Diana",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-01-31T04:36:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "dfea34c7-21bd-4ec7-8d48-948e36ed1098",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "issue",
+      "status": "open",
+      "content": "The command shown here doesn't work as written.",
+      "createdAt": "2026-02-14T18:45:00.000Z",
+      "replies": [
+        {
+          "id": "8000e833-a7d6-4350-8a82-2f70edce6770",
+          "author": "Charlie",
+          "content": "Thanks for pointing that out!",
+          "createdAt": "2026-02-16T22:05:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "7795162d-6ae1-4a37-b45e-4035cbf88942",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Frank",
+      "type": "question",
+      "status": "open",
+      "content": "What is the difference between this feature and the other approach?",
+      "createdAt": "2026-01-29T04:14:00.000Z",
+      "replies": [
+        {
+          "id": "32984ffc-8f4e-4332-b4b7-556029831701",
+          "author": "Bob",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-01-31T12:28:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "18dfa136-367b-4e78-b724-e8e50afe19b2",
+      "anchor": {
+        "scope": "text",
+        "exact": "best practices",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Eve",
+      "type": "suggestion",
+      "status": "resolved",
+      "content": "This section could benefit from more examples.",
+      "createdAt": "2026-02-06T06:30:00.000Z",
+      "replies": [
+        {
+          "id": "27f42a00-4b4c-4f90-aa1f-130396290bf9",
+          "author": "Frank",
+          "content": "Good question, let me clarify...",
+          "createdAt": "2026-02-01T14:23:00.000Z"
+        },
+        {
+          "id": "85eeeec6-e924-4c34-b279-67a74593100f",
+          "author": "Diana",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-05T02:01:00.000Z"
+        },
+        {
+          "id": "70630e5a-b15d-4234-9bb1-523917eaedcc",
+          "author": "Charlie",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-05T18:34:00.000Z"
+        }
+      ]
+    }
+  ]
+}

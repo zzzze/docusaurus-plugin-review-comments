@@ -1,0 +1,39 @@
+{
+  "documentPath": "docs/advanced/performance",
+  "comments": [
+    {
+      "id": "4548408e-acb0-4ce3-9e4a-0a177157d734",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Frank",
+      "type": "question",
+      "status": "open",
+      "content": "Is this feature required or optional?",
+      "createdAt": "2026-02-15T03:16:00.000Z",
+      "replies": []
+    },
+    {
+      "id": "15bd08f2-16b6-4ea6-8fe1-304a08071aca",
+      "anchor": {
+        "scope": "block",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": 0
+      },
+      "author": "Bob",
+      "type": "suggestion",
+      "status": "open",
+      "content": "Adding a code snippet would help explain this feature.",
+      "createdAt": "2026-02-11T20:54:00.000Z",
+      "replies": []
+    }
+  ]
+}

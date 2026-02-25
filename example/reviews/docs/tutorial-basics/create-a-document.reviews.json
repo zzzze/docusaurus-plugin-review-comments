@@ -1,0 +1,59 @@
+{
+  "documentPath": "docs/tutorial-basics/create-a-document",
+  "comments": [
+    {
+      "id": "c8c91caf-6645-4e4e-962d-b70df02e5913",
+      "anchor": {
+        "scope": "text",
+        "exact": "configuration options",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Charlie",
+      "type": "issue",
+      "status": "open",
+      "content": "There appears to be a typo in this section.",
+      "createdAt": "2026-02-07T18:13:00.000Z",
+      "replies": [
+        {
+          "id": "6c8d677e-267b-4210-b249-03f026acaaad",
+          "author": "Eve",
+          "content": "I agree, this needs improvement.",
+          "createdAt": "2026-02-18T19:49:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "5747dece-ee5c-4cf9-8b7f-7f5b8fd0b6b9",
+      "anchor": {
+        "scope": "text",
+        "exact": "recommended approach",
+        "prefix": "the ",
+        "suffix": " for",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Alice",
+      "type": "issue",
+      "status": "resolved",
+      "content": "The command shown here doesn't work as written.",
+      "createdAt": "2026-02-09T22:33:00.000Z",
+      "replies": [
+        {
+          "id": "26ecc941-d070-4577-9447-0662f3b34e0a",
+          "author": "Eve",
+          "content": "I've updated the documentation.",
+          "createdAt": "2026-02-06T17:44:00.000Z"
+        },
+        {
+          "id": "ee7c8ecb-a744-43e6-a14c-0af6d002bb6d",
+          "author": "Bob",
+          "content": "You're absolutely right, fixing now.",
+          "createdAt": "2026-02-17T04:19:00.000Z"
+        }
+      ]
+    }
+  ]
+}
