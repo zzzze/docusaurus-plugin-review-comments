@@ -68,6 +68,16 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    [
+      require.resolve('../src/index.ts'),
+      {
+        reviewsDir: 'reviews',
+        defaultAuthor: 'Demo User',
+      },
+    ],
+  ],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
