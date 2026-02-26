@@ -83,17 +83,28 @@ function findTextRange(
   anchor: ReviewAnchor,
   contentElement: HTMLElement,
 ): Range | null {
+  // Walk both text nodes and elements so we can detect <br> tags.
+  // Docusaurus CodeBlock renders each line in a <span> with a trailing <br>
+  // instead of a "\n" text node. selection.toString() converts <br> to "\n",
+  // so we must do the same when building fullText to keep offsets in sync.
   const treeWalker = document.createTreeWalker(
     contentElement,
-    NodeFilter.SHOW_TEXT,
+    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
   );
   let fullText = "";
   const textNodes: { node: Text; start: number }[] = [];
 
-  let node: Text | null;
-  while ((node = treeWalker.nextNode() as Text | null)) {
-    textNodes.push({ node, start: fullText.length });
-    fullText += node.textContent ?? "";
+  let node: Node | null;
+  while ((node = treeWalker.nextNode())) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      if ((node as Element).tagName === "BR") {
+        fullText += "\n";
+      }
+      continue;
+    }
+    const textNode = node as Text;
+    textNodes.push({ node: textNode, start: fullText.length });
+    fullText += textNode.textContent ?? "";
   }
 
   const searchText = anchor.exact;

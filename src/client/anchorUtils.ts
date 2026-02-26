@@ -1,22 +1,109 @@
 import type { ReviewAnchor } from "../types";
 
+/**
+ * Collects all text before `targetNode` up to `charCount` characters by
+ * walking backwards through the tree using a TreeWalker on the nearest
+ * block ancestor. This handles syntax-highlighted code blocks where the
+ * selection start sits inside a deeply-nested <span> with little local text.
+ */
+/**
+ * Walks a subtree rooted at `root`, yielding each node in document order.
+ * Text nodes are yielded as-is; <br> elements emit a synthetic "\n" entry.
+ * Other element nodes are skipped (but their children are still visited).
+ */
+function* iterTextWithBr(
+  root: Node,
+): Generator<{ type: "text"; node: Text; text: string } | { type: "br" }> {
+  const walker = document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+  );
+  let node: Node | null;
+  while ((node = walker.nextNode())) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      yield { type: "text", node: node as Text, text: node.textContent ?? "" };
+    } else if ((node as Element).tagName === "BR") {
+      yield { type: "br" };
+    }
+  }
+}
+
+function collectTextBefore(
+  targetNode: Node,
+  offsetInNode: number,
+  charCount: number,
+): string {
+  const blockAncestor = findNearestBlockAncestor(targetNode);
+  if (!blockAncestor) {
+    const text = targetNode.textContent ?? "";
+    const start = Math.max(0, offsetInNode - charCount);
+    return text.slice(start, offsetInNode);
+  }
+
+  let accumulated = "";
+  for (const item of iterTextWithBr(blockAncestor)) {
+    if (item.type === "br") {
+      accumulated += "\n";
+      continue;
+    }
+    if (item.node === targetNode) break;
+    accumulated += item.text;
+  }
+  accumulated += (targetNode.textContent ?? "").slice(0, offsetInNode);
+  return accumulated.slice(-charCount);
+}
+
+/**
+ * Collects all text after `targetNode` from `offsetInNode` up to `charCount`
+ * characters by walking forwards through the tree.
+ */
+function collectTextAfter(
+  targetNode: Node,
+  offsetInNode: number,
+  charCount: number,
+): string {
+  const blockAncestor = findNearestBlockAncestor(targetNode);
+  if (!blockAncestor) {
+    const text = targetNode.textContent ?? "";
+    return text.slice(offsetInNode, offsetInNode + charCount);
+  }
+
+  let accumulated = "";
+  let pastTarget = false;
+  for (const item of iterTextWithBr(blockAncestor)) {
+    if (!pastTarget) {
+      if (item.type === "text" && item.node === targetNode) {
+        accumulated += item.text.slice(offsetInNode);
+        pastTarget = true;
+      }
+      continue;
+    }
+    if (accumulated.length >= charCount) break;
+    accumulated += item.type === "br" ? "\n" : item.text;
+  }
+  return accumulated.slice(0, charCount);
+}
+
+function findNearestBlockAncestor(node: Node): HTMLElement | null {
+  const BLOCK = new Set(["P","UL","OL","BLOCKQUOTE","PRE","TABLE","DIV","H1","H2","H3","H4","H5","H6"]);
+  let current: Node | null = node.parentNode;
+  while (current) {
+    if (current instanceof HTMLElement && BLOCK.has(current.tagName)) return current;
+    current = current.parentNode;
+  }
+  return null;
+}
+
 export function extractPrefix(range: Range, charCount = 32): string {
   const container = range.startContainer;
-  if (container.nodeType === Node.TEXT_NODE) {
-    const text = container.textContent ?? "";
-    const start = Math.max(0, range.startOffset - charCount);
-    return text.slice(start, range.startOffset);
-  }
-  return "";
+  if (container.nodeType !== Node.TEXT_NODE) return "";
+  return collectTextBefore(container, range.startOffset, charCount);
 }
 
 export function extractSuffix(range: Range, charCount = 32): string {
   const container = range.endContainer;
-  if (container.nodeType === Node.TEXT_NODE) {
-    const text = container.textContent ?? "";
-    return text.slice(range.endOffset, range.endOffset + charCount);
-  }
-  return "";
+  if (container.nodeType !== Node.TEXT_NODE) return "";
+  return collectTextAfter(container, range.endOffset, charCount);
 }
 
 const HEADING_PATTERN = /^H[1-6]$/;

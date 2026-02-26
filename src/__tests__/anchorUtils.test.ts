@@ -68,6 +68,27 @@ describe("anchorUtils", () => {
       expect(prefix.length).toBe(10);
     });
 
+    it("crosses span boundaries in syntax-highlighted code blocks", () => {
+      // Simulates Prism output: <pre><code><span>npm install </span><span>pkg</span></code></pre>
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      const span1 = el("span", {}, "npm install ");
+      const span2 = el("span", {}, "pkg");
+      code.appendChild(span1);
+      code.appendChild(span2);
+      pre.appendChild(code);
+      document.body.appendChild(pre);
+
+      // Selection starts at beginning of span2 ("pkg")
+      const span2Text = span2.firstChild!;
+      const range = document.createRange();
+      range.setStart(span2Text, 0);
+      range.setEnd(span2Text, 3);
+
+      // Should collect from span1 as well, not just the current text node
+      expect(extractPrefix(range, 32)).toBe("npm install ");
+    });
+
     it("returns empty string for non-text nodes", () => {
       const div = el("div", {}, el("span", {}, "child"));
       document.body.appendChild(div);
@@ -105,6 +126,27 @@ describe("anchorUtils", () => {
 
       const suffix = extractSuffix(range, 10);
       expect(suffix.length).toBe(10);
+    });
+
+    it("crosses span boundaries in syntax-highlighted code blocks", () => {
+      // Simulates Prism: <pre><code><span>pkg</span><span> --save</span></code></pre>
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      const span1 = el("span", {}, "pkg");
+      const span2 = el("span", {}, " --save");
+      code.appendChild(span1);
+      code.appendChild(span2);
+      pre.appendChild(code);
+      document.body.appendChild(pre);
+
+      // Selection ends at the end of span1 ("pkg")
+      const span1Text = span1.firstChild!;
+      const range = document.createRange();
+      range.setStart(span1Text, 0);
+      range.setEnd(span1Text, 3);
+
+      // Should collect from span2 as well
+      expect(extractSuffix(range, 32)).toBe(" --save");
     });
   });
 

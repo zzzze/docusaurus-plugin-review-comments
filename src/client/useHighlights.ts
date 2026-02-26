@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import type { ReviewComment } from "../types";
 import {
   findTextInDocument,
-  applyHighlight,
+  highlightRangePerNode,
   removeAllHighlights,
   setHighlightHover,
   applyBlockHighlight,
@@ -51,7 +51,7 @@ export function useHighlights({
 
       const range = findTextInDocument(comment.anchor, contentEl);
       if (range) {
-        applyHighlight(range, comment.id);
+        highlightRangePerNode(range, comment.id);
       } else {
         orphanedIds.push(comment.id);
       }

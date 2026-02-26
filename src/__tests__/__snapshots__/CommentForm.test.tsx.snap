@@ -2,7 +2,7 @@
 
 exports[`CommentForm snapshots > matches snapshot for create mode with text anchor 1`] = `
 <div
-  class="form"
+  class="form "
 >
   <div
     class="segmentedControl"
@@ -123,7 +123,7 @@ exports[`CommentForm snapshots > matches snapshot for create mode with text anch
 
 exports[`CommentForm snapshots > matches snapshot for edit mode with initial content 1`] = `
 <div
-  class="form"
+  class="form "
 >
   <div
     class="tabs"
@@ -207,7 +207,7 @@ exports[`CommentForm snapshots > matches snapshot for edit mode with initial con
 
 exports[`CommentForm snapshots > matches snapshot for reply mode 1`] = `
 <div
-  class="form"
+  class="form "
 >
   <div
     class="tabs"

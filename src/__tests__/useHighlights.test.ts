@@ -7,6 +7,7 @@ import type { ReviewComment } from "../types";
 vi.mock("../client/highlightRenderer", () => ({
   findTextInDocument: vi.fn(),
   applyHighlight: vi.fn(),
+  highlightRangePerNode: vi.fn(),
   removeAllHighlights: vi.fn(),
   setHighlightHover: vi.fn(),
   applyBlockHighlight: vi.fn(),
@@ -67,7 +68,7 @@ describe("useHighlights", () => {
       sampleAnchor,
       contentEl,
     );
-    expect(highlightRenderer.applyHighlight).toHaveBeenCalledWith(
+    expect(highlightRenderer.highlightRangePerNode).toHaveBeenCalledWith(
       mockRange,
       "c1",
     );
@@ -109,7 +110,7 @@ describe("useHighlights", () => {
     );
 
     expect(highlightRenderer.findTextInDocument).not.toHaveBeenCalled();
-    expect(highlightRenderer.applyHighlight).not.toHaveBeenCalled();
+    expect(highlightRenderer.highlightRangePerNode).not.toHaveBeenCalled();
   });
 
   it("skips resolved comments", () => {

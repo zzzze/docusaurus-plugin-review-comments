@@ -281,6 +281,163 @@ describe("highlightRenderer", () => {
     });
   });
 
+  describe("findTextInDocument in syntax-highlighted code blocks", () => {
+    it("finds text that spans multiple Prism token spans", () => {
+      // Prism splits code into spans per token; the exact text is split across them
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      // "reviewsDir: 'reviews'" split across spans as Prism might render it
+      const spans = [
+        el("span", {}, "reviewsDir"),
+        el("span", {}, ": "),
+        el("span", {}, "'reviews'"),
+      ];
+      for (const s of spans) code.appendChild(s);
+      pre.appendChild(code);
+
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "reviewsDir: 'reviews'",
+        prefix: "",
+        suffix: "",
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).not.toBeNull();
+      expect(range!.toString()).toBe("reviewsDir: 'reviews'");
+    });
+
+    it("finds multiline text in code block spanning token spans and newlines", () => {
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      // Simulate: "foo\nbar" where each word is a token and \n is a separate text node
+      code.appendChild(el("span", {}, "foo"));
+      code.appendChild(document.createTextNode("\n"));
+      code.appendChild(el("span", {}, "bar"));
+      pre.appendChild(code);
+
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "foo\nbar",
+        prefix: "",
+        suffix: "",
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).not.toBeNull();
+      expect(range!.toString()).toBe("foo\nbar");
+    });
+
+    it("finds multiline text in Docusaurus CodeBlock where lines end with <br> not \\n", () => {
+      // Docusaurus renders each code line as: <span>...tokens...<br/></span>
+      // selection.toString() converts <br> → "\n", so anchor.exact contains "\n"
+      // but naive text-node concatenation produces no "\n" at line boundaries.
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+
+      // Line 1: "  foo: 'bar'," + <br>
+      const line1 = document.createElement("span");
+      line1.appendChild(document.createTextNode("  foo: 'bar',"));
+      line1.appendChild(document.createElement("br"));
+
+      // Line 2: "  baz: 'qux'," + <br>
+      const line2 = document.createElement("span");
+      line2.appendChild(document.createTextNode("  baz: 'qux',"));
+      line2.appendChild(document.createElement("br"));
+
+      code.appendChild(line1);
+      code.appendChild(line2);
+      pre.appendChild(code);
+
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "foo: 'bar',\n  baz: 'qux',",
+        prefix: "  ",
+        suffix: "",
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).not.toBeNull();
+      // The range spans from "foo" to the end of "qux',"
+      expect(range!.toString()).toContain("foo: 'bar'");
+      expect(range!.toString()).toContain("baz: 'qux',");
+    });
+  });
+
+  describe("content drift in CodeBlock (<br> lines)", () => {
+    function makeCodeBlock(...lines: string[]): HTMLElement {
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      for (const line of lines) {
+        const span = document.createElement("span");
+        span.appendChild(document.createTextNode(line));
+        span.appendChild(document.createElement("br"));
+        code.appendChild(span);
+      }
+      pre.appendChild(code);
+      return pre;
+    }
+
+    it("relocates via suffix (across <br>) when one char deleted from exact text", () => {
+      // suffix spans a <br>-terminated line boundary: "\n};" is in fullText as "\n};"
+      const pre = makeCodeBlock("  foo: 'ba',", "  baz: 'qux',", "};");
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "foo: 'bar',\n  baz: 'qux',",
+        prefix: "",
+        suffix: "\n};",  // newline (from <br>) + next line content
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).not.toBeNull();
+    });
+
+    it("relocates via prefix+suffix when one char deleted from exact text", () => {
+      // Both prefix and suffix are long enough to uniquely locate the anchor
+      const pre = makeCodeBlock("module.exports = {", "  foo: 'ba',", "  baz: 'qux',", "};");
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "foo: 'bar',\n  baz: 'qux',",
+        prefix: "exports = {\n  ",  // crosses a <br> boundary
+        suffix: "\n};",
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).not.toBeNull();
+    });
+
+    it("returns null when both prefix and suffix also changed (orphaned)", () => {
+      const pre = makeCodeBlock("completely different", "content here");
+      const anchor: ReviewAnchor = {
+        scope: "text",
+        exact: "foo: 'bar',\n  baz: 'qux',",
+        prefix: "exports = {\n  ",
+        suffix: "\n};",
+        heading: "",
+        blockIndex: null,
+      };
+      const content = createContentElement(pre);
+      const range = findTextInDocument(anchor, content);
+
+      expect(range).toBeNull();
+    });
+  });
+
   describe("content drift", () => {
     describe("text scope - relocateByContext", () => {
       it("relocates via prefix+suffix when exact text slightly modified", () => {
