@@ -1,11 +1,22 @@
-export interface ReviewAnchor {
-  scope: "text" | "block" | "document";
+export interface TextAnchor {
+  scope: "text";
   exact: string;
-  prefix: string;
-  suffix: string;
+  prefix?: string;
+  suffix?: string;
+}
+
+export interface BlockAnchor {
+  scope: "block";
+  exact: string;
   heading: string;
   blockIndex: number | null;
 }
+
+export interface DocumentAnchor {
+  scope: "document";
+}
+
+export type ReviewAnchor = TextAnchor | BlockAnchor | DocumentAnchor;
 
 export interface ReviewReply {
   id: string;
