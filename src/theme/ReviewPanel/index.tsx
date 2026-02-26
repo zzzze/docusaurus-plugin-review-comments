@@ -6,6 +6,84 @@ import { CommentForm } from "../CommentForm";
 import { BottomSheet } from "../BottomSheet";
 import styles from "./styles.module.css";
 
+const PANEL_MIN_WIDTH = 240;
+const PANEL_MAX_WIDTH = 800;
+const PANEL_DEFAULT_WIDTH = 320;
+const PANEL_WIDTH_KEY = "review-panel-width";
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+export function usePanelResize(): {
+  width: number;
+  handleRef: React.RefObject<HTMLDivElement>;
+} {
+  const [width, setWidth] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem(PANEL_WIDTH_KEY);
+      if (stored) {
+        return clamp(parseInt(stored, 10), PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
+      }
+    } catch {
+      // localStorage unavailable
+    }
+    return PANEL_DEFAULT_WIDTH;
+  });
+
+  const handleRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const startWidth = useRef(0);
+
+  useEffect(() => {
+    const handle = handleRef.current;
+    if (!handle) return;
+
+    const onPointerDown = (e: PointerEvent): void => {
+      dragging.current = true;
+      startX.current = e.clientX;
+      startWidth.current = width;
+      handle.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    };
+
+    const onPointerMove = (e: PointerEvent): void => {
+      if (!dragging.current) return;
+      const delta = startX.current - e.clientX;
+      const next = clamp(startWidth.current + delta, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
+      setWidth(next);
+    };
+
+    const onPointerUp = (): void => {
+      if (!dragging.current) return;
+      dragging.current = false;
+      setWidth((w) => {
+        try {
+          localStorage.setItem(PANEL_WIDTH_KEY, String(w));
+        } catch {
+          // localStorage unavailable
+        }
+        return w;
+      });
+    };
+
+    handle.addEventListener("pointerdown", onPointerDown);
+    handle.addEventListener("pointermove", onPointerMove);
+    handle.addEventListener("pointerup", onPointerUp);
+    handle.addEventListener("pointercancel", onPointerUp);
+
+    return () => {
+      handle.removeEventListener("pointerdown", onPointerDown);
+      handle.removeEventListener("pointermove", onPointerMove);
+      handle.removeEventListener("pointerup", onPointerUp);
+      handle.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [width]);
+
+  return { width, handleRef };
+}
+
 interface UndoState {
   commentId: string;
   author: string;
@@ -127,8 +205,8 @@ export function ReviewPanel(): React.ReactElement | null {
   );
 
   const openComments = useMemo(
-    () => comments.filter((c) => c.status === "open"),
-    [comments],
+    () => comments.filter((c) => c.status === "open" && !orphanedCommentIds.has(c.id)),
+    [comments, orphanedCommentIds],
   );
 
   const resolvedComments = useMemo(

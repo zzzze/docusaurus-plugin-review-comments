@@ -556,8 +556,14 @@
 /* Resolved comments section */
 .resolvedSection {
   margin-top: 16px;
-  border-top: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
-  padding-top: 8px;
+  border: 1px dashed var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 8px;
+  opacity: 0.6;
+}
+
+.resolvedSection:hover {
+  opacity: 0.85;
 }
 
 .resolvedToggle {

@@ -12,6 +12,7 @@ export default defineConfig({
       ["src/__tests__/useGutterButtons.test.ts", "happy-dom"],
       ["src/__tests__/useHighlights.test.ts", "happy-dom"],
       ["src/__tests__/useKeyboardShortcuts.test.ts", "happy-dom"],
+      ["src/__tests__/ReviewPanel.test.tsx", "happy-dom"],
     ],
     setupFiles: ["src/__tests__/setup.ts"],
   },
