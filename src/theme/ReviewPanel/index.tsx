@@ -45,24 +45,28 @@ export function usePanelResize(): {
     const handle = handleRef.current;
     if (!handle) return;
 
-    const onPointerDown = (e: PointerEvent): void => {
+    const onMouseDown = (e: MouseEvent): void => {
+      if (e.button !== 0) return;
       dragging.current = true;
       startX.current = e.clientX;
       startWidth.current = widthRef.current;
-      handle.setPointerCapture(e.pointerId);
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "ew-resize";
       e.preventDefault();
     };
 
-    const onPointerMove = (e: PointerEvent): void => {
+    const onMouseMove = (e: MouseEvent): void => {
       if (!dragging.current) return;
       const delta = startX.current - e.clientX;
       const next = clamp(startWidth.current + delta, PANEL_MIN_WIDTH, PANEL_MAX_WIDTH);
       setWidth(next);
     };
 
-    const onPointerUp = (): void => {
+    const onMouseUp = (): void => {
       if (!dragging.current) return;
       dragging.current = false;
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
       setWidth((w) => {
         try {
           localStorage.setItem(PANEL_WIDTH_KEY, String(w));
@@ -73,16 +77,14 @@ export function usePanelResize(): {
       });
     };
 
-    handle.addEventListener("pointerdown", onPointerDown);
-    handle.addEventListener("pointermove", onPointerMove);
-    handle.addEventListener("pointerup", onPointerUp);
-    handle.addEventListener("pointercancel", onPointerUp);
+    handle.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      handle.removeEventListener("pointerdown", onPointerDown);
-      handle.removeEventListener("pointermove", onPointerMove);
-      handle.removeEventListener("pointerup", onPointerUp);
-      handle.removeEventListener("pointercancel", onPointerUp);
+      handle.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
     };
   }, []);
 
