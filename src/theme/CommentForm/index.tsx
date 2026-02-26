@@ -32,20 +32,13 @@ function upgradeAnchor(
     return cachedTextAnchor;
   }
   if (newScope === "document") {
-    return {
-      scope: "document",
-      exact: "",
-      prefix: "",
-      suffix: "",
-      heading: "",
-      blockIndex: null,
-    };
+    return { scope: "document" };
   }
   if (newScope === "block") {
     if (blockAnchor) {
       return blockAnchor;
     }
-    return { ...anchor, scope: "block", prefix: "", suffix: "" };
+    return anchor;
   }
   return anchor;
 }

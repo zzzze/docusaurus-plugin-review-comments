@@ -194,14 +194,7 @@ export function ReviewPanel(): React.ReactElement | null {
     [isPanelOpen, setIsPanelOpen],
   );
 
-  const documentAnchor = {
-    scope: "document" as const,
-    exact: "",
-    prefix: "",
-    suffix: "",
-    heading: "",
-    blockIndex: null,
-  };
+  const documentAnchor = { scope: "document" as const };
 
   const commentListContent = (
     <>

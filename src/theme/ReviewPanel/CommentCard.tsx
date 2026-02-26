@@ -94,15 +94,17 @@ export function CommentCard({
     );
   }
 
-  const textExcerpt = comment.anchor.exact
-    ? comment.anchor.exact.length > 60
-      ? `"${comment.anchor.exact.slice(0, 60)}..."`
-      : `"${comment.anchor.exact}"`
+  const anchorExact = comment.anchor.scope !== "document" ? comment.anchor.exact : null;
+
+  const textExcerpt = anchorExact
+    ? anchorExact.length > 60
+      ? `"${anchorExact.slice(0, 60)}..."`
+      : `"${anchorExact}"`
     : null;
 
-  const blockPreview = comment.anchor.exact
-    ? comment.anchor.exact.split("\n")[0]!.trim().slice(0, 50) +
-      (comment.anchor.exact.length > 50 ? "…" : "")
+  const blockPreview = anchorExact
+    ? anchorExact.split("\n")[0]!.trim().slice(0, 50) +
+      (anchorExact.length > 50 ? "…" : "")
     : null;
 
   return (

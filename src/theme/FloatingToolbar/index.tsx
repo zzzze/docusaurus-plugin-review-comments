@@ -67,7 +67,7 @@ export function FloatingToolbar({
     clearPendingHighlights();
     if (highlightMode === "text") {
       highlightRangePerNode(formState.range, PENDING_COMMENT_ID);
-    } else if (highlightMode === "block" && contentRef.current) {
+    } else if (highlightMode === "block" && contentRef.current && formState.anchor.scope === "block") {
       applyBlockHighlight(formState.anchor, PENDING_COMMENT_ID, contentRef.current);
     }
     return () => {
