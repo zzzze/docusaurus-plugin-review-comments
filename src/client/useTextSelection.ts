@@ -60,7 +60,7 @@ export function useTextSelection(
         const anchorNode = selection.anchorNode;
         if (!anchorNode || !contentEl.contains(anchorNode)) return;
 
-        const anchor = buildAnchorFromSelection(selection);
+        const anchor = buildAnchorFromSelection(selection, contentEl);
         if (!anchor) return;
 
         const range = selection.getRangeAt(0);
