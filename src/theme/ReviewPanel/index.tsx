@@ -149,7 +149,9 @@ function groupByHeading(comments: ReviewComment[]): CommentGroup[] {
     const heading =
       comment.anchor.scope === "document"
         ? "Document"
-        : comment.anchor.heading || "Untitled";
+        : comment.anchor.scope === "block"
+          ? comment.anchor.heading || "Untitled"
+          : "Untitled";
     const existing = groups.get(heading);
     if (existing) {
       existing.push(comment);
