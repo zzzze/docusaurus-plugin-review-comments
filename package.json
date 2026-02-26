@@ -15,6 +15,7 @@
     "test:mutate": "stryker run"
   },
   "dependencies": {
+    "dom-anchor-text-quote": "^4.0.2",
     "express": "^4.21.0",
     "lucide-react": "^0.468.0",
     "react-markdown": "^9.0.0",
@@ -23,9 +24,12 @@
   },
   "devDependencies": {
     "@docusaurus/types": "3.9.2",
+    "@rollup/rollup-linux-arm64-gnu": "^4.59.0",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
     "@types/express": "^5.0.0",
+    "@types/react": "^19.2.14",
     "@types/uuid": "^10.0.0",
     "happy-dom": "^17.0.0",
     "react": "^19.0.0",
