@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import type { ReviewAnchor } from "../../types";
 import { useTextSelection } from "../../client/useTextSelection";
 import {
@@ -25,7 +25,8 @@ interface FormState {
   blockAnchor: ReviewAnchor | null;
   range: Range;
   type: "question" | "suggestion" | "issue";
-  top: number;
+  selectionTop: number;
+  selectionBottom: number;
   left: number;
 }
 
@@ -48,6 +49,7 @@ export function FloatingToolbar({
   } = useTextSelection(contentRef);
   const [formState, setFormState] = useState<FormState | null>(null);
   const [highlightMode, setHighlightMode] = useState<HighlightMode>("text");
+  const [adjustedPos, setAdjustedPos] = useState<{ top: number; left: number } | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const formStateRef = useRef(formState);
   formStateRef.current = formState;
@@ -55,6 +57,7 @@ export function FloatingToolbar({
   const closeForm = useCallback(() => {
     clearPendingHighlights();
     setFormState(null);
+    setAdjustedPos(null);
     clearSelection();
   }, [clearSelection]);
 
@@ -71,6 +74,52 @@ export function FloatingToolbar({
       clearPendingHighlights();
     };
   }, [formState, highlightMode, contentRef]);
+
+  const isFormOpen = formState !== null;
+
+  // Compute position after render so we know the toolbar's real dimensions.
+  // Runs whenever the anchor coordinates change (new selection or form open/close).
+  const rawSelectionTop = isFormOpen
+    ? formState!.selectionTop
+    : toolbarPosition?.selectionTop ?? null;
+  const rawSelectionBottom = isFormOpen
+    ? formState!.selectionBottom
+    : toolbarPosition?.selectionBottom ?? null;
+  const rawLeft = isFormOpen ? formState!.left : toolbarPosition?.left ?? null;
+
+  useLayoutEffect(() => {
+    const el = toolbarRef.current;
+    if (!el || rawSelectionTop === null || rawSelectionBottom === null || rawLeft === null) return;
+
+    const GAP = 8;
+    const { offsetWidth: w, offsetHeight: h } = el;
+    const vpWidth = window.innerWidth;
+    const vpHeight = window.innerHeight;
+    const scrollY = window.scrollY;
+
+    // Prefer above the selection; flip below if not enough room
+    let top: number;
+    const spaceAbove = rawSelectionTop - scrollY; // viewport pixels above selection top
+    if (spaceAbove >= h + GAP) {
+      top = rawSelectionTop - h - GAP;
+    } else {
+      top = rawSelectionBottom + GAP;
+    }
+
+    // Clamp left so toolbar stays within viewport
+    const halfW = w / 2;
+    let left = rawLeft;
+    left = Math.max(halfW + GAP, left);
+    left = Math.min(vpWidth - halfW - GAP, left);
+
+    // Clamp top so toolbar stays within visible document area
+    const maxTop = scrollY + vpHeight - h - GAP;
+    const minTop = scrollY + GAP;
+    top = Math.max(minTop, Math.min(maxTop, top));
+
+    setAdjustedPos({ top, left });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawSelectionTop, rawSelectionBottom, rawLeft, isFormOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
@@ -121,7 +170,8 @@ export function FloatingToolbar({
       blockAnchor,
       range: selectedRange,
       type,
-      top: toolbarPosition.top,
+      selectionTop: toolbarPosition.selectionTop,
+      selectionBottom: toolbarPosition.selectionBottom,
       left: toolbarPosition.left,
     });
   };
@@ -144,13 +194,9 @@ export function FloatingToolbar({
     setFormState(null);
   };
 
-  const isFormOpen = formState !== null;
   const showToolbarButtons = isSelecting && toolbarPosition && selectedAnchor && !isFormOpen;
 
   if (!showToolbarButtons && !isFormOpen) return null;
-
-  const top = isFormOpen ? formState.top : toolbarPosition!.top;
-  const left = isFormOpen ? formState.left : toolbarPosition!.left;
 
   return (
     <div
@@ -158,9 +204,10 @@ export function FloatingToolbar({
       className={`${styles.toolbar} ${isFormOpen ? styles.toolbarWithForm : ""}`}
       style={{
         position: "absolute",
-        top,
-        left,
+        top: adjustedPos?.top ?? -9999,
+        left: adjustedPos?.left ?? -9999,
         transform: "translateX(-50%)",
+        visibility: adjustedPos ? "visible" : "hidden",
       }}
     >
       {showToolbarButtons ? (

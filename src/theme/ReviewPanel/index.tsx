@@ -248,6 +248,7 @@ export function ReviewPanel(): React.ReactElement | null {
             mode="create"
             initialAnchor={documentAnchor}
             initialType="question"
+            variant="inline"
             onSubmit={() => setShowNewForm(false)}
             onCancel={() => setShowNewForm(false)}
           />

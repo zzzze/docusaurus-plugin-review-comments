@@ -16,6 +16,7 @@ interface CommentFormProps {
   initialType?: CommentType;
   commentId?: string;
   initialContent?: string;
+  variant?: "floating" | "inline";
   onSubmit: () => void;
   onCancel: () => void;
   onScopeChange?: (scope: AnchorScope) => void;
@@ -56,6 +57,7 @@ export function CommentForm({
   initialType = "question",
   commentId,
   initialContent = "",
+  variant = "floating",
   onSubmit,
   onCancel,
   onScopeChange,
@@ -137,7 +139,7 @@ export function CommentForm({
   );
 
   return (
-    <div className={styles.form}>
+    <div className={`${styles.form} ${variant === "inline" ? styles.formInline : ""}`}>
       {mode === "create" && (
         <>
           <div className={styles.segmentedControl}>

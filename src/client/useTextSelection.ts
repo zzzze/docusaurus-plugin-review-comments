@@ -4,7 +4,11 @@ import type { ReviewAnchor } from "../types";
 import { buildAnchorFromSelection } from "./anchorUtils";
 
 interface ToolbarPosition {
-  top: number;
+  /** Document Y coordinate of the selection top edge */
+  selectionTop: number;
+  /** Document Y coordinate of the selection bottom edge */
+  selectionBottom: number;
+  /** Viewport X coordinate of the selection horizontal center */
   left: number;
 }
 
@@ -62,30 +66,22 @@ export function useTextSelection(
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
 
-        let top = rect.top - 8 + window.scrollY;
+        const selectionTop = rect.top + window.scrollY;
+        const selectionBottom = rect.bottom + window.scrollY;
         const left = rect.left + rect.width / 2;
 
-        // Flip below selection if it would clip the viewport top
-        if (rect.top < 60) {
-          top = rect.bottom + 8 + window.scrollY;
-        }
-
         setIsSelecting(true);
-        setToolbarPosition({ top, left });
+        setToolbarPosition({ selectionTop, selectionBottom, left });
         setSelectedAnchor(anchor);
         setSelectedRange(range.cloneRange());
       });
     };
 
     document.addEventListener("mouseup", handleSelectionChange);
-    document.addEventListener("selectionchange", () => {
-      const selection = window.getSelection();
-      if (selection && !selection.isCollapsed && selection.toString().trim()) {
-        handleSelectionChange();
-      }
-    });
+    document.addEventListener("keyup", handleSelectionChange);
     return () => {
       document.removeEventListener("mouseup", handleSelectionChange);
+      document.removeEventListener("keyup", handleSelectionChange);
     };
   }, [contentRef]);
 

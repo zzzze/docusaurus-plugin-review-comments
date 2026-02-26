@@ -8,6 +8,17 @@
   max-width: 420px;
 }
 
+.formInline {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  min-width: 0;
+  max-width: none;
+  width: 100%;
+  background: transparent;
+}
+
 .segmentedControl {
   display: flex;
   gap: 2px;
