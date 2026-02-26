@@ -1,5 +1,6 @@
 import { fromRange } from "dom-anchor-text-quote";
 import type { BlockAnchor, TextAnchor } from "../types";
+import { getVisibleText } from "./domUtils";
 
 const HEADING_PATTERN = /^H[1-6]$/;
 
@@ -85,11 +86,11 @@ function extractBlockText(element: HTMLElement): string {
   if (element.tagName === "UL" || element.tagName === "OL") {
     return Array.from(element.children)
       .filter((child) => child.tagName === "LI")
-      .map((li) => (li.textContent ?? "").trim())
+      .map((li) => getVisibleText(li as HTMLElement))
       .filter(Boolean)
       .join("\n");
   }
-  return (element.textContent ?? "").trim();
+  return getVisibleText(element);
 }
 
 export function buildAnchorFromBlock(

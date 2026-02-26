@@ -1,5 +1,6 @@
 import { toRange } from "dom-anchor-text-quote";
 import type { BlockAnchor, ReviewAnchor } from "../types";
+import { getVisibleText } from "./domUtils";
 
 export function findTextInDocument(
   anchor: ReviewAnchor,
@@ -22,15 +23,39 @@ function findBlockElement(
   anchor: BlockAnchor,
   contentElement: HTMLElement,
 ): Range | null {
-  if (!anchor.heading) return null;
-  const heading = contentElement.querySelector(
-    `#${CSS.escape(anchor.heading)}`,
-  );
-  if (!heading) return null;
+  let startSibling: Element | null;
+
+  if (anchor.heading) {
+    const heading = contentElement.querySelector(
+      `#${CSS.escape(anchor.heading)}`,
+    );
+    if (!heading) return null;
+
+    // If the anchor text matches the heading itself, return it directly
+    if (anchor.exact && getVisibleText(heading) === anchor.exact.trim()) {
+      return rangeFromElement(heading);
+    }
+
+    startSibling = heading.nextElementSibling;
+  } else {
+    // No heading: try to match against a direct-child heading without an id (e.g. H1 inside <header>)
+    if (anchor.exact) {
+      const headingEl = Array.from(
+        contentElement.querySelectorAll("h1, h2, h3, h4, h5, h6"),
+      ).find(
+        (el) => !el.id && el.parentElement === contentElement && getVisibleText(el) === anchor.exact.trim(),
+      );
+      if (headingEl) return rangeFromElement(headingEl);
+    }
+    // Search from the first child of contentElement
+    startSibling = contentElement.firstElementChild;
+  }
 
   const blocks: Element[] = [];
-  let sibling = heading.nextElementSibling;
+  let sibling = startSibling;
   while (sibling) {
+    // Stop at the first heading when searching from document root (before pushing)
+    if (!anchor.heading && /^H[1-6]$/.test(sibling.tagName)) break;
     if (isBlockElement(sibling)) blocks.push(sibling);
     sibling = sibling.nextElementSibling;
   }
@@ -38,7 +63,7 @@ function findBlockElement(
   // Primary: match by text content
   if (anchor.exact) {
     const exactMatches = blocks.filter(
-      (el) => el.textContent?.trim() === anchor.exact.trim(),
+      (el) => getVisibleText(el) === anchor.exact.trim(),
     );
     if (exactMatches.length === 1) {
       return rangeFromElement(exactMatches[0]!);
@@ -56,7 +81,7 @@ function findBlockElement(
   // Secondary: substring match (handles text added to block)
   if (anchor.exact) {
     const substringMatches = blocks.filter(
-      (el) => el.textContent?.includes(anchor.exact.trim()),
+      (el) => getVisibleText(el).includes(anchor.exact.trim()),
     );
     if (substringMatches.length === 1) {
       return rangeFromElement(substringMatches[0]!);
@@ -93,6 +118,7 @@ const BLOCK_TAGS = new Set([
   "PRE",
   "TABLE",
   "DIV",
+  "H1", "H2", "H3", "H4", "H5", "H6",
 ]);
 
 function isBlockElement(el: Element): boolean {
@@ -250,7 +276,11 @@ export function applyBlockHighlight(
   removeBlockHighlight(commentId);
   const range = findBlockElement(anchor, contentElement);
   if (!range) return;
-  const blockEl = range.startContainer as HTMLElement;
+  const node = range.startContainer;
+  const blockEl = node.nodeType === Node.ELEMENT_NODE
+    ? (node as HTMLElement)
+    : (node as Text).parentElement;
+  if (!blockEl) return;
   blockEl.classList.add(BLOCK_HIGHLIGHT_CLASS);
   blockEl.setAttribute(BLOCK_HIGHLIGHT_ATTR, commentId);
 }
