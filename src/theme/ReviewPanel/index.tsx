@@ -137,40 +137,6 @@ function useUndoResolve(
   return { undoState, onResolved, dismissUndo, handleUndo };
 }
 
-interface CommentGroup {
-  heading: string;
-  comments: ReviewComment[];
-}
-
-function groupByHeading(comments: ReviewComment[]): CommentGroup[] {
-  const groups = new Map<string, ReviewComment[]>();
-
-  for (const comment of comments) {
-    const heading =
-      comment.anchor.scope === "document"
-        ? "Document"
-        : comment.anchor.scope === "block"
-          ? comment.anchor.heading || "Untitled"
-          : "Untitled";
-    const existing = groups.get(heading);
-    if (existing) {
-      existing.push(comment);
-    } else {
-      groups.set(heading, [comment]);
-    }
-  }
-
-  const result: CommentGroup[] = [];
-  const documentGroup = groups.get("Document");
-  if (documentGroup) {
-    result.push({ heading: "Document", comments: documentGroup });
-    groups.delete("Document");
-  }
-  for (const [heading, groupComments] of groups) {
-    result.push({ heading, comments: groupComments });
-  }
-  return result;
-}
 
 function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = useState(false);
@@ -214,11 +180,6 @@ export function ReviewPanel(): React.ReactElement | null {
   const resolvedComments = useMemo(
     () => comments.filter((c) => c.status === "resolved"),
     [comments],
-  );
-
-  const groups = useMemo(
-    () => groupByHeading(openComments),
-    [openComments],
   );
 
   const orphanedComments = useMemo(
@@ -277,13 +238,8 @@ export function ReviewPanel(): React.ReactElement | null {
         </div>
       )}
 
-      {groups.map((group) => (
-        <div key={group.heading} className={styles.group}>
-          <div className={styles.groupHeading}>{group.heading}</div>
-          {group.comments.map((comment) => (
-            <CommentCard key={comment.id} comment={comment} onResolved={onResolved} />
-          ))}
-        </div>
+      {openComments.map((comment) => (
+        <CommentCard key={comment.id} comment={comment} onResolved={onResolved} />
       ))}
 
       {orphanedComments.length > 0 && (
