@@ -35,6 +35,11 @@ export function usePanelResize(): {
   const dragging = useRef(false);
   const startX = useRef(0);
   const startWidth = useRef(0);
+  const widthRef = useRef(width);
+
+  useEffect(() => {
+    widthRef.current = width;
+  }, [width]);
 
   useEffect(() => {
     const handle = handleRef.current;
@@ -43,7 +48,7 @@ export function usePanelResize(): {
     const onPointerDown = (e: PointerEvent): void => {
       dragging.current = true;
       startX.current = e.clientX;
-      startWidth.current = width;
+      startWidth.current = widthRef.current;
       handle.setPointerCapture(e.pointerId);
       e.preventDefault();
     };
@@ -79,7 +84,7 @@ export function usePanelResize(): {
       handle.removeEventListener("pointerup", onPointerUp);
       handle.removeEventListener("pointercancel", onPointerUp);
     };
-  }, [width]);
+  }, []);
 
   return { width, handleRef };
 }

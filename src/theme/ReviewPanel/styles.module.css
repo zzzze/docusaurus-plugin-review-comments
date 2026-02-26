@@ -8,7 +8,6 @@
   flex-direction: column;
   background: var(--review-panel-bg, var(--ifm-background-surface-color));
   border-left: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
-  transition: width 0.2s ease;
   overflow: hidden;
 }
 
