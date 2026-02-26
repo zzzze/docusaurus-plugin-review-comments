@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import {
-  extractPrefix,
-  extractSuffix,
   findNearestHeading,
   findParentBlock,
   countBlockIndex,
@@ -39,115 +37,6 @@ function cleanup(): void {
 describe("anchorUtils", () => {
   beforeEach(() => {
     cleanup();
-  });
-
-  describe("extractPrefix", () => {
-    it("extracts text before range start", () => {
-      const p = el("p", {}, "Hello world today");
-      document.body.appendChild(p);
-      const textNode = p.firstChild!;
-
-      const range = document.createRange();
-      range.setStart(textNode, 6);
-      range.setEnd(textNode, 11);
-
-      expect(extractPrefix(range)).toBe("Hello ");
-    });
-
-    it("limits to charCount characters", () => {
-      const longText = "a".repeat(50) + "target";
-      const p = el("p", {}, longText);
-      document.body.appendChild(p);
-      const textNode = p.firstChild!;
-
-      const range = document.createRange();
-      range.setStart(textNode, 50);
-      range.setEnd(textNode, 56);
-
-      const prefix = extractPrefix(range, 10);
-      expect(prefix.length).toBe(10);
-    });
-
-    it("crosses span boundaries in syntax-highlighted code blocks", () => {
-      // Simulates Prism output: <pre><code><span>npm install </span><span>pkg</span></code></pre>
-      const pre = document.createElement("pre");
-      const code = document.createElement("code");
-      const span1 = el("span", {}, "npm install ");
-      const span2 = el("span", {}, "pkg");
-      code.appendChild(span1);
-      code.appendChild(span2);
-      pre.appendChild(code);
-      document.body.appendChild(pre);
-
-      // Selection starts at beginning of span2 ("pkg")
-      const span2Text = span2.firstChild!;
-      const range = document.createRange();
-      range.setStart(span2Text, 0);
-      range.setEnd(span2Text, 3);
-
-      // Should collect from span1 as well, not just the current text node
-      expect(extractPrefix(range, 32)).toBe("npm install ");
-    });
-
-    it("returns empty string for non-text nodes", () => {
-      const div = el("div", {}, el("span", {}, "child"));
-      document.body.appendChild(div);
-
-      const range = document.createRange();
-      range.setStart(div, 0);
-      range.setEnd(div, 1);
-
-      expect(extractPrefix(range)).toBe("");
-    });
-  });
-
-  describe("extractSuffix", () => {
-    it("extracts text after range end", () => {
-      const p = el("p", {}, "Hello world today");
-      document.body.appendChild(p);
-      const textNode = p.firstChild!;
-
-      const range = document.createRange();
-      range.setStart(textNode, 6);
-      range.setEnd(textNode, 11);
-
-      expect(extractSuffix(range)).toBe(" today");
-    });
-
-    it("limits to charCount characters", () => {
-      const text = "target" + "b".repeat(50);
-      const p = el("p", {}, text);
-      document.body.appendChild(p);
-      const textNode = p.firstChild!;
-
-      const range = document.createRange();
-      range.setStart(textNode, 0);
-      range.setEnd(textNode, 6);
-
-      const suffix = extractSuffix(range, 10);
-      expect(suffix.length).toBe(10);
-    });
-
-    it("crosses span boundaries in syntax-highlighted code blocks", () => {
-      // Simulates Prism: <pre><code><span>pkg</span><span> --save</span></code></pre>
-      const pre = document.createElement("pre");
-      const code = document.createElement("code");
-      const span1 = el("span", {}, "pkg");
-      const span2 = el("span", {}, " --save");
-      code.appendChild(span1);
-      code.appendChild(span2);
-      pre.appendChild(code);
-      document.body.appendChild(pre);
-
-      // Selection ends at the end of span1 ("pkg")
-      const span1Text = span1.firstChild!;
-      const range = document.createRange();
-      range.setStart(span1Text, 0);
-      range.setEnd(span1Text, 3);
-
-      // Should collect from span2 as well
-      expect(extractSuffix(range, 32)).toBe(" --save");
-    });
   });
 
   describe("findNearestHeading", () => {
@@ -195,7 +84,6 @@ describe("anchorUtils", () => {
     });
 
     it("returns null when no block parent", () => {
-      // Attach span directly to body (not via setupDocument which wraps in div)
       const span = el("span", {}, "inline");
       document.body.appendChild(span);
 
@@ -245,8 +133,6 @@ describe("anchorUtils", () => {
       expect(anchor.exact).toBe("Block content here");
       expect(anchor.heading).toBe("section");
       expect(anchor.blockIndex).toBe(0);
-      expect(anchor.prefix).toBe("");
-      expect(anchor.suffix).toBe("");
     });
 
     it("extracts list items as newline-separated text", () => {
