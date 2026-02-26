@@ -7,9 +7,7 @@
         "scope": "text",
         "exact": "recommended approach",
         "prefix": "the ",
-        "suffix": " for",
-        "heading": "",
-        "blockIndex": null
+        "suffix": " for"
       },
       "author": "Frank",
       "type": "suggestion",
@@ -26,36 +24,10 @@
       ]
     },
     {
-      "id": "23ea2a91-c2d1-4025-ad54-b22d2c900ceb",
-      "anchor": {
-        "scope": "text",
-        "exact": "common use case",
-        "prefix": "the ",
-        "suffix": " for",
-        "heading": "",
-        "blockIndex": null
-      },
-      "author": "Diana",
-      "type": "issue",
-      "status": "open",
-      "content": "The link to the API reference appears to be broken.",
-      "createdAt": "2026-02-02T22:53:00.000Z",
-      "replies": [
-        {
-          "id": "43c8f177-a61d-4357-b5a2-e3da9a631e19",
-          "author": "Charlie",
-          "content": "Thanks for pointing that out!",
-          "createdAt": "2026-02-07T06:58:00.000Z"
-        }
-      ]
-    },
-    {
       "id": "e69415bd-64fc-460d-975b-0da24a4e12ff",
       "anchor": {
         "scope": "block",
         "exact": "",
-        "prefix": "",
-        "suffix": "",
         "heading": "",
         "blockIndex": 3
       },
@@ -64,62 +36,7 @@
       "status": "open",
       "content": "Consider adding a diagram to visualize this feature.",
       "createdAt": "2026-02-09T22:30:00.000Z",
-      "replies": [
-        {
-          "id": "9b5e601c-a191-40aa-b24a-46e4f96d6a04",
-          "author": "Frank",
-          "content": "Good question, let me clarify...",
-          "createdAt": "2026-02-07T06:18:00.000Z"
-        }
-      ]
-    },
-    {
-      "id": "c1e36d15-04ba-4797-84c0-9a92c2d2d4b4",
-      "anchor": {
-        "scope": "text",
-        "exact": "recommended approach",
-        "prefix": "the ",
-        "suffix": " for",
-        "heading": "",
-        "blockIndex": null
-      },
-      "author": "Eve",
-      "type": "question",
-      "status": "resolved",
-      "content": "Can you provide an example of this feature?",
-      "createdAt": "2026-02-14T14:35:00.000Z",
-      "replies": [
-        {
-          "id": "c1b8bc7a-52b5-4cad-a052-a23077181656",
-          "author": "Frank",
-          "content": "You're absolutely right, fixing now.",
-          "createdAt": "2026-02-07T00:06:00.000Z"
-        }
-      ]
-    },
-    {
-      "id": "d5a13f3f-c5da-418d-881a-2b472db6b3b8",
-      "anchor": {
-        "scope": "text",
-        "exact": "configuration options",
-        "prefix": "the ",
-        "suffix": " for",
-        "heading": "",
-        "blockIndex": null
-      },
-      "author": "Charlie",
-      "type": "suggestion",
-      "status": "open",
-      "content": "Consider breaking this into smaller sections.",
-      "createdAt": "2026-01-30T08:09:00.000Z",
-      "replies": [
-        {
-          "id": "793cd135-eda6-48e5-a7b5-56a4a4a43eab",
-          "author": "Frank",
-          "content": "You're absolutely right, fixing now.",
-          "createdAt": "2026-02-13T10:46:00.000Z"
-        }
-      ]
+      "replies": []
     }
   ]
 }
