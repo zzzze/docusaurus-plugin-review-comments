@@ -18,7 +18,24 @@
 }
 
 .expanded {
-  width: 320px;
+  /* width: 320px; -- removed, set via inline style from usePanelResize */
+}
+
+.resizeHandle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: ew-resize;
+  background: transparent;
+  transition: background 0.15s ease;
+  z-index: 1;
+}
+
+.resizeHandle:hover,
+.resizeHandle:active {
+  background: var(--ifm-color-primary-light);
 }
 
 .collapsedStrip {

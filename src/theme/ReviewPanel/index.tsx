@@ -199,6 +199,7 @@ export function ReviewPanel(): React.ReactElement | null {
   const [resolvedExpanded, setResolvedExpanded] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);
   const isMobile = useIsMobile();
+  const { width, handleRef } = usePanelResize();
   const { undoState, onResolved, dismissUndo, handleUndo } = useUndoResolve(
     unresolveComment,
     !resolvedExpanded,
@@ -384,7 +385,11 @@ export function ReviewPanel(): React.ReactElement | null {
   }
 
   return (
-    <div className={`${styles.panelContainer} ${styles.expanded}`}>
+    <div
+      className={`${styles.panelContainer} ${styles.expanded}`}
+      style={{ width }}
+    >
+      <div ref={handleRef} className={styles.resizeHandle} aria-hidden="true" />
       <div className={styles.header}>
         <span className={styles.headerTitle}>
           Comments ({openCount})
