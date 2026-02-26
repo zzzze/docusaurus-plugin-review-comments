@@ -323,12 +323,24 @@ export function setHighlightHover(
   }
 }
 
+function getNavbarHeight(): number {
+  const navbar = document.querySelector(".navbar") as HTMLElement | null;
+  return navbar ? navbar.offsetHeight : 60;
+}
+
+function scrollIntoViewWithOffset(el: Element): void {
+  const rect = el.getBoundingClientRect();
+  const offset = getNavbarHeight() + 16;
+  const targetScrollY = window.scrollY + rect.top - offset;
+  window.scrollTo({ top: targetScrollY, behavior: "smooth" });
+}
+
 export function scrollToHighlight(commentId: string): void {
   const mark = document.querySelector(
     `mark[data-comment-id="${CSS.escape(commentId)}"]`,
   );
   if (mark) {
-    mark.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollIntoViewWithOffset(mark);
     mark.classList.add("review-highlight-pulse");
     setTimeout(() => mark.classList.remove("review-highlight-pulse"), 1500);
     return;
@@ -338,7 +350,7 @@ export function scrollToHighlight(commentId: string): void {
     `[${BLOCK_HIGHLIGHT_ATTR}="${CSS.escape(commentId)}"]`,
   );
   if (blockEl) {
-    blockEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollIntoViewWithOffset(blockEl);
     blockEl.classList.add("review-block-highlight-pulse");
     setTimeout(() => blockEl.classList.remove("review-block-highlight-pulse"), 1500);
   }
