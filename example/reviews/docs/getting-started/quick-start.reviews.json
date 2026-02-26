@@ -112,6 +112,38 @@
           "createdAt": "2026-02-10T05:19:00.000Z"
         }
       ]
+    },
+    {
+      "id": "6c2019e5-64f3-4726-9515-0589dd9c7a8e",
+      "anchor": {
+        "scope": "block",
+        "exact": "Select Text: Highlight any text in the documentation\nClick Comment Button: A floating button appears next to your selection\nChoose Type: Select question, suggestion, or issue\nWrite Content: Add your comment text\nSubmit: Your comment is saved immediately",
+        "heading": "adding-a-comment",
+        "blockIndex": 0
+      },
+      "author": "Demo User",
+      "type": "question",
+      "status": "open",
+      "content": "Hello",
+      "createdAt": "2026-02-26T13:43:38.944Z",
+      "replies": []
+    },
+    {
+      "id": "9983e78e-27cb-4ed4-ab4a-6b4882388783",
+      "anchor": {
+        "scope": "document",
+        "exact": "",
+        "prefix": "",
+        "suffix": "",
+        "heading": "",
+        "blockIndex": null
+      },
+      "author": "Demo User",
+      "type": "question",
+      "status": "open",
+      "content": "eeerrttt",
+      "createdAt": "2026-02-26T13:48:57.922Z",
+      "replies": []
     }
   ]
 }

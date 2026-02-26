@@ -54,6 +54,21 @@
           "createdAt": "2026-02-14T09:56:00.000Z"
         }
       ]
+    },
+    {
+      "id": "bd82ae74-ae3e-494a-940f-8232026703f5",
+      "anchor": {
+        "scope": "text",
+        "exact": "a document's re",
+        "prefix": "Path​\nResolve the file path for ",
+        "suffix": "view data.\nimport { resolveRevie"
+      },
+      "author": "Demo User",
+      "type": "suggestion",
+      "status": "open",
+      "content": "abc",
+      "createdAt": "2026-02-26T13:33:38.408Z",
+      "replies": []
     }
   ]
 }

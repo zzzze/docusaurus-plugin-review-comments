@@ -73,22 +73,13 @@ function generateAnchor() {
   const scope = randomItem(['document', 'text', 'text', 'text', 'text', 'block', 'block']);
 
   if (scope === 'document') {
-    return {
-      scope: 'document',
-      exact: '',
-      prefix: '',
-      suffix: '',
-      heading: '',
-      blockIndex: null,
-    };
+    return { scope: 'document' };
   }
 
   if (scope === 'block') {
     return {
       scope: 'block',
       exact: '',
-      prefix: '',
-      suffix: '',
       heading: '',
       blockIndex: randomInt(0, 3),
     };
@@ -109,8 +100,6 @@ function generateAnchor() {
     exact,
     prefix: 'the ',
     suffix: ' for',
-    heading: '',
-    blockIndex: null,
   };
 }
 
