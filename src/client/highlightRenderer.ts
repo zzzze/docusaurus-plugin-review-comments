@@ -1,4 +1,5 @@
-import type { ReviewAnchor } from "../types";
+import { toRange } from "dom-anchor-text-quote";
+import type { BlockAnchor, ReviewAnchor } from "../types";
 
 export function findTextInDocument(
   anchor: ReviewAnchor,
@@ -10,11 +11,15 @@ export function findTextInDocument(
     return findBlockElement(anchor, contentElement);
   }
 
-  return findTextRange(anchor, contentElement);
+  return toRange(contentElement, {
+    exact: anchor.exact,
+    prefix: anchor.prefix,
+    suffix: anchor.suffix,
+  });
 }
 
 function findBlockElement(
-  anchor: ReviewAnchor,
+  anchor: BlockAnchor,
   contentElement: HTMLElement,
 ): Range | null {
   if (!anchor.heading) return null;
@@ -79,139 +84,6 @@ function rangeFromElement(el: Element): Range {
   return range;
 }
 
-function findTextRange(
-  anchor: ReviewAnchor,
-  contentElement: HTMLElement,
-): Range | null {
-  // Walk both text nodes and elements so we can detect <br> tags.
-  // Docusaurus CodeBlock renders each line in a <span> with a trailing <br>
-  // instead of a "\n" text node. selection.toString() converts <br> to "\n",
-  // so we must do the same when building fullText to keep offsets in sync.
-  const treeWalker = document.createTreeWalker(
-    contentElement,
-    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-  );
-  let fullText = "";
-  const textNodes: { node: Text; start: number }[] = [];
-
-  let node: Node | null;
-  while ((node = treeWalker.nextNode())) {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      if ((node as Element).tagName === "BR") {
-        fullText += "\n";
-      }
-      continue;
-    }
-    const textNode = node as Text;
-    textNodes.push({ node: textNode, start: fullText.length });
-    fullText += textNode.textContent ?? "";
-  }
-
-  const searchText = anchor.exact;
-  let searchStart = 0;
-  let bestMatch = -1;
-
-  while (true) {
-    const idx = fullText.indexOf(searchText, searchStart);
-    if (idx === -1) break;
-
-    if (anchor.prefix || anchor.suffix) {
-      const beforeText = fullText.slice(Math.max(0, idx - 50), idx);
-      const afterText = fullText.slice(
-        idx + searchText.length,
-        idx + searchText.length + 50,
-      );
-
-      if (anchor.prefix && beforeText.endsWith(anchor.prefix)) {
-        bestMatch = idx;
-        break;
-      }
-      if (anchor.suffix && afterText.startsWith(anchor.suffix)) {
-        bestMatch = idx;
-        break;
-      }
-    }
-
-    if (bestMatch === -1) bestMatch = idx;
-    searchStart = idx + 1;
-  }
-
-  if (bestMatch === -1) {
-    const relocated = relocateByContext(
-      fullText,
-      anchor.prefix,
-      anchor.suffix,
-      searchText.length,
-    );
-    if (!relocated) return null;
-    return createRangeFromPosition(textNodes, relocated.start, relocated.end);
-  }
-
-  return createRangeFromPosition(
-    textNodes,
-    bestMatch,
-    bestMatch + searchText.length,
-  );
-}
-
-function relocateByContext(
-  fullText: string,
-  prefix: string,
-  suffix: string,
-  exactLength: number,
-): { start: number; end: number } | null {
-  const windowLimit = exactLength * 3;
-
-  if (prefix && suffix) {
-    const prefixIdx = fullText.indexOf(prefix);
-    if (prefixIdx === -1) return null;
-    const anchorStart = prefixIdx + prefix.length;
-    const suffixIdx = fullText.indexOf(suffix, anchorStart);
-    if (suffixIdx === -1 || suffixIdx - anchorStart > windowLimit) return null;
-    return { start: anchorStart, end: suffixIdx };
-  }
-
-  if (prefix) {
-    const prefixIdx = fullText.indexOf(prefix);
-    if (prefixIdx === -1) return null;
-    const anchorStart = prefixIdx + prefix.length;
-    return { start: anchorStart, end: anchorStart + exactLength };
-  }
-
-  if (suffix) {
-    const suffixIdx = fullText.indexOf(suffix);
-    if (suffixIdx === -1) return null;
-    const anchorEnd = suffixIdx;
-    return { start: Math.max(0, anchorEnd - exactLength), end: anchorEnd };
-  }
-
-  return null;
-}
-
-function createRangeFromPosition(
-  textNodes: { node: Text; start: number }[],
-  start: number,
-  end: number,
-): Range | null {
-  const range = document.createRange();
-  let startSet = false;
-
-  for (const tn of textNodes) {
-    const nodeEnd = tn.start + (tn.node.textContent?.length ?? 0);
-
-    if (!startSet && start >= tn.start && start < nodeEnd) {
-      range.setStart(tn.node, start - tn.start);
-      startSet = true;
-    }
-
-    if (startSet && end <= nodeEnd) {
-      range.setEnd(tn.node, end - tn.start);
-      return range;
-    }
-  }
-
-  return null;
-}
 
 const BLOCK_TAGS = new Set([
   "P",
@@ -371,7 +243,7 @@ const BLOCK_HIGHLIGHT_CLASS = "review-block-highlight";
 const BLOCK_HIGHLIGHT_ATTR = "data-block-highlight-id";
 
 export function applyBlockHighlight(
-  anchor: ReviewAnchor,
+  anchor: BlockAnchor,
   commentId: string,
   contentElement: HTMLElement,
 ): void {
