@@ -17,7 +17,7 @@ function clamp(value: number, min: number, max: number): number {
 
 export function usePanelResize(): {
   width: number;
-  handleRef: React.RefObject<HTMLDivElement>;
+  handleRef: (node: HTMLDivElement | null) => void;
 } {
   const [width, setWidth] = useState<number>(() => {
     try {
@@ -31,7 +31,6 @@ export function usePanelResize(): {
     return PANEL_DEFAULT_WIDTH;
   });
 
-  const handleRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -41,8 +40,7 @@ export function usePanelResize(): {
     widthRef.current = width;
   }, [width]);
 
-  useEffect(() => {
-    const handle = handleRef.current;
+  const handleRef = useCallback((handle: HTMLDivElement | null) => {
     if (!handle) return;
 
     const onMouseDown = (e: MouseEvent): void => {
@@ -80,12 +78,6 @@ export function usePanelResize(): {
     handle.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
-
-    return () => {
-      handle.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
   }, []);
 
   return { width, handleRef };
