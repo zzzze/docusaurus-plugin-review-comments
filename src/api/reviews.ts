@@ -12,11 +12,14 @@ import type { SseNotifier } from "./sseNotifier";
 
 export function createReviewsMiddleware(
   app: Express,
-  reviewsDir: string,
-  defaultAuthor: string,
-  onTrigger?: () => Promise<void>,
-  notifier?: SseNotifier,
+  opts: {
+    reviewsDir: string;
+    defaultAuthor: string;
+    onTrigger?: () => Promise<void>;
+    notifier?: SseNotifier;
+  },
 ): void {
+  const { reviewsDir, defaultAuthor, onTrigger, notifier } = opts;
   app.use("/api/reviews", express.json());
 
   if (onTrigger) {
@@ -28,7 +31,7 @@ export function createReviewsMiddleware(
     });
   }
 
-  app.get("/api/reviews/events", (req, res) => {
+  app.get("/api/reviews/events", (_req, res) => {
     if (notifier) {
       notifier.connect(res);
     } else {

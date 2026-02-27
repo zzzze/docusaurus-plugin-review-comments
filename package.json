@@ -8,7 +8,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc && cp src/service/AGENTS.md lib/service/AGENTS.md",
+    "build": "tsc",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",

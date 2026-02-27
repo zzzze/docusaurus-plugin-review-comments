@@ -90,9 +90,7 @@ describe("useHighlights", () => {
     );
 
     expect(highlightRenderer.applyBlockHighlight).toHaveBeenCalledWith(
-      blockAnchor,
-      "c1",
-      contentEl,
+      { anchor: blockAnchor, commentId: "c1", contentElement: contentEl },
     );
   });
 

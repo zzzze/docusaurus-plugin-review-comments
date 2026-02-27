@@ -132,13 +132,53 @@ describe("validateOptions — reviewService", () => {
     ).toThrow("'reviewService.intervalMs' must be a positive number");
   });
 
-  it("accepts contextDirs as an array of strings", () => {
+  it("accepts contextDirs as an array of strings (legacy format)", () => {
     const result = callValidate({
       reviewsDir: "./.reviews",
       defaultAuthor: "reviewer",
       reviewService: { contextDirs: ["../my-repo", "/abs/path"] },
     });
     expect(result.reviewService?.contextDirs).toEqual(["../my-repo", "/abs/path"]);
+  });
+
+  it("accepts contextDirs as an array of { dir, desc } objects", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: {
+        contextDirs: [
+          { dir: "../my-repo", desc: "plugin source code" },
+          { dir: "/abs/path", desc: "usage examples" },
+        ],
+      },
+    });
+    expect(result.reviewService?.contextDirs).toEqual([
+      { dir: "../my-repo", desc: "plugin source code" },
+      { dir: "/abs/path", desc: "usage examples" },
+    ]);
+  });
+
+  it("accepts contextDirs as a mixed array of strings and objects", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: {
+        contextDirs: ["../my-repo", { dir: "/abs/path", desc: "usage examples" }],
+      },
+    });
+    expect(result.reviewService?.contextDirs).toEqual([
+      "../my-repo",
+      { dir: "/abs/path", desc: "usage examples" },
+    ]);
+  });
+
+  it("accepts contextDirs entries without desc", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: { contextDirs: [{ dir: "../my-repo" }] },
+    });
+    expect(result.reviewService?.contextDirs).toEqual([{ dir: "../my-repo" }]);
   });
 
   it("throws when contextDirs is not an array", () => {
@@ -148,17 +188,17 @@ describe("validateOptions — reviewService", () => {
         defaultAuthor: "reviewer",
         reviewService: { contextDirs: "../my-repo" },
       }),
-    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+    ).toThrow("'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects");
   });
 
-  it("throws when contextDirs contains a non-string entry", () => {
+  it("throws when contextDirs contains an invalid entry", () => {
     expect(() =>
       callValidate({
         reviewsDir: "./.reviews",
         defaultAuthor: "reviewer",
-        reviewService: { contextDirs: ["../ok", 42] },
+        reviewService: { contextDirs: [{ dir: "../ok" }, 42] },
       }),
-    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+    ).toThrow("'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects");
   });
 
   it("throws when contextDirs contains an empty string", () => {
@@ -168,6 +208,26 @@ describe("validateOptions — reviewService", () => {
         defaultAuthor: "reviewer",
         reviewService: { contextDirs: [""] },
       }),
-    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+    ).toThrow("'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects");
+  });
+
+  it("throws when contextDirs contains an entry with empty dir", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { contextDirs: [{ dir: "" }] },
+      }),
+    ).toThrow("'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects");
+  });
+
+  it("throws when contextDirs contains an entry with missing dir", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { contextDirs: [{ desc: "no dir" }] },
+      }),
+    ).toThrow("'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects");
   });
 });

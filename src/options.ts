@@ -36,10 +36,30 @@ export function validateOptions({
     if (rs.contextDirs !== undefined) {
       if (
         !Array.isArray(rs.contextDirs) ||
-        rs.contextDirs.some((d) => typeof d !== "string" || !d)
+        rs.contextDirs.some((d) => {
+          if (typeof d === "string") return !d;
+          return (
+            typeof d !== "object" ||
+            d === null ||
+            typeof d.dir !== "string" ||
+            !d.dir
+          );
+        })
       ) {
         throw new Error(
-          "docusaurus-plugin-review-comments: 'reviewService.contextDirs' must be an array of non-empty strings",
+          "docusaurus-plugin-review-comments: 'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects",
+        );
+      }
+    }
+    if (rs.env !== undefined) {
+      if (
+        typeof rs.env !== "object" ||
+        rs.env === null ||
+        Array.isArray(rs.env) ||
+        Object.values(rs.env).some((v) => typeof v !== "string")
+      ) {
+        throw new Error(
+          "docusaurus-plugin-review-comments: 'reviewService.env' must be a Record<string, string>",
         );
       }
     }

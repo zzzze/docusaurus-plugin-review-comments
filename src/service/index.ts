@@ -4,7 +4,8 @@ import { spawn } from "node:child_process";
 import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
-import type { AgentCommandFn } from "../types";
+import type { AgentCommandFn, ContextDir } from "../types";
+import { DEFAULT_PROMPT_TEMPLATE } from "./defaultPrompt";
 import type { SseNotifier } from "../api/sseNotifier";
 
 const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
@@ -29,11 +30,11 @@ function absEdit(dir: string): string {
   return "Edit(//" + withoutLeadingSlash + "/**)";
 }
 
-function defaultAgentCommand({ reviewsDir, docsDirs, contextDirs }: { reviewsDir: string; docsDirs: string[]; contextDirs: string[] }): string {
+function defaultAgentCommand({ reviewsDir, docsDirs, contextDirs }: { reviewsDir: string; docsDirs: string[]; contextDirs: ContextDir[] }): string {
   // --allowedTools grants edit permission scoped to reviewsDir and docsDirs
   const allowedTools = [absEdit(reviewsDir), ...docsDirs.map(absEdit), "Read"].join(",");
   // --add-dir expands the MCP filesystem context to extra read-only directories (e.g. source repos)
-  const addDirs = contextDirs.map((d) => `--add-dir ${d}`).join(" ");
+  const addDirs = contextDirs.map((d) => `--add-dir ${d.dir}`).join(" ");
   return `claude --allowedTools "${allowedTools}"${addDirs ? " " + addDirs : ""} -p`;
 }
 
@@ -45,7 +46,9 @@ export interface ReviewServiceConfig {
   agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
   // Extra directories for read-only MCP context (--add-dir). siteDir is always included.
-  contextDirs?: string[];
+  contextDirs?: Array<string | ContextDir>;
+  // Extra environment variables to pass to the agent process (merged with process.env).
+  env?: Record<string, string>;
   notifier?: SseNotifier;
 }
 
@@ -72,6 +75,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     agentCommand = defaultAgentCommand,
     agentPromptFile,
     contextDirs: extraContextDirs = [],
+    env,
     notifier,
   } = config;
 
@@ -80,8 +84,12 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   const docsDirs = Array.from(docsPathMap.values()).map((fsPath) =>
     path.join(siteDir, fsPath),
   );
-  // siteDir is always included as context so the agent can read the source repo
-  const contextDirs = [siteDir, ...extraContextDirs];
+  // Resolve extra contextDirs relative to siteDir; normalize string entries to ContextDir
+  const resolvedContextDirs: ContextDir[] = extraContextDirs.map((entry) => {
+    const { dir, desc } = typeof entry === "string" ? { dir: entry, desc: undefined } : entry;
+    return { dir: path.resolve(siteDir, dir), desc };
+  });
+  const contextDirs: ContextDir[] = resolvedContextDirs;
 
   // Track docs currently being processed to prevent concurrent writes to the same file
   const inProgress = new Set<string>();
@@ -89,7 +97,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
   const tick = () =>
-    runTick(siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, inProgress, notifier);
+    runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, env, inProgress, notifier });
 
   const intervalId = setInterval(() => { void tick(); }, intervalMs);
 
@@ -99,17 +107,20 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   };
 }
 
-async function runTick(
-  siteDir: string,
-  reviewsDir: string,
-  docsPathMap: Map<string, string>,
-  docsDirs: string[],
-  contextDirs: string[],
-  agentCommand: string | AgentCommandFn,
-  agentPromptFile: string | undefined,
-  inProgress: Set<string>,
-  notifier?: SseNotifier,
-): Promise<void> {
+async function runTick(opts: {
+  siteDir: string;
+  reviewsDir: string;
+  docsPathMap: Map<string, string>;
+  docsDirs: string[];
+  contextDirs: ContextDir[];
+  agentCommand: string | AgentCommandFn;
+  agentPromptFile: string | undefined;
+  env: Record<string, string> | undefined;
+  inProgress: Set<string>;
+  notifier?: SseNotifier;
+}): Promise<void> {
+  const { siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, env, inProgress, notifier } = opts;
+
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
 
@@ -130,15 +141,9 @@ async function runTick(
       continue;
     }
 
-    const prompt = buildPrompt(
-      promptTemplate,
-      siteDir,
-      reviewsDir,
-      docsPathMap,
-      documentPath,
-    );
+    const prompt = buildPrompt({ template: promptTemplate, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs });
     inProgress.add(documentPath);
-    spawnAgent(resolvedCommand, prompt, siteDir, documentPath, () => inProgress.delete(documentPath), notifier);
+    spawnAgent({ agentCommand: resolvedCommand, prompt, cwd: siteDir, documentPath, env, onDone: () => inProgress.delete(documentPath), notifier });
   }
 }
 
@@ -170,22 +175,25 @@ async function collectPendingDocs(reviewsDir: string): Promise<string[]> {
 async function loadPromptTemplate(
   agentPromptFile: string | undefined,
 ): Promise<string> {
-  const filePath =
-    agentPromptFile ?? path.join(__dirname, "AGENTS.md");
+  if (agentPromptFile === undefined) {
+    return DEFAULT_PROMPT_TEMPLATE;
+  }
   try {
-    return await fs.readFile(filePath, "utf-8");
+    return await fs.readFile(agentPromptFile, "utf-8");
   } catch {
     return "";
   }
 }
 
-function buildPrompt(
-  template: string,
-  siteDir: string,
-  reviewsDir: string,
-  docsPathMap: Map<string, string>,
-  documentPath: string,
-): string {
+function buildPrompt(opts: {
+  template: string;
+  siteDir: string;
+  reviewsDir: string;
+  docsPathMap: Map<string, string>;
+  documentPath: string;
+  contextDirs: ContextDir[];
+}): string {
+  const { template, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs } = opts;
   const pathMapEntries =
     docsPathMap.size === 0
       ? "  (none configured — using documentPath prefix as-is)"
@@ -200,22 +208,36 @@ function buildPrompt(
   ];
   const allowedPathsText = allowedPaths.map((p) => `- ${p}`).join("\n");
 
+  const contextDirsText =
+    contextDirs.length === 0
+      ? ""
+      : "\nAdditional context directories (read-only):\n" +
+        contextDirs
+          .map((d) => `- \`${d.dir}\`${d.desc ? ` — ${d.desc}` : ""}`)
+          .join("\n") +
+        "\n";
+
   return template
     .replace(/\{reviewsDir\}/g, reviewsDir)
     .replace(/\{siteDir\}/g, siteDir)
     .replace(/\{pathMapEntries\}/g, pathMapEntries)
     .replace(/\{documentPath\}/g, documentPath)
-    .replace(/\{allowedPaths\}/g, allowedPathsText);
+    .replace(/\{allowedPaths\}/g, allowedPathsText)
+    .replace(/\{contextDirs\}/g, contextDirsText);
 }
 
-function spawnAgent(
-  agentCommand: string,
-  prompt: string,
-  cwd: string,
-  documentPath: string,
-  onDone: () => void,
-  notifier?: SseNotifier,
-): void {
+function spawnAgent(opts: {
+  agentCommand: string;
+  prompt: string;
+  cwd: string;
+  documentPath: string;
+  env: Record<string, string> | undefined;
+  onDone: () => void;
+  notifier?: SseNotifier;
+}): void {
+  const { agentCommand, prompt, cwd, documentPath, env, onDone, notifier } = opts;
+  const spawnEnv = env ? { ...process.env, ...env } : process.env;
+
   // If agentCommand contains {prompt}, substitute it inline (e.g. "opencode run {prompt}").
   // Otherwise pipe prompt via stdin (e.g. "claude -p", "gemini", "amp -x").
   if (agentCommand.includes("{prompt}")) {
@@ -226,6 +248,7 @@ function spawnAgent(
     log(`Spawning agent for ${documentPath}: ${cmd.slice(0, 80)}${cmd.length > 80 ? "…" : ""}`);
     const child = spawn("sh", ["-c", cmd], {
       cwd,
+      env: spawnEnv,
       stdio: "inherit",
     });
     child?.on("error", (err) => {
@@ -244,6 +267,7 @@ function spawnAgent(
     log(`Spawning agent for ${documentPath}: ${agentCommand}`);
     const child = spawn("sh", ["-c", agentCommand], {
       cwd,
+      env: spawnEnv,
       stdio: ["pipe", "inherit", "inherit"],
     });
     child?.stdin?.write(prompt);

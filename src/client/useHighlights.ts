@@ -42,7 +42,7 @@ export function useHighlights({
       if (comment.anchor.scope === "block") {
         const range = findTextInDocument(comment.anchor, contentEl);
         if (range) {
-          applyBlockHighlight(comment.anchor, comment.id, contentEl);
+          applyBlockHighlight({ anchor: comment.anchor, commentId: comment.id, contentElement: contentEl });
         } else {
           orphanedIds.push(comment.id);
         }

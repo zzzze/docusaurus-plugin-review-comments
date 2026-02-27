@@ -41,10 +41,15 @@ export interface ReviewFile {
   comments: ReviewComment[];
 }
 
+export interface ContextDir {
+  dir: string;
+  desc?: string;
+}
+
 export interface AgentCommandContext {
   reviewsDir: string;  // absolute path to the reviews directory
   docsDirs: string[];  // absolute paths to all docs content directories
-  contextDirs: string[];  // extra read-only dirs added via --add-dir (e.g. source code repos)
+  contextDirs: ContextDir[];  // extra read-only dirs added via --add-dir (e.g. source code repos)
 }
 
 export type AgentCommandFn = (ctx: AgentCommandContext) => string;
@@ -60,7 +65,9 @@ export interface ReviewServiceOptions {
   agentPromptFile?: string;
   // Extra directories to add as read-only context via --add-dir (e.g. a source code repo that
   // the docs describe). The site root (siteDir) is always included automatically.
-  contextDirs?: string[];
+  contextDirs?: Array<string | ContextDir>;
+  // Extra environment variables to pass to the agent process (merged with process.env).
+  env?: Record<string, string>;
 }
 
 export interface PluginOptions {

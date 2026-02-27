@@ -13,6 +13,7 @@ import os from "node:os";
 import * as childProcess from "node:child_process";
 import { startReviewService, createReviewService } from "../service/index";
 import type { DocusaurusConfig } from "@docusaurus/types";
+import type { ContextDir } from "../types";
 
 vi.mock("node:child_process", () => ({
   spawn: vi.fn(),
@@ -174,8 +175,8 @@ describe("startReviewService", () => {
     await fs.mkdir(path.dirname(filePath), { recursive: true });
     await fs.writeFile(filePath, JSON.stringify(reviewFile));
 
-    const capturedCtx: { reviewsDir: string; docsDirs: string[] }[] = [];
-    const agentCommand = (ctx: { reviewsDir: string; docsDirs: string[] }) => {
+    const capturedCtx: { reviewsDir: string; docsDirs: string[]; contextDirs: ContextDir[] }[] = [];
+    const agentCommand = (ctx: { reviewsDir: string; docsDirs: string[]; contextDirs: ContextDir[] }) => {
       capturedCtx.push(ctx);
       return `my-agent --dir ${ctx.reviewsDir} -p`;
     };
@@ -452,6 +453,44 @@ describe("startReviewService", () => {
     closeCallback?.(1);
     expect(broadcast).not.toHaveBeenCalled();
     stop();
+  });
+
+  it("passes env merged with process.env to spawn", async () => {
+    const reviewFile = {
+      documentPath: "docs/env-test",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Env?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/env-test.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    const { stop, tick } = createReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      env: { MY_TOKEN: "abc123", CUSTOM_VAR: "hello" },
+    });
+
+    await tick();
+    stop();
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    const spawnOptions = spawnMock.mock.calls[0]![2] as { env?: Record<string, string> };
+    expect(spawnOptions.env).toBeDefined();
+    expect(spawnOptions.env!["MY_TOKEN"]).toBe("abc123");
+    expect(spawnOptions.env!["CUSTOM_VAR"]).toBe("hello");
+    // should still inherit process.env
+    expect(spawnOptions.env!["PATH"]).toBe(process.env["PATH"]);
   });
 
   it("stop() clears the interval", async () => {

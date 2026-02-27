@@ -28,6 +28,7 @@ export default function pluginReviewComments(
       return [`${resolvedReviewsDir}/**/*.reviews.json`];
     },
 
+    // @ts-expect-error webpack Configuration type does not include devServer, but Docusaurus handles it at runtime
     configureWebpack() {
       return {
         devServer: {
@@ -44,14 +45,13 @@ export default function pluginReviewComments(
                 intervalMs: rs?.intervalMs,
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,
-                contextDirs: rs?.contextDirs?.map((d) =>
-                  path.resolve(context.siteDir, d),
-                ),
+                contextDirs: rs?.contextDirs,
+                env: rs?.env,
                 notifier,
               });
-              createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor, tick, notifier);
+              createReviewsMiddleware(app, { reviewsDir: resolvedReviewsDir, defaultAuthor: options.defaultAuthor, onTrigger: tick, notifier });
             } else {
-              createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor);
+              createReviewsMiddleware(app, { reviewsDir: resolvedReviewsDir, defaultAuthor: options.defaultAuthor });
             }
 
             return middlewares;

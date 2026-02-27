@@ -268,11 +268,12 @@ export function scrollToHighlight(commentId: string): void {
 const BLOCK_HIGHLIGHT_CLASS = "review-block-highlight";
 const BLOCK_HIGHLIGHT_ATTR = "data-block-highlight-id";
 
-export function applyBlockHighlight(
-  anchor: BlockAnchor,
-  commentId: string,
-  contentElement: HTMLElement,
-): void {
+export function applyBlockHighlight(opts: {
+  anchor: BlockAnchor;
+  commentId: string;
+  contentElement: HTMLElement;
+}): void {
+  const { anchor, commentId, contentElement } = opts;
   removeBlockHighlight(commentId);
   const range = findBlockElement(anchor, contentElement);
   if (!range) return;

@@ -415,7 +415,7 @@ describe("highlightRenderer", () => {
         blockIndex: 0,
       };
 
-      applyBlockHighlight(anchor, "c1", content);
+      applyBlockHighlight({ anchor, commentId: "c1", contentElement: content });
 
       const p = content.querySelector("p")!;
       expect(p.classList.contains("review-block-highlight")).toBe(true);
@@ -434,7 +434,7 @@ describe("highlightRenderer", () => {
         blockIndex: 0,
       };
 
-      applyBlockHighlight(anchor, "c1", content);
+      applyBlockHighlight({ anchor, commentId: "c1", contentElement: content });
       removeBlockHighlight("c1");
 
       const p = content.querySelector("p")!;
