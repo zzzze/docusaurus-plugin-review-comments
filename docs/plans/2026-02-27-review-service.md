@@ -49,7 +49,6 @@ describe("validateOptions — reviewService", () => {
         intervalMs: 30000,
         agentCommand: "my-agent",
         agentPromptFile: "/custom/AGENTS.md",
-        allowedPaths: ["docs/**/*.md", "reviews/**/*.json"],
       },
     });
     expect(result.reviewService).toEqual({
@@ -57,28 +56,7 @@ describe("validateOptions — reviewService", () => {
       intervalMs: 30000,
       agentCommand: "my-agent",
       agentPromptFile: "/custom/AGENTS.md",
-      allowedPaths: ["docs/**/*.md", "reviews/**/*.json"],
     });
-  });
-
-  it("throws when reviewService.allowedPaths is not an array", () => {
-    expect(() =>
-      callValidate({
-        reviewsDir: "./.reviews",
-        defaultAuthor: "reviewer",
-        reviewService: { allowedPaths: "docs/**" },
-      }),
-    ).toThrow("'reviewService.allowedPaths' must be an array of strings");
-  });
-
-  it("throws when reviewService.allowedPaths contains a non-string", () => {
-    expect(() =>
-      callValidate({
-        reviewsDir: "./.reviews",
-        defaultAuthor: "reviewer",
-        reviewService: { allowedPaths: ["docs/**", 123] },
-      }),
-    ).toThrow("'reviewService.allowedPaths' must be an array of strings");
   });
 
   it("throws when reviewService.intervalMs is not a number", () => {
@@ -121,12 +99,10 @@ export interface ReviewServiceOptions {
   intervalMs?: number;
   // If contains {prompt}, prompt is substituted inline (e.g. "opencode run {prompt}").
   // Otherwise prompt is piped via stdin (e.g. "claude -p", "gemini -p", "amp -x").
+  // To add CLI-level path restrictions (e.g. Claude's --add-dir), include them directly
+  // in agentCommand: "claude --dangerously-skip-permissions --add-dir ./reviews --add-dir ./docs -p"
   agentCommand?: string;
   agentPromptFile?: string;
-  // Glob patterns of files the agent is allowed to read/write.
-  // Injected into the prompt as an explicit constraint.
-  // Default: ["<reviewsDir>/**/*.reviews.json", "<docsDir>/**/*.md"]
-  allowedPaths?: string[];
 }
 ```
 
@@ -170,16 +146,6 @@ export function validateOptions({
       throw new Error(
         "docusaurus-plugin-review-comments: 'reviewService.intervalMs' must be a positive number",
       );
-    }
-    if (rs.allowedPaths !== undefined) {
-      if (
-        !Array.isArray(rs.allowedPaths) ||
-        rs.allowedPaths.some((p) => typeof p !== "string")
-      ) {
-        throw new Error(
-          "docusaurus-plugin-review-comments: 'reviewService.allowedPaths' must be an array of strings",
-        );
-      }
     }
   }
   return options as PluginOptions;
@@ -1040,7 +1006,7 @@ describe("startReviewService", () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("injects custom allowedPaths into prompt (stdin mode)", async () => {
+  it("injects auto-computed allowedPaths into prompt", async () => {
     const reviewFile = {
       documentPath: "docs/security",
       comments: [
@@ -1076,15 +1042,18 @@ describe("startReviewService", () => {
     startReviewService({
       siteDir,
       reviewsDir,
-      siteConfig: makeConfig(),
-      allowedPaths: ["reviews/**/*.json", "docs/**/*.md"],
+      siteConfig: makeConfig(), // has docs → "docs" mapping
     });
 
     await vi.runAllTimersAsync();
     expect(spawnMock).toHaveBeenCalledTimes(1);
     const written = writtenChunks.join("");
-    expect(written).toContain("reviews/**/*.json");
-    expect(written).toContain("docs/**/*.md");
+    // reviewsDir path injected
+    expect(written).toContain(reviewsDir);
+    // docs fsPath injected
+    expect(written).toContain("docs");
+    // must not contain raw placeholder
+    expect(written).not.toContain("{allowedPaths}");
   });
 
   it("stop() clears the interval", async () => {
@@ -1154,7 +1123,6 @@ export interface ReviewServiceConfig {
   intervalMs?: number;
   agentCommand?: string;
   agentPromptFile?: string;
-  allowedPaths?: string[];
 }
 
 /**
@@ -1168,13 +1136,12 @@ export function startReviewService(config: ReviewServiceConfig): () => void {
     intervalMs = DEFAULT_INTERVAL_MS,
     agentCommand = DEFAULT_AGENT_COMMAND,
     agentPromptFile,
-    allowedPaths,
   } = config;
 
   const docsPathMap = buildDocsPathMap(siteConfig);
 
   const intervalId = setInterval(() => {
-    void runTick(siteDir, reviewsDir, docsPathMap, agentCommand, agentPromptFile, allowedPaths);
+    void runTick(siteDir, reviewsDir, docsPathMap, agentCommand, agentPromptFile);
   }, intervalMs);
 
   return () => clearInterval(intervalId);
@@ -1186,7 +1153,6 @@ async function runTick(
   docsPathMap: Map<string, string>,
   agentCommand: string,
   agentPromptFile: string | undefined,
-  allowedPaths: string[] | undefined,
 ): Promise<void> {
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
@@ -1200,7 +1166,6 @@ async function runTick(
       reviewsDir,
       docsPathMap,
       documentPath,
-      allowedPaths,
     );
     spawnAgent(agentCommand, prompt, siteDir);
   }
@@ -1249,7 +1214,6 @@ function buildPrompt(
   reviewsDir: string,
   docsPathMap: Map<string, string>,
   documentPath: string,
-  allowedPaths: string[] | undefined,
 ): string {
   const pathMapEntries =
     docsPathMap.size === 0
@@ -1258,14 +1222,12 @@ function buildPrompt(
           .map(([route, fsPath]) => `  ${route} → ${fsPath}`)
           .join("\n");
 
-  const defaultAllowedPaths = [
+  // Compute allowed paths automatically from reviewsDir + docsPathMap
+  const allowedPaths = [
     `${reviewsDir}/**/*.reviews.json`,
     ...Array.from(docsPathMap.values()).map((fsPath) => `${siteDir}/${fsPath}/**/*.md`),
   ];
-  const resolvedAllowedPaths = allowedPaths ?? defaultAllowedPaths;
-  const allowedPathsText = resolvedAllowedPaths
-    .map((p) => `- ${p}`)
-    .join("\n");
+  const allowedPathsText = allowedPaths.map((p) => `- ${p}`).join("\n");
 
   return template
     .replace(/\{reviewsDir\}/g, reviewsDir)
@@ -1382,7 +1344,6 @@ export default function pluginReviewComments(
                 intervalMs: rs?.intervalMs,
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,
-                allowedPaths: rs?.allowedPaths,
               });
             }
 
