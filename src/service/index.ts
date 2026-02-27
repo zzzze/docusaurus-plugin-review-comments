@@ -22,10 +22,13 @@ function error(msg: string): void {
 }
 
 function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
-  const addDirs = [reviewsDir, ...docsDirs]
-    .map((d) => `--add-dir ${d}`)
-    .join(" ");
-  return `claude ${addDirs} -p`;
+  // --allowedTools grants edit permission scoped to reviewsDir and docsDirs
+  const allowedTools = [
+    `Edit(${reviewsDir}//**)`,
+    ...docsDirs.map((d) => `Edit(${d}//**)`),
+    "Read",
+  ].join(",");
+  return `claude --allowedTools "${allowedTools}" -p`;
 }
 
 export interface ReviewServiceConfig {

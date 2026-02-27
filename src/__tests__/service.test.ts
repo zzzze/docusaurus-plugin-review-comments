@@ -111,9 +111,10 @@ describe("startReviewService", () => {
     const [cmd, args] = spawnMock.mock.calls[0] as [string, string[]];
     expect(cmd).toBe("sh");
     expect(args[0]).toBe("-c");
-    // Default command includes --add-dir for reviewsDir and docsDirs
-    expect(args[1]).toContain("--add-dir");
+    // Default command grants scoped edit permissions via --allowedTools
+    expect(args[1]).toContain("--allowedTools");
     expect(args[1]).toContain(reviewsDir);
+    expect(args[1]).toContain("Edit(");
     expect(args[1]).toContain("claude");
     expect(args[1]).toContain("-p");
   });
