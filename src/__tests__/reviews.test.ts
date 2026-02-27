@@ -662,14 +662,15 @@ describe("POST /api/reviews/trigger", () => {
   });
 
   it("calls onTrigger and returns { started: true }", async () => {
-    let called = false;
+    let resolveTrigger!: () => void;
+    const triggerDone = new Promise<void>((r) => { resolveTrigger = r; });
     const app = express();
     createReviewsMiddleware(app, tmpDir, "tester", async () => {
-      called = true;
+      resolveTrigger();
     });
     const res = await request(app, "POST", "/api/reviews/trigger");
+    await triggerDone;
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ started: true });
-    expect(called).toBe(true);
   });
 });

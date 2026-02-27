@@ -19,7 +19,9 @@ export function createReviewsMiddleware(
 
   if (onTrigger) {
     app.post("/api/reviews/trigger", (_req, res) => {
-      void onTrigger();
+      onTrigger().catch((err: unknown) => {
+        console.error("[review-service] trigger failed:", (err instanceof Error ? err.message : String(err)));
+      });
       res.json({ started: true });
     });
   }
