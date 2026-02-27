@@ -8,12 +8,14 @@ import {
   writeReviewFile,
   globReviewFiles,
 } from "./storage";
+import type { SseNotifier } from "./sseNotifier";
 
 export function createReviewsMiddleware(
   app: Express,
   reviewsDir: string,
   defaultAuthor: string,
   onTrigger?: () => Promise<void>,
+  notifier?: SseNotifier,
 ): void {
   app.use("/api/reviews", express.json());
 
@@ -25,6 +27,14 @@ export function createReviewsMiddleware(
       res.json({ started: true });
     });
   }
+
+  app.get("/api/reviews/events", (req, res) => {
+    if (notifier) {
+      notifier.connect(res);
+    } else {
+      res.status(404).json({ error: "SSE not available" });
+    }
+  });
 
   app.get("/api/reviews/pending", async (_req, res) => {
     const pendingDocs: string[] = [];

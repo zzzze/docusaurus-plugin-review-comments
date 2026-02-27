@@ -1,10 +1,44 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useReviewComments } from "../client/useReviewComments";
 import * as api from "../client/api";
 import type { ReviewFile, ReviewComment } from "../types";
 
 vi.mock("../client/api");
+
+// Minimal EventSource mock
+type EventHandler = (e: { data: string }) => void;
+
+class MockEventSource {
+  static instances: MockEventSource[] = [];
+  url: string;
+  private _listeners: Record<string, EventHandler[]> = {};
+  onerror: (() => void) | null = null;
+
+  constructor(url: string) {
+    this.url = url;
+    MockEventSource.instances.push(this);
+  }
+
+  addEventListener(event: string, handler: EventHandler) {
+    this._listeners[event] = this._listeners[event] ?? [];
+    this._listeners[event]!.push(handler);
+  }
+
+  dispatchEvent(event: string, data: unknown) {
+    const handlers = this._listeners[event] ?? [];
+    for (const h of handlers) h({ data: JSON.stringify(data) });
+  }
+
+  close() {
+    MockEventSource.instances = MockEventSource.instances.filter((e) => e !== this);
+  }
+}
+
+beforeEach(() => {
+  MockEventSource.instances = [];
+  vi.stubGlobal("EventSource", MockEventSource);
+});
 
 const sampleAnchor = {
   scope: "text" as const,
@@ -230,5 +264,63 @@ describe("useReviewComments", () => {
     });
 
     expect(result.current.isPanelOpen).toBe(true);
+  });
+});
+
+describe("useReviewComments SSE subscription", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(api.fetchComments).mockResolvedValue(emptyReviewFile);
+  });
+
+  it("creates an EventSource for /api/reviews/events on mount", async () => {
+    renderHook(() => useReviewComments("guide/intro"));
+
+    await waitFor(() => {
+      expect(MockEventSource.instances.length).toBeGreaterThan(0);
+    });
+
+    expect(MockEventSource.instances[0]!.url).toBe("/api/reviews/events");
+  });
+
+  it("calls refetch when agent:done event matches docPath", async () => {
+    const { result } = renderHook(() => useReviewComments("guide/intro"));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    const callsBefore = vi.mocked(api.fetchComments).mock.calls.length;
+
+    act(() => {
+      MockEventSource.instances[0]!.dispatchEvent("agent:done", { docPath: "guide/intro" });
+    });
+
+    await waitFor(() => {
+      expect(vi.mocked(api.fetchComments).mock.calls.length).toBeGreaterThan(callsBefore);
+    });
+  });
+
+  it("does NOT call refetch when agent:done event is for a different docPath", async () => {
+    const { result } = renderHook(() => useReviewComments("guide/intro"));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    const callsBefore = vi.mocked(api.fetchComments).mock.calls.length;
+
+    act(() => {
+      MockEventSource.instances[0]!.dispatchEvent("agent:done", { docPath: "other/page" });
+    });
+
+    // Small wait to confirm refetch was NOT triggered
+    await new Promise((r) => setTimeout(r, 50));
+    expect(vi.mocked(api.fetchComments).mock.calls.length).toBe(callsBefore);
+  });
+
+  it("does not create EventSource when docPath is empty", () => {
+    renderHook(() => useReviewComments(""));
+    expect(MockEventSource.instances.length).toBe(0);
   });
 });

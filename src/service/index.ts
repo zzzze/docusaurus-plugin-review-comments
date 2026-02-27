@@ -5,6 +5,7 @@ import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
 import type { AgentCommandFn } from "../types";
+import type { SseNotifier } from "../api/sseNotifier";
 
 const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
 const LOG_PREFIX = "[review-service]";
@@ -45,6 +46,7 @@ export interface ReviewServiceConfig {
   agentPromptFile?: string;
   // Extra directories for read-only MCP context (--add-dir). siteDir is always included.
   contextDirs?: string[];
+  notifier?: SseNotifier;
 }
 
 export interface ReviewServiceHandle {
@@ -70,6 +72,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     agentCommand = defaultAgentCommand,
     agentPromptFile,
     contextDirs: extraContextDirs = [],
+    notifier,
   } = config;
 
   const docsPathMap = buildDocsPathMap(siteConfig);
@@ -86,7 +89,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
   const tick = () =>
-    runTick(siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, inProgress);
+    runTick(siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, inProgress, notifier);
 
   const intervalId = setInterval(() => { void tick(); }, intervalMs);
 
@@ -105,6 +108,7 @@ async function runTick(
   agentCommand: string | AgentCommandFn,
   agentPromptFile: string | undefined,
   inProgress: Set<string>,
+  notifier?: SseNotifier,
 ): Promise<void> {
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
@@ -134,7 +138,7 @@ async function runTick(
       documentPath,
     );
     inProgress.add(documentPath);
-    spawnAgent(resolvedCommand, prompt, siteDir, documentPath, () => inProgress.delete(documentPath));
+    spawnAgent(resolvedCommand, prompt, siteDir, documentPath, () => inProgress.delete(documentPath), notifier);
   }
 }
 
@@ -210,6 +214,7 @@ function spawnAgent(
   cwd: string,
   documentPath: string,
   onDone: () => void,
+  notifier?: SseNotifier,
 ): void {
   // If agentCommand contains {prompt}, substitute it inline (e.g. "opencode run {prompt}").
   // Otherwise pipe prompt via stdin (e.g. "claude -p", "gemini", "amp -x").
@@ -229,6 +234,7 @@ function spawnAgent(
     child?.on("close", (code) => {
       if (code === 0) {
         log(`Agent finished for ${documentPath} (exit 0)`);
+        notifier?.broadcast(documentPath);
       } else {
         warn(`Agent exited with code ${code ?? "null"} for ${documentPath}`);
       }
@@ -248,6 +254,7 @@ function spawnAgent(
     child?.on("close", (code) => {
       if (code === 0) {
         log(`Agent finished for ${documentPath} (exit 0)`);
+        notifier?.broadcast(documentPath);
       } else {
         warn(`Agent exited with code ${code ?? "null"} for ${documentPath}`);
       }

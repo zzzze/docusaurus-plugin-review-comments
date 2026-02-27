@@ -48,6 +48,28 @@ export function useReviewComments(docPath: string): ReviewCommentsState {
     refetch().finally(() => setIsLoading(false));
   }, [refetch, docPath]);
 
+  useEffect(() => {
+    if (!docPath) return;
+    let es: EventSource | null = null;
+    let retryMs = 1000;
+
+    function connect() {
+      es = new EventSource("/api/reviews/events");
+      es.addEventListener("agent:done", (e: MessageEvent) => {
+        const { docPath: changedPath } = JSON.parse(e.data as string) as { docPath: string };
+        if (changedPath === docPath) void refetch();
+      });
+      es.onerror = () => {
+        es?.close();
+        setTimeout(connect, retryMs);
+        retryMs = Math.min(retryMs * 2, 30_000);
+      };
+    }
+
+    connect();
+    return () => { es?.close(); };
+  }, [docPath, refetch]);
+
   const addComment = useCallback(
     async (
       anchor: ReviewAnchor,

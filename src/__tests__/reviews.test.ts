@@ -1,14 +1,16 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import express from "express";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import http from "node:http";
 import { createReviewsMiddleware } from "../api/reviews";
+import type { SseNotifier } from "../api/sseNotifier";
 import type { ReviewComment, ReviewFile } from "../types";
 
-function makeApp(reviewsDir: string, author = "tester") {
+function makeApp(reviewsDir: string, author = "tester", notifier?: SseNotifier) {
   const app = express();
-  createReviewsMiddleware(app, reviewsDir, author);
+  createReviewsMiddleware(app, reviewsDir, author, undefined, notifier);
   return app;
 }
 
@@ -672,5 +674,61 @@ describe("POST /api/reviews/trigger", () => {
     await triggerDone;
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ started: true });
+  });
+});
+
+describe("GET /api/reviews/events", () => {
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "reviews-sse-"));
+  });
+
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it("returns 404 when no notifier provided", async () => {
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/events");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: "SSE not available" });
+  });
+
+  it("returns 200 with text/event-stream content-type when notifier provided", async () => {
+    const mockNotifier: SseNotifier = {
+      connect: vi.fn((res) => {
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.writeHead(200);
+        // End the response so the test helper can complete
+        res.end();
+      }),
+      broadcast: vi.fn(),
+    };
+
+    const app = makeApp(tmpDir, "tester", mockNotifier);
+    const statusAndHeaders = await new Promise<{ status: number; contentType: string }>((resolve, reject) => {
+      const server = app.listen(0, () => {
+        const addr = server.address() as { port: number };
+        const req = http.request(
+          { hostname: "127.0.0.1", port: addr.port, path: "/api/reviews/events", method: "GET" },
+          (res) => {
+            server.close();
+            resolve({
+              status: res.statusCode ?? 0,
+              contentType: res.headers["content-type"] ?? "",
+            });
+          },
+        );
+        req.on("error", (err) => { server.close(); reject(err); });
+        req.end();
+      });
+    });
+
+    expect(statusAndHeaders.status).toBe(200);
+    expect(statusAndHeaders.contentType).toContain("text/event-stream");
+    expect(mockNotifier.connect).toHaveBeenCalled();
   });
 });

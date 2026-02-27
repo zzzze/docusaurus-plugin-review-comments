@@ -358,6 +358,102 @@ describe("startReviewService", () => {
     expect(spawnMock).toHaveBeenCalledTimes(2);
   });
 
+  it("calls notifier.broadcast with docPath when agent exits with code 0", async () => {
+    const reviewFile = {
+      documentPath: "docs/notify-test",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Q?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/notify-test.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    let closeCallback: ((code: number | null) => void) | undefined;
+    const fakeChild = {
+      stdin: { write: vi.fn(), end: vi.fn() },
+      on: vi.fn((event: string, cb: (code: number | null) => void) => {
+        if (event === "close") closeCallback = cb;
+      }),
+    };
+    spawnMock.mockReturnValue(
+      fakeChild as unknown as ReturnType<typeof childProcess.spawn>,
+    );
+
+    const broadcast = vi.fn();
+    const notifier = { connect: vi.fn(), broadcast };
+
+    const { stop, tick } = createReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      notifier,
+    });
+
+    await tick();
+    expect(broadcast).not.toHaveBeenCalled();
+
+    closeCallback?.(0);
+    expect(broadcast).toHaveBeenCalledWith("docs/notify-test");
+    stop();
+  });
+
+  it("does NOT call notifier.broadcast when agent exits with non-zero code", async () => {
+    const reviewFile = {
+      documentPath: "docs/fail-test",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Q?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/fail-test.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    let closeCallback: ((code: number | null) => void) | undefined;
+    const fakeChild = {
+      stdin: { write: vi.fn(), end: vi.fn() },
+      on: vi.fn((event: string, cb: (code: number | null) => void) => {
+        if (event === "close") closeCallback = cb;
+      }),
+    };
+    spawnMock.mockReturnValue(
+      fakeChild as unknown as ReturnType<typeof childProcess.spawn>,
+    );
+
+    const broadcast = vi.fn();
+    const notifier = { connect: vi.fn(), broadcast };
+
+    const { stop, tick } = createReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      notifier,
+    });
+
+    await tick();
+    closeCallback?.(1);
+    expect(broadcast).not.toHaveBeenCalled();
+    stop();
+  });
+
   it("stop() clears the interval", async () => {
     const reviewFile = {
       documentPath: "docs/stop-test",
