@@ -34,7 +34,7 @@ export default function pluginReviewComments(
             const app = (devServer as { app: import("express").Express }).app;
 
             const rs = options.reviewService;
-            if (rs?.enabled !== false) {
+            if (rs !== undefined && rs.enabled !== false) {
               const { tick } = createReviewService({
                 siteDir: context.siteDir,
                 reviewsDir: resolvedReviewsDir,

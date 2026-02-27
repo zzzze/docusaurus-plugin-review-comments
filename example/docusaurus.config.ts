@@ -74,6 +74,10 @@ const config: Config = {
       {
         reviewsDir: 'reviews',
         defaultAuthor: 'Demo User',
+        reviewService: {
+          enabled: true,
+          contextDirs: ['../'],
+        },
       },
     ],
   ],
