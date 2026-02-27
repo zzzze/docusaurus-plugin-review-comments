@@ -35,7 +35,7 @@ export async function globReviewFiles(reviewsDir: string): Promise<string[]> {
   const results: string[] = [];
 
   async function walk(dir: string): Promise<void> {
-    let entries: import("node:fs/promises").Dirent[];
+    let entries: import("node:fs").Dirent[];
     try {
       entries = await fs.readdir(dir, { withFileTypes: true });
     } catch {
