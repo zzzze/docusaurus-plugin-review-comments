@@ -4,16 +4,23 @@ sidebar_position: 1
 
 # Introduction
 
-Welcome to the Review Comments Plugin documentation. This plugin adds collaborative review functionality to your Docusaurus documentation site.
+`docusaurus-plugin-review-comments` adds inline review comments to your Docusaurus site.
+While reading your documentation locally, you can select any text and leave a comment — a question, a suggestion, or a reported issue. Comments are saved as JSON files alongside your docs.
 
-## Features
+The plugin also supports an optional **AI review service**: an AI agent (such as Claude Code) runs periodically, reads open comments, and responds directly — answering questions, applying suggestions, or fixing issues in your Markdown source files.
 
-- **Inline Comments**: Add comments to specific text selections or code blocks
-- **Discussion Threads**: Reply to comments and have conversations
-- **Status Tracking**: Mark comments as resolved or keep them open
-- **Multiple Types**: Support for questions, suggestions, and issue reports
-- **Real-time Updates**: Comments update instantly during development
+## How It Works
 
-## Quick Start
+1. Run your Docusaurus site locally with `npm start`
+2. Select text on any page — a comment button appears
+3. Leave a comment (question, suggestion, or issue)
+4. Optionally, configure an AI agent to process comments automatically
 
-Get started by [installing the plugin](./getting-started/installation.md).
+Comments are stored as `.reviews.json` files in a directory you configure. They can be committed to version control or kept local.
+
+## Next Steps
+
+- [Install the plugin](./installation.md)
+- [Configure options](./configuration.md)
+- [Set up AI review service](./ai-agent-setup.md)
+- [Learn how to leave comments](./using-comments.md)
