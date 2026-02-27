@@ -2,7 +2,7 @@ import type { LoadContext, Plugin } from "@docusaurus/types";
 import type { PluginOptions } from "./types";
 import path from "node:path";
 import { createReviewsMiddleware } from "./api/reviews";
-import { startReviewService } from "./service/index";
+import { createReviewService } from "./service/index";
 
 export { validateOptions } from "./options";
 
@@ -32,11 +32,10 @@ export default function pluginReviewComments(
         devServer: {
           setupMiddlewares(middlewares: unknown[], devServer: unknown) {
             const app = (devServer as { app: import("express").Express }).app;
-            createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor);
 
             const rs = options.reviewService;
             if (rs?.enabled !== false) {
-              startReviewService({
+              const { tick } = createReviewService({
                 siteDir: context.siteDir,
                 reviewsDir: resolvedReviewsDir,
                 siteConfig: context.siteConfig,
@@ -44,6 +43,9 @@ export default function pluginReviewComments(
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,
               });
+              createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor, tick);
+            } else {
+              createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor);
             }
 
             return middlewares;
