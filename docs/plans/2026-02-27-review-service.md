@@ -97,6 +97,8 @@ Add after the `PluginOptions` interface:
 export interface ReviewServiceOptions {
   enabled?: boolean;
   intervalMs?: number;
+  // If contains {prompt}, prompt is substituted inline (e.g. "opencode run {prompt}").
+  // Otherwise prompt is piped via stdin (e.g. "claude -p", "gemini -p", "amp -x").
   agentCommand?: string;
   agentPromptFile?: string;
 }
@@ -905,7 +907,7 @@ describe("startReviewService", () => {
     expect(typeof args[1]).toBe("string");
   });
 
-  it("uses custom agentCommand when provided", async () => {
+  it("uses custom agentCommand (stdin mode) when provided", async () => {
     const reviewFile = {
       documentPath: "docs/guide",
       comments: [
@@ -934,8 +936,51 @@ describe("startReviewService", () => {
 
     await vi.runAllTimersAsync();
     expect(spawnMock).toHaveBeenCalledTimes(1);
-    const args = spawnMock.mock.calls[0] as [string, string[]];
-    expect(args[1][1]).toContain("my-custom-agent --flag");
+    const [cmd, args] = spawnMock.mock.calls[0] as [string, string[]];
+    expect(cmd).toBe("sh");
+    expect(args[1]).toContain("my-custom-agent --flag");
+  });
+
+  it("uses {prompt} placeholder mode when agentCommand contains {prompt}", async () => {
+    const reviewFile = {
+      documentPath: "docs/opencode",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "bob",
+          type: "question",
+          status: "open",
+          content: "How?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/opencode.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    // Reconfigure mock — no stdin needed for placeholder mode
+    const fakeChildNoStdin = { on: vi.fn() };
+    spawnMock.mockReturnValue(
+      fakeChildNoStdin as unknown as ReturnType<typeof childProcess.spawn>,
+    );
+
+    startReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      agentCommand: "opencode run {prompt}",
+    });
+
+    await vi.runAllTimersAsync();
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    const [cmd, args] = spawnMock.mock.calls[0] as [string, string[]];
+    expect(cmd).toBe("sh");
+    // The command string should have {prompt} substituted, not literal
+    expect(args[1]).not.toContain("{prompt}");
+    expect(args[1]).toContain("opencode run");
   });
 
   it("respects custom intervalMs", async () => {
@@ -1129,17 +1174,31 @@ function spawnAgent(
   prompt: string,
   cwd: string,
 ): void {
-  const child = spawn("sh", ["-c", agentCommand], {
-    cwd,
-    stdio: ["pipe", "inherit", "inherit"],
-  });
-
-  child.stdin.write(prompt);
-  child.stdin.end();
-
-  child.on("error", (err) => {
-    console.error("[review-service] Failed to spawn agent:", err.message);
-  });
+  // If agentCommand contains {prompt}, substitute it inline (e.g. "opencode run {prompt}").
+  // Otherwise pipe prompt via stdin (e.g. "claude -p", "gemini", "amp -x").
+  if (agentCommand.includes("{prompt}")) {
+    const cmd = agentCommand.replace(
+      /\{prompt\}/g,
+      prompt.replace(/'/g, "'\\''"),
+    );
+    const child = spawn("sh", ["-c", cmd], {
+      cwd,
+      stdio: "inherit",
+    });
+    child.on("error", (err) => {
+      console.error("[review-service] Failed to spawn agent:", err.message);
+    });
+  } else {
+    const child = spawn("sh", ["-c", agentCommand], {
+      cwd,
+      stdio: ["pipe", "inherit", "inherit"],
+    });
+    child.stdin.write(prompt);
+    child.stdin.end();
+    child.on("error", (err) => {
+      console.error("[review-service] Failed to spawn agent:", err.message);
+    });
+  }
 }
 ```
 
