@@ -1135,6 +1135,61 @@ describe("startReviewService", () => {
     expect(written).not.toContain("{allowedPaths}");
   });
 
+  it("does not spawn a second agent for a doc already in progress", async () => {
+    const reviewFile = {
+      documentPath: "docs/in-progress",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Q?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/in-progress.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    // Simulate a long-running agent: capture the "close" callback but never call it
+    let closeCallback: (() => void) | undefined;
+    const fakeChild = {
+      stdin: { write: vi.fn(), end: vi.fn() },
+      on: vi.fn((event: string, cb: () => void) => {
+        if (event === "close") closeCallback = cb;
+      }),
+    };
+    spawnMock.mockReturnValue(
+      fakeChild as unknown as ReturnType<typeof childProcess.spawn>,
+    );
+
+    startReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      intervalMs: 1000,
+    });
+
+    // First tick — agent spawned, close not called yet
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+
+    // Second tick — same doc still in progress, should not spawn again
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+
+    // Simulate agent finishing
+    closeCallback?.();
+
+    // Third tick — doc no longer in progress, should spawn again
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(spawnMock).toHaveBeenCalledTimes(2);
+  });
+
   it("stop() clears the interval", async () => {
     const reviewFile = {
       documentPath: "docs/stop-test",
@@ -1193,7 +1248,7 @@ import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
 import type { AgentCommandFn } from "../types";
 
-const DEFAULT_INTERVAL_MS = 60_000;
+const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
 
 function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
   const addDirs = [reviewsDir, ...docsDirs]
@@ -1230,8 +1285,11 @@ export function startReviewService(config: ReviewServiceConfig): () => void {
     path.join(siteDir, fsPath),
   );
 
+  // Track docs currently being processed to prevent concurrent writes to the same file
+  const inProgress = new Set<string>();
+
   const intervalId = setInterval(() => {
-    void runTick(siteDir, reviewsDir, docsPathMap, docsDirs, agentCommand, agentPromptFile);
+    void runTick(siteDir, reviewsDir, docsPathMap, docsDirs, agentCommand, agentPromptFile, inProgress);
   }, intervalMs);
 
   return () => clearInterval(intervalId);
@@ -1244,6 +1302,7 @@ async function runTick(
   docsDirs: string[],
   agentCommand: string | AgentCommandFn,
   agentPromptFile: string | undefined,
+  inProgress: Set<string>,
 ): Promise<void> {
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
@@ -1257,6 +1316,9 @@ async function runTick(
   const promptTemplate = await loadPromptTemplate(agentPromptFile);
 
   for (const documentPath of pendingDocs) {
+    // Skip docs already being processed by a previous tick's agent
+    if (inProgress.has(documentPath)) continue;
+
     const prompt = buildPrompt(
       promptTemplate,
       siteDir,
@@ -1264,7 +1326,8 @@ async function runTick(
       docsPathMap,
       documentPath,
     );
-    spawnAgent(resolvedCommand, prompt, siteDir);
+    inProgress.add(documentPath);
+    spawnAgent(resolvedCommand, prompt, siteDir, () => inProgress.delete(documentPath));
   }
 }
 
@@ -1338,6 +1401,7 @@ function spawnAgent(
   agentCommand: string,
   prompt: string,
   cwd: string,
+  onDone: () => void,
 ): void {
   // If agentCommand contains {prompt}, substitute it inline (e.g. "opencode run {prompt}").
   // Otherwise pipe prompt via stdin (e.g. "claude -p", "gemini", "amp -x").
@@ -1353,6 +1417,7 @@ function spawnAgent(
     child.on("error", (err) => {
       console.error("[review-service] Failed to spawn agent:", err.message);
     });
+    child.on("close", onDone);
   } else {
     const child = spawn("sh", ["-c", agentCommand], {
       cwd,
@@ -1363,6 +1428,7 @@ function spawnAgent(
     child.on("error", (err) => {
       console.error("[review-service] Failed to spawn agent:", err.message);
     });
+    child.on("close", onDone);
   }
 }
 ```
