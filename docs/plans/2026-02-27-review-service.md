@@ -4,7 +4,7 @@
 
 **Goal:** Add a review service to the plugin that periodically polls for open comments needing AI responses and spawns a configurable AI agent (e.g. Claude Code) to process them.
 
-**Architecture:** `GET /api/reviews/pending` scans all `*.reviews.json` files and returns doc paths with open comments lacking an AI reply. A `startReviewService()` function starts a `setInterval` loop inside `setupMiddlewares` — each tick calls that endpoint and pipes a composed prompt (AGENTS.md + doc path) to `agentCommand` via stdin. Path resolution uses a `routeBasePath → fsPath` map built from `siteConfig` at init time.
+**Architecture:** `GET /api/reviews/pending` scans all `*.reviews.json` files and returns doc paths with open comments lacking an AI reply. A `startReviewService()` function starts a `setInterval` loop inside `setupMiddlewares` — each tick resolves the shell command via `agentCommand` (string or function), then pipes the prompt via stdin or `{prompt}` substitution. `agentCommand` as a function receives `{ reviewsDir: string, docsDirs: string[] }` and returns a shell command string — enabling users to inject `--add-dir` flags per directory. Path resolution uses a `routeBasePath → fsPath` map built from `siteConfig` at init time; `docsDirs` is derived from all values in that map.
 
 **Tech Stack:** Node.js `child_process.spawn`, `node:fs/promises` glob, TypeScript, Vitest (node environment)
 
@@ -40,23 +40,44 @@ describe("validateOptions — reviewService", () => {
     expect(result.reviewService).toEqual({});
   });
 
-  it("accepts valid reviewService options", () => {
+  it("accepts valid reviewService options with string agentCommand", () => {
     const result = callValidate({
       reviewsDir: "./.reviews",
       defaultAuthor: "reviewer",
       reviewService: {
         enabled: false,
         intervalMs: 30000,
-        agentCommand: "my-agent",
+        agentCommand: "my-agent -p",
         agentPromptFile: "/custom/AGENTS.md",
       },
     });
     expect(result.reviewService).toEqual({
       enabled: false,
       intervalMs: 30000,
-      agentCommand: "my-agent",
+      agentCommand: "my-agent -p",
       agentPromptFile: "/custom/AGENTS.md",
     });
+  });
+
+  it("accepts agentCommand as a function", () => {
+    const fn = ({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }) =>
+      `claude --add-dir ${reviewsDir} ${docsDirs.map((d) => `--add-dir ${d}`).join(" ")} -p`;
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: { agentCommand: fn },
+    });
+    expect(typeof result.reviewService?.agentCommand).toBe("function");
+  });
+
+  it("throws when agentCommand is neither string nor function", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { agentCommand: 42 },
+      }),
+    ).toThrow("'reviewService.agentCommand' must be a string or function");
   });
 
   it("throws when reviewService.intervalMs is not a number", () => {
@@ -94,14 +115,22 @@ Expected: FAIL — `reviewService` field not recognized / validation not impleme
 Add after the `PluginOptions` interface:
 
 ```typescript
+export interface AgentCommandContext {
+  reviewsDir: string;  // absolute path to the reviews directory
+  docsDirs: string[];  // absolute paths to all docs content directories
+}
+
+export type AgentCommandFn = (ctx: AgentCommandContext) => string;
+
 export interface ReviewServiceOptions {
   enabled?: boolean;
   intervalMs?: number;
-  // If contains {prompt}, prompt is substituted inline (e.g. "opencode run {prompt}").
-  // Otherwise prompt is piped via stdin (e.g. "claude -p", "gemini -p", "amp -x").
-  // To add CLI-level path restrictions (e.g. Claude's --add-dir), include them directly
-  // in agentCommand: "claude --dangerously-skip-permissions --add-dir ./reviews --add-dir ./docs -p"
-  agentCommand?: string;
+  // string: used as-is as the shell command
+  // function: called with { reviewsDir, docsDirs }, returns the shell command string
+  // In both cases: if the resolved command contains {prompt}, prompt is substituted inline;
+  // otherwise prompt is piped via stdin.
+  // Default: a function that builds "claude --add-dir <reviewsDir> --add-dir <docsDir>... -p"
+  agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
 }
 ```
@@ -145,6 +174,15 @@ export function validateOptions({
     ) {
       throw new Error(
         "docusaurus-plugin-review-comments: 'reviewService.intervalMs' must be a positive number",
+      );
+    }
+    if (
+      rs.agentCommand !== undefined &&
+      typeof rs.agentCommand !== "string" &&
+      typeof rs.agentCommand !== "function"
+    ) {
+      throw new Error(
+        "docusaurus-plugin-review-comments: 'reviewService.agentCommand' must be a string or function",
       );
     }
   }
@@ -880,8 +918,7 @@ describe("startReviewService", () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
-  it("spawns agent for each pending doc", async () => {
-    // Write a review file with a pending comment
+  it("spawns agent for each pending doc using default command (function)", async () => {
     const reviewFile = {
       documentPath: "docs/intro",
       comments: [
@@ -910,14 +947,17 @@ describe("startReviewService", () => {
     await vi.runAllTimersAsync();
     expect(spawnMock).toHaveBeenCalledTimes(1);
 
-    // Verify spawn was called with sh -c and agentCommand as shell
     const [cmd, args] = spawnMock.mock.calls[0] as [string, string[]];
     expect(cmd).toBe("sh");
     expect(args[0]).toBe("-c");
-    expect(typeof args[1]).toBe("string");
+    // Default command includes --add-dir for reviewsDir and docsDirs
+    expect(args[1]).toContain("--add-dir");
+    expect(args[1]).toContain(reviewsDir);
+    expect(args[1]).toContain("claude");
+    expect(args[1]).toContain("-p");
   });
 
-  it("uses custom agentCommand (stdin mode) when provided", async () => {
+  it("uses custom agentCommand string (stdin mode)", async () => {
     const reviewFile = {
       documentPath: "docs/guide",
       comments: [
@@ -951,7 +991,48 @@ describe("startReviewService", () => {
     expect(args[1]).toContain("my-custom-agent --flag");
   });
 
-  it("uses {prompt} placeholder mode when agentCommand contains {prompt}", async () => {
+  it("calls agentCommand function with reviewsDir and docsDirs", async () => {
+    const reviewFile = {
+      documentPath: "docs/fn-test",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Fn?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/fn-test.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    const capturedCtx: { reviewsDir: string; docsDirs: string[] }[] = [];
+    const agentCommand = (ctx: { reviewsDir: string; docsDirs: string[] }) => {
+      capturedCtx.push(ctx);
+      return `my-agent --dir ${ctx.reviewsDir} -p`;
+    };
+
+    startReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      agentCommand,
+    });
+
+    await vi.runAllTimersAsync();
+    expect(capturedCtx).toHaveLength(1);
+    expect(capturedCtx[0]!.reviewsDir).toBe(reviewsDir);
+    expect(Array.isArray(capturedCtx[0]!.docsDirs)).toBe(true);
+    // makeConfig has docs → "docs", so docsDirs should include siteDir/docs
+    expect(capturedCtx[0]!.docsDirs[0]).toContain("docs");
+  });
+
+  it("uses {prompt} placeholder mode when agentCommand string contains {prompt}", async () => {
     const reviewFile = {
       documentPath: "docs/opencode",
       comments: [
@@ -971,7 +1052,6 @@ describe("startReviewService", () => {
     await fs.mkdir(path.dirname(filePath), { recursive: true });
     await fs.writeFile(filePath, JSON.stringify(reviewFile));
 
-    // Reconfigure mock — no stdin needed for placeholder mode
     const fakeChildNoStdin = { on: vi.fn() };
     spawnMock.mockReturnValue(
       fakeChildNoStdin as unknown as ReturnType<typeof childProcess.spawn>,
@@ -988,7 +1068,6 @@ describe("startReviewService", () => {
     expect(spawnMock).toHaveBeenCalledTimes(1);
     const [cmd, args] = spawnMock.mock.calls[0] as [string, string[]];
     expect(cmd).toBe("sh");
-    // The command string should have {prompt} substituted, not literal
     expect(args[1]).not.toContain("{prompt}");
     expect(args[1]).toContain("opencode run");
   });
@@ -1112,16 +1191,23 @@ import { spawn } from "node:child_process";
 import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
+import type { AgentCommandFn } from "../types";
 
-const DEFAULT_AGENT_COMMAND = "claude --dangerously-skip-permissions -p";
 const DEFAULT_INTERVAL_MS = 60_000;
+
+function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
+  const addDirs = [reviewsDir, ...docsDirs]
+    .map((d) => `--add-dir ${d}`)
+    .join(" ");
+  return `claude ${addDirs} -p`;
+}
 
 export interface ReviewServiceConfig {
   siteDir: string;
   reviewsDir: string;
   siteConfig: DocusaurusConfig;
   intervalMs?: number;
-  agentCommand?: string;
+  agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
 }
 
@@ -1134,14 +1220,18 @@ export function startReviewService(config: ReviewServiceConfig): () => void {
     reviewsDir,
     siteConfig,
     intervalMs = DEFAULT_INTERVAL_MS,
-    agentCommand = DEFAULT_AGENT_COMMAND,
+    agentCommand = defaultAgentCommand,
     agentPromptFile,
   } = config;
 
   const docsPathMap = buildDocsPathMap(siteConfig);
+  // Compute docsDirs once: absolute paths of all docs content directories
+  const docsDirs = Array.from(docsPathMap.values()).map((fsPath) =>
+    path.join(siteDir, fsPath),
+  );
 
   const intervalId = setInterval(() => {
-    void runTick(siteDir, reviewsDir, docsPathMap, agentCommand, agentPromptFile);
+    void runTick(siteDir, reviewsDir, docsPathMap, docsDirs, agentCommand, agentPromptFile);
   }, intervalMs);
 
   return () => clearInterval(intervalId);
@@ -1151,11 +1241,18 @@ async function runTick(
   siteDir: string,
   reviewsDir: string,
   docsPathMap: Map<string, string>,
-  agentCommand: string,
+  docsDirs: string[],
+  agentCommand: string | AgentCommandFn,
   agentPromptFile: string | undefined,
 ): Promise<void> {
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
+
+  // Resolve agentCommand to a string once per tick
+  const resolvedCommand =
+    typeof agentCommand === "function"
+      ? agentCommand({ reviewsDir, docsDirs })
+      : agentCommand;
 
   const promptTemplate = await loadPromptTemplate(agentPromptFile);
 
@@ -1167,7 +1264,7 @@ async function runTick(
       docsPathMap,
       documentPath,
     );
-    spawnAgent(agentCommand, prompt, siteDir);
+    spawnAgent(resolvedCommand, prompt, siteDir);
   }
 }
 
@@ -1304,6 +1401,7 @@ import type { PluginOptions } from "./types";
 import path from "node:path";
 import { createReviewsMiddleware } from "./api/reviews";
 import { startReviewService } from "./service/index";
+// AgentCommandFn is re-exported from types so users can import it for type annotations
 
 export { validateOptions } from "./options";
 
