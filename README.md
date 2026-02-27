@@ -4,13 +4,13 @@ A Docusaurus plugin for adding collaborative review comments to documentation.
 
 ## Development
 
-See the `example/` directory for a complete Docusaurus site demonstrating all plugin features.
+See the `docs-site/` directory for a complete Docusaurus site demonstrating all plugin features.
 
 ```bash
-cd example
+cd docs-site
 npm install
 npm run generate-reviews
 npm start
 ```
 
-The example site includes comprehensive documentation with pre-generated review comments for testing.
+The docs site includes comprehensive documentation with pre-generated review comments for testing.

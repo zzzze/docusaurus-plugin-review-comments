@@ -29,6 +29,13 @@ module.exports = {
       {
         reviewsDir: 'reviews',
         defaultAuthor: 'Anonymous',
+        reviewService: {
+          enabled: true,
+          intervalMs: 30000,
+          agentCommand: 'your-ai-agent-command',
+          agentPromptFile: 'path/to/prompt.md',
+          contextDirs: ['../source-repo'],
+        },
       },
     ],
   ],

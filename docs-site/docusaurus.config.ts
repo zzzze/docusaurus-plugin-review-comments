@@ -72,10 +72,9 @@ const config: Config = {
     [
       require.resolve('../src/index.ts'),
       {
-        reviewsDir: 'reviews',
+        reviewsDir: '.reviews',
         defaultAuthor: 'Demo User',
         reviewService: {
-          enabled: true,
           contextDirs: ['../'],
         },
       },

@@ -55,3 +55,6 @@ Thumbs.db
 # Debug
 .vscode-test/
 .history/
+
+docs/plans/
+.reviews/
