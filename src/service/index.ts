@@ -21,13 +21,16 @@ function error(msg: string): void {
   console.error(`${LOG_PREFIX} ${msg}`);
 }
 
+// Claude Code treats /path as project-relative; //path as a true filesystem absolute path.
+// To express an absolute path like /Users/foo, write //Users/foo (replace leading / with //).
+function absEdit(dir: string): string {
+  const withoutLeadingSlash = dir.startsWith("/") ? dir.slice(1) : dir;
+  return "Edit(//" + withoutLeadingSlash + "/**)";
+}
+
 function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
   // --allowedTools grants edit permission scoped to reviewsDir and docsDirs
-  const allowedTools = [
-    `Edit(${reviewsDir}//**)`,
-    ...docsDirs.map((d) => `Edit(${d}//**)`),
-    "Read",
-  ].join(",");
+  const allowedTools = [absEdit(reviewsDir), ...docsDirs.map(absEdit), "Read"].join(",");
   return `claude --allowedTools "${allowedTools}" -p`;
 }
 
