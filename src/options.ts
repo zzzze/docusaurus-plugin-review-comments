@@ -14,5 +14,25 @@ export function validateOptions({
       "docusaurus-plugin-review-comments: 'defaultAuthor' option is required",
     );
   }
+  if (options.reviewService !== undefined) {
+    const rs = options.reviewService;
+    if (
+      rs.intervalMs !== undefined &&
+      (typeof rs.intervalMs !== "number" || rs.intervalMs <= 0)
+    ) {
+      throw new Error(
+        "docusaurus-plugin-review-comments: 'reviewService.intervalMs' must be a positive number",
+      );
+    }
+    if (
+      rs.agentCommand !== undefined &&
+      typeof rs.agentCommand !== "string" &&
+      typeof rs.agentCommand !== "function"
+    ) {
+      throw new Error(
+        "docusaurus-plugin-review-comments: 'reviewService.agentCommand' must be a string or function",
+      );
+    }
+  }
   return options as PluginOptions;
 }

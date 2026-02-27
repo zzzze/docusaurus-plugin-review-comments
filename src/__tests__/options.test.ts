@@ -53,3 +53,82 @@ describe("validateOptions", () => {
     ).toThrow("'defaultAuthor' option is required");
   });
 });
+
+describe("validateOptions — reviewService", () => {
+  it("accepts missing reviewService (optional)", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+    });
+    expect(result.reviewService).toBeUndefined();
+  });
+
+  it("accepts empty reviewService object", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: {},
+    });
+    expect(result.reviewService).toEqual({});
+  });
+
+  it("accepts valid reviewService options with string agentCommand", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: {
+        enabled: false,
+        intervalMs: 30000,
+        agentCommand: "my-agent -p",
+        agentPromptFile: "/custom/AGENTS.md",
+      },
+    });
+    expect(result.reviewService).toEqual({
+      enabled: false,
+      intervalMs: 30000,
+      agentCommand: "my-agent -p",
+      agentPromptFile: "/custom/AGENTS.md",
+    });
+  });
+
+  it("accepts agentCommand as a function", () => {
+    const fn = ({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }) =>
+      `claude --add-dir ${reviewsDir} ${docsDirs.map((d) => `--add-dir ${d}`).join(" ")} -p`;
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: { agentCommand: fn },
+    });
+    expect(typeof result.reviewService?.agentCommand).toBe("function");
+  });
+
+  it("throws when agentCommand is neither string nor function", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { agentCommand: 42 },
+      }),
+    ).toThrow("'reviewService.agentCommand' must be a string or function");
+  });
+
+  it("throws when reviewService.intervalMs is not a number", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { intervalMs: "fast" },
+      }),
+    ).toThrow("'reviewService.intervalMs' must be a positive number");
+  });
+
+  it("throws when reviewService.intervalMs is zero or negative", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { intervalMs: 0 },
+      }),
+    ).toThrow("'reviewService.intervalMs' must be a positive number");
+  });
+});
