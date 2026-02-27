@@ -6,6 +6,7 @@ import {
   readReviewFile,
   resolveReviewFilePath,
   writeReviewFile,
+  globReviewFiles,
 } from "./storage";
 
 export function createReviewsMiddleware(
@@ -14,6 +15,33 @@ export function createReviewsMiddleware(
   defaultAuthor: string,
 ): void {
   app.use("/api/reviews", express.json());
+
+  app.get("/api/reviews/pending", async (_req, res) => {
+    const pendingDocs: string[] = [];
+
+    let entries: string[];
+    try {
+      entries = await globReviewFiles(reviewsDir);
+    } catch {
+      res.json({ docs: [] });
+      return;
+    }
+
+    for (const filePath of entries) {
+      const reviewFile = await readReviewFile(filePath);
+      const hasPending = reviewFile.comments.some((comment) => {
+        if (comment.status !== "open") return false;
+        if (comment.replies.length === 0) return true;
+        const lastReply = comment.replies[comment.replies.length - 1]!;
+        return lastReply.author !== "ai";
+      });
+      if (hasPending && reviewFile.documentPath) {
+        pendingDocs.push(reviewFile.documentPath);
+      }
+    }
+
+    res.json({ docs: pendingDocs });
+  });
 
   app.get("/api/reviews", async (req, res) => {
     const doc = req.query.doc as string | undefined;

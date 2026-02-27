@@ -474,3 +474,172 @@ describe("DELETE /api/reviews/:commentId", () => {
     expect(comments[0]!.content).toBe("Keep me");
   });
 });
+
+describe("GET /api/reviews/pending", () => {
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "reviews-pending-"));
+  });
+
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  async function writeReview(
+    relPath: string,
+    data: ReviewFile,
+  ): Promise<void> {
+    const full = path.join(tmpDir, relPath);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, JSON.stringify(data));
+  }
+
+  it("returns empty docs array when no review files exist", async () => {
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: [] });
+  });
+
+  it("returns doc path for comment with no replies", async () => {
+    await writeReview("docs/intro.reviews.json", {
+      documentPath: "docs/intro",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Why?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: ["docs/intro"] });
+  });
+
+  it("returns doc path when last reply is not from ai", async () => {
+    await writeReview("docs/guide.reviews.json", {
+      documentPath: "docs/guide",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "How?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [
+            {
+              id: "r1",
+              author: "ai",
+              content: "Here is how...",
+              createdAt: "2025-01-02T00:00:00.000Z",
+            },
+            {
+              id: "r2",
+              author: "alice",
+              content: "Thanks, but what about X?",
+              createdAt: "2025-01-03T00:00:00.000Z",
+            },
+          ],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: ["docs/guide"] });
+  });
+
+  it("excludes doc when last reply is from ai", async () => {
+    await writeReview("docs/done.reviews.json", {
+      documentPath: "docs/done",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Done?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [
+            {
+              id: "r1",
+              author: "ai",
+              content: "Yes, done.",
+              createdAt: "2025-01-02T00:00:00.000Z",
+            },
+          ],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: [] });
+  });
+
+  it("excludes resolved comments", async () => {
+    await writeReview("docs/resolved.reviews.json", {
+      documentPath: "docs/resolved",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "resolved",
+          content: "Old question",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: [] });
+  });
+
+  it("returns each doc at most once even with multiple pending comments", async () => {
+    await writeReview("docs/multi.reviews.json", {
+      documentPath: "docs/multi",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "First?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [],
+        },
+        {
+          id: "c2",
+          anchor: sampleAnchor,
+          author: "bob",
+          type: "issue",
+          status: "open",
+          content: "Second?",
+          createdAt: "2025-01-02T00:00:00.000Z",
+          replies: [],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir);
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect((res.body as { docs: string[] }).docs).toHaveLength(1);
+    expect((res.body as { docs: string[] }).docs[0]).toBe("docs/multi");
+  });
+});
