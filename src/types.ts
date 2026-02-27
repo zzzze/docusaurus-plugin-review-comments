@@ -44,6 +44,7 @@ export interface ReviewFile {
 export interface AgentCommandContext {
   reviewsDir: string;  // absolute path to the reviews directory
   docsDirs: string[];  // absolute paths to all docs content directories
+  contextDirs: string[];  // extra read-only dirs added via --add-dir (e.g. source code repos)
 }
 
 export type AgentCommandFn = (ctx: AgentCommandContext) => string;
@@ -52,12 +53,14 @@ export interface ReviewServiceOptions {
   enabled?: boolean;
   intervalMs?: number;
   // string: used as-is as the shell command
-  // function: called with { reviewsDir, docsDirs }, returns the shell command string
+  // function: called with { reviewsDir, docsDirs, contextDirs }, returns the shell command string
   // In both cases: if the resolved command contains {prompt}, prompt is substituted inline;
   // otherwise prompt is piped via stdin.
-  // Default: a function that builds "claude --add-dir <reviewsDir> --add-dir <docsDir>... -p"
   agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
+  // Extra directories to add as read-only context via --add-dir (e.g. a source code repo that
+  // the docs describe). The site root (siteDir) is always included automatically.
+  contextDirs?: string[];
 }
 
 export interface PluginOptions {

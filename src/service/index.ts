@@ -28,10 +28,12 @@ function absEdit(dir: string): string {
   return "Edit(//" + withoutLeadingSlash + "/**)";
 }
 
-function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
+function defaultAgentCommand({ reviewsDir, docsDirs, contextDirs }: { reviewsDir: string; docsDirs: string[]; contextDirs: string[] }): string {
   // --allowedTools grants edit permission scoped to reviewsDir and docsDirs
   const allowedTools = [absEdit(reviewsDir), ...docsDirs.map(absEdit), "Read"].join(",");
-  return `claude --allowedTools "${allowedTools}" -p`;
+  // --add-dir expands the MCP filesystem context to extra read-only directories (e.g. source repos)
+  const addDirs = contextDirs.map((d) => `--add-dir ${d}`).join(" ");
+  return `claude --allowedTools "${allowedTools}"${addDirs ? " " + addDirs : ""} -p`;
 }
 
 export interface ReviewServiceConfig {
@@ -41,6 +43,8 @@ export interface ReviewServiceConfig {
   intervalMs?: number;
   agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
+  // Extra directories for read-only MCP context (--add-dir). siteDir is always included.
+  contextDirs?: string[];
 }
 
 export interface ReviewServiceHandle {
@@ -65,6 +69,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     intervalMs = DEFAULT_INTERVAL_MS,
     agentCommand = defaultAgentCommand,
     agentPromptFile,
+    contextDirs: extraContextDirs = [],
   } = config;
 
   const docsPathMap = buildDocsPathMap(siteConfig);
@@ -72,6 +77,8 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   const docsDirs = Array.from(docsPathMap.values()).map((fsPath) =>
     path.join(siteDir, fsPath),
   );
+  // siteDir is always included as context so the agent can read the source repo
+  const contextDirs = [siteDir, ...extraContextDirs];
 
   // Track docs currently being processed to prevent concurrent writes to the same file
   const inProgress = new Set<string>();
@@ -79,7 +86,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
   const tick = () =>
-    runTick(siteDir, reviewsDir, docsPathMap, docsDirs, agentCommand, agentPromptFile, inProgress);
+    runTick(siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, inProgress);
 
   const intervalId = setInterval(() => { void tick(); }, intervalMs);
 
@@ -94,6 +101,7 @@ async function runTick(
   reviewsDir: string,
   docsPathMap: Map<string, string>,
   docsDirs: string[],
+  contextDirs: string[],
   agentCommand: string | AgentCommandFn,
   agentPromptFile: string | undefined,
   inProgress: Set<string>,
@@ -106,7 +114,7 @@ async function runTick(
   // Resolve agentCommand to a string once per tick
   const resolvedCommand =
     typeof agentCommand === "function"
-      ? agentCommand({ reviewsDir, docsDirs })
+      ? agentCommand({ reviewsDir, docsDirs, contextDirs })
       : agentCommand;
 
   const promptTemplate = await loadPromptTemplate(agentPromptFile);

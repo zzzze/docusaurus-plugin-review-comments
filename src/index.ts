@@ -42,6 +42,7 @@ export default function pluginReviewComments(
                 intervalMs: rs?.intervalMs,
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,
+                contextDirs: rs?.contextDirs,
               });
               createReviewsMiddleware(app, resolvedReviewsDir, options.defaultAuthor, tick);
             } else {
