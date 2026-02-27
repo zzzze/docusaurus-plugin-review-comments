@@ -131,4 +131,43 @@ describe("validateOptions — reviewService", () => {
       }),
     ).toThrow("'reviewService.intervalMs' must be a positive number");
   });
+
+  it("accepts contextDirs as an array of strings", () => {
+    const result = callValidate({
+      reviewsDir: "./.reviews",
+      defaultAuthor: "reviewer",
+      reviewService: { contextDirs: ["../my-repo", "/abs/path"] },
+    });
+    expect(result.reviewService?.contextDirs).toEqual(["../my-repo", "/abs/path"]);
+  });
+
+  it("throws when contextDirs is not an array", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { contextDirs: "../my-repo" },
+      }),
+    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+  });
+
+  it("throws when contextDirs contains a non-string entry", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { contextDirs: ["../ok", 42] },
+      }),
+    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+  });
+
+  it("throws when contextDirs contains an empty string", () => {
+    expect(() =>
+      callValidate({
+        reviewsDir: "./.reviews",
+        defaultAuthor: "reviewer",
+        reviewService: { contextDirs: [""] },
+      }),
+    ).toThrow("'reviewService.contextDirs' must be an array of non-empty strings");
+  });
 });

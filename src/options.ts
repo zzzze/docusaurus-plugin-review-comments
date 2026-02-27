@@ -33,6 +33,16 @@ export function validateOptions({
         "docusaurus-plugin-review-comments: 'reviewService.agentCommand' must be a string or function",
       );
     }
+    if (rs.contextDirs !== undefined) {
+      if (
+        !Array.isArray(rs.contextDirs) ||
+        rs.contextDirs.some((d) => typeof d !== "string" || !d)
+      ) {
+        throw new Error(
+          "docusaurus-plugin-review-comments: 'reviewService.contextDirs' must be an array of non-empty strings",
+        );
+      }
+    }
   }
   return options as PluginOptions;
 }
