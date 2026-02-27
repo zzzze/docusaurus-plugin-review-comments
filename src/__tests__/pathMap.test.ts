@@ -73,6 +73,16 @@ describe("buildDocsPathMap", () => {
     expect(map.get("docs")).toBe("docs");
   });
 
+  it("reads plugin-content-docs from 'classic' short-name preset", () => {
+    const map = buildDocsPathMap(
+      makeConfig(
+        [],
+        [["classic", { docs: { path: "docs", routeBasePath: "docs" } }]],
+      ),
+    );
+    expect(map.get("docs")).toBe("docs");
+  });
+
   it("handles multiple docs instances", () => {
     const map = buildDocsPathMap(
       makeConfig([

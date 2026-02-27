@@ -27,7 +27,7 @@ export function buildDocsPathMap(
     const [presetName, presetOptions] = preset;
     if (
       typeof presetName === "string" &&
-      presetName.includes("preset-classic") &&
+      (presetName === "classic" || presetName.includes("preset-classic")) &&
       presetOptions &&
       typeof presetOptions === "object"
     ) {
