@@ -13,8 +13,16 @@ export function createReviewsMiddleware(
   app: Express,
   reviewsDir: string,
   defaultAuthor: string,
+  onTrigger?: () => Promise<void>,
 ): void {
   app.use("/api/reviews", express.json());
+
+  if (onTrigger) {
+    app.post("/api/reviews/trigger", (_req, res) => {
+      void onTrigger();
+      res.json({ started: true });
+    });
+  }
 
   app.get("/api/reviews/pending", async (_req, res) => {
     const pendingDocs: string[] = [];

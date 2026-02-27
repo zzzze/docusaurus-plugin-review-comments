@@ -643,3 +643,33 @@ describe("GET /api/reviews/pending", () => {
     expect((res.body as { docs: string[] }).docs[0]).toBe("docs/multi");
   });
 });
+
+describe("POST /api/reviews/trigger", () => {
+  let tmpDir: string;
+
+  beforeEach(async () => {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "reviews-trigger-"));
+  });
+
+  afterEach(async () => {
+    await fs.rm(tmpDir, { recursive: true, force: true });
+  });
+
+  it("returns 404 when no onTrigger callback provided", async () => {
+    const app = makeApp(tmpDir);
+    const res = await request(app, "POST", "/api/reviews/trigger");
+    expect(res.status).toBe(404);
+  });
+
+  it("calls onTrigger and returns { started: true }", async () => {
+    let called = false;
+    const app = express();
+    createReviewsMiddleware(app, tmpDir, "tester", async () => {
+      called = true;
+    });
+    const res = await request(app, "POST", "/api/reviews/trigger");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ started: true });
+    expect(called).toBe(true);
+  });
+});
