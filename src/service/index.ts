@@ -7,6 +7,19 @@ import { buildDocsPathMap } from "./pathMap";
 import type { AgentCommandFn } from "../types";
 
 const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
+const LOG_PREFIX = "[review-service]";
+
+function log(msg: string): void {
+  console.log(`${LOG_PREFIX} ${msg}`);
+}
+
+function warn(msg: string): void {
+  console.warn(`${LOG_PREFIX} ${msg}`);
+}
+
+function error(msg: string): void {
+  console.error(`${LOG_PREFIX} ${msg}`);
+}
 
 function defaultAgentCommand({ reviewsDir, docsDirs }: { reviewsDir: string; docsDirs: string[] }): string {
   const addDirs = [reviewsDir, ...docsDirs]
@@ -57,6 +70,8 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   // Track docs currently being processed to prevent concurrent writes to the same file
   const inProgress = new Set<string>();
 
+  log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
+
   const tick = () =>
     runTick(siteDir, reviewsDir, docsPathMap, docsDirs, agentCommand, agentPromptFile, inProgress);
 
@@ -80,6 +95,8 @@ async function runTick(
   const pendingDocs = await collectPendingDocs(reviewsDir);
   if (pendingDocs.length === 0) return;
 
+  log(`Found ${pendingDocs.length} pending doc(s): ${pendingDocs.join(", ")}`);
+
   // Resolve agentCommand to a string once per tick
   const resolvedCommand =
     typeof agentCommand === "function"
@@ -90,7 +107,10 @@ async function runTick(
 
   for (const documentPath of pendingDocs) {
     // Skip docs already being processed by a previous tick's agent
-    if (inProgress.has(documentPath)) continue;
+    if (inProgress.has(documentPath)) {
+      log(`Skipping ${documentPath} (agent already running)`);
+      continue;
+    }
 
     const prompt = buildPrompt(
       promptTemplate,
@@ -100,7 +120,7 @@ async function runTick(
       documentPath,
     );
     inProgress.add(documentPath);
-    spawnAgent(resolvedCommand, prompt, siteDir, () => inProgress.delete(documentPath));
+    spawnAgent(resolvedCommand, prompt, siteDir, documentPath, () => inProgress.delete(documentPath));
   }
 }
 
@@ -174,6 +194,7 @@ function spawnAgent(
   agentCommand: string,
   prompt: string,
   cwd: string,
+  documentPath: string,
   onDone: () => void,
 ): void {
   // If agentCommand contains {prompt}, substitute it inline (e.g. "opencode run {prompt}").
@@ -183,15 +204,24 @@ function spawnAgent(
       /\{prompt\}/g,
       prompt.replace(/'/g, "'\\''"),
     );
+    log(`Spawning agent for ${documentPath}: ${cmd.slice(0, 80)}${cmd.length > 80 ? "…" : ""}`);
     const child = spawn("sh", ["-c", cmd], {
       cwd,
       stdio: "inherit",
     });
     child?.on("error", (err) => {
-      console.error("[review-service] Failed to spawn agent:", err.message);
+      error(`Failed to spawn agent for ${documentPath}: ${err.message}`);
     });
-    child?.on("close", onDone);
+    child?.on("close", (code) => {
+      if (code === 0) {
+        log(`Agent finished for ${documentPath} (exit 0)`);
+      } else {
+        warn(`Agent exited with code ${code ?? "null"} for ${documentPath}`);
+      }
+      onDone();
+    });
   } else {
+    log(`Spawning agent for ${documentPath}: ${agentCommand}`);
     const child = spawn("sh", ["-c", agentCommand], {
       cwd,
       stdio: ["pipe", "inherit", "inherit"],
@@ -199,8 +229,15 @@ function spawnAgent(
     child?.stdin?.write(prompt);
     child?.stdin?.end();
     child?.on("error", (err) => {
-      console.error("[review-service] Failed to spawn agent:", err.message);
+      error(`Failed to spawn agent for ${documentPath}: ${err.message}`);
     });
-    child?.on("close", onDone);
+    child?.on("close", (code) => {
+      if (code === 0) {
+        log(`Agent finished for ${documentPath} (exit 0)`);
+      } else {
+        warn(`Agent exited with code ${code ?? "null"} for ${documentPath}`);
+      }
+      onDone();
+    });
   }
 }
