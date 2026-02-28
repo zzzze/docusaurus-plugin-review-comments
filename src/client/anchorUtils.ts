@@ -25,7 +25,7 @@ export function findNearestHeading(node: Node): string {
         return prev.id || "";
       }
       if (!prev) break;
-      sibling = prev;
+      sibling = prev as HTMLElement;
     }
     current = current.parentNode;
   }

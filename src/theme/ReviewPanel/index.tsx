@@ -105,7 +105,7 @@ function useUndoResolve(
   handleUndo: () => void;
 } {
   const [undoState, setUndoState] = useState<UndoState | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {

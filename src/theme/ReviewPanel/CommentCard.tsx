@@ -20,9 +20,9 @@ function formatRelativeTime(isoDate: string): string {
 }
 
 const BADGE_CLASS: Record<ReviewComment["type"], string> = {
-  question: styles.badgeQuestion,
-  suggestion: styles.badgeSuggestion,
-  issue: styles.badgeIssue,
+  question: styles.badgeQuestion!,
+  suggestion: styles.badgeSuggestion!,
+  issue: styles.badgeIssue!,
 };
 
 interface CommentCardProps {
