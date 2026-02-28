@@ -14,6 +14,10 @@ export default function pluginReviewComments(
   context: LoadContext,
   options: PluginOptions,
 ): Plugin {
+  if (process.env.NODE_ENV !== "development") {
+    return { name: "docusaurus-plugin-review-comments" };
+  }
+
   const resolvedReviewsDir = path.resolve(context.siteDir, options.reviewsDir);
 
   return {
