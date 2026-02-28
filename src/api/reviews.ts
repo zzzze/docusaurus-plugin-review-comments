@@ -37,6 +37,7 @@ export function createReviewsMiddleware(
       hasPrompt: !!getPrompt,
       hasGlobalPrompt: !!getGlobalPrompt,
       ...(onTrigger && intervalMs !== undefined ? { intervalMs } : {}),
+      ...(agentName !== undefined ? { agentName } : {}),
     });
   });
 

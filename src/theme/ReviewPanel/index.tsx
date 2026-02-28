@@ -205,9 +205,12 @@ export function ReviewPanel(): React.ReactElement | null {
     () => comments.some((c) => {
       if (c.status !== "open") return false;
       if (c.replies.length === 0) return true;
-      return c.replies[c.replies.length - 1]!.author !== "ai";
+      const last = c.replies[c.replies.length - 1]!;
+      // role takes precedence; fall back to agentName comparison for old data lacking role
+      const isAgent = last.role === "agent" || (last.role === undefined && !!caps?.agentName && last.author === caps.agentName);
+      return !isAgent;
     }),
-    [comments],
+    [comments, caps],
   );
 
   const handleCopyPrompt = useCallback(async () => {

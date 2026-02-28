@@ -93,13 +93,13 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   });
   const contextDirs: ContextDir[] = resolvedContextDirs;
 
-  // Track docs currently being processed to prevent concurrent writes to the same file
-  const inProgress = new Set<string>();
+  // Global lock: only one agent runs at a time across all docs
+  const agentLock = { running: false };
 
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
   const tick = () =>
-    runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, inProgress, notifier });
+    runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, agentLock, notifier });
 
   const intervalId = setInterval(() => { void tick(); }, intervalMs);
 
@@ -119,10 +119,10 @@ async function runTick(opts: {
   agentPromptFile: string | undefined;
   agentName: string;
   env: Record<string, string> | undefined;
-  inProgress: Set<string>;
+  agentLock: { running: boolean };
   notifier?: SseNotifier;
 }): Promise<void> {
-  const { siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, inProgress, notifier } = opts;
+  const { siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, agentLock, notifier } = opts;
 
   const pendingDocs = await collectPendingDocs(reviewsDir, agentName);
   if (pendingDocs.length === 0) return;
@@ -137,17 +137,15 @@ async function runTick(opts: {
 
   const promptTemplate = await loadPromptTemplate(agentPromptFile);
 
-  for (const documentPath of pendingDocs) {
-    // Skip docs already being processed by a previous tick's agent
-    if (inProgress.has(documentPath)) {
-      log(`Skipping ${documentPath} (agent already running)`);
-      continue;
-    }
-
-    const prompt = buildPrompt({ template: promptTemplate, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs, agentName });
-    inProgress.add(documentPath);
-    spawnAgent({ agentCommand: resolvedCommand, prompt, cwd: siteDir, documentPath, env, onDone: () => inProgress.delete(documentPath), notifier });
+  if (agentLock.running) {
+    log("Agent already running, skipping tick");
+    return;
   }
+
+  const documentPath = pendingDocs[0]!;
+  const prompt = buildPrompt({ template: promptTemplate, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs, agentName });
+  agentLock.running = true;
+  spawnAgent({ agentCommand: resolvedCommand, prompt, cwd: siteDir, documentPath, env, onDone: () => { agentLock.running = false; }, notifier });
 }
 
 async function collectPendingDocs(reviewsDir: string, agentName: string): Promise<string[]> {

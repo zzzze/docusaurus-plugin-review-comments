@@ -343,7 +343,7 @@ describe("startReviewService", () => {
     expect(written).not.toContain("{allowedPaths}");
   });
 
-  it("does not spawn a second agent for a doc already in progress", async () => {
+  it("does not spawn a second agent while a previous agent is still running", async () => {
     const reviewFile = {
       documentPath: "docs/in-progress",
       comments: [

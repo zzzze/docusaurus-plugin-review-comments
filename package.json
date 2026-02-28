@@ -1,6 +1,6 @@
 {
   "name": "docusaurus-plugin-review-comments",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Docusaurus plugin for adding inline review comments to your documentation site",
   "keywords": [
     "docusaurus",

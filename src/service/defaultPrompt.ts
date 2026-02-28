@@ -40,6 +40,8 @@ const RULES = `\
 - Always read the full \`.md\` file before responding to any comment on it
 - Keep replies concise and directly address the comment
 - When modifying \`.md\` source, make minimal targeted edits
+- You may modify any \`.md\` file within the allowed paths if a comment requires it — not just the primary document under review
+- If you modify \`.md\` files beyond the primary document, list every modified file path in your reply
 - Preserve the existing JSON structure; only modify the specific comment being addressed`;
 
 const SINGLE_DOC_TASK = `\
@@ -57,8 +59,8 @@ Process reviews for document: \`{documentPath}\`
    - Locate the anchored content using \`anchor.heading\` and \`anchor.exact\`
    - Process based on \`type\`:
      - \`question\` — Add a reply answering the question
-     - \`suggestion\` — Evaluate the suggestion; if appropriate, edit the \`.md\` source minimally, then add a reply explaining what changed (or why you didn't change it)
-     - \`issue\` — Fix the issue in the \`.md\` source, then add a reply explaining the fix
+     - \`suggestion\` — Evaluate the suggestion; if appropriate, edit the \`.md\` source(s) minimally, then add a reply explaining what changed (or why you didn't change it); if you modified files other than the primary document, list them
+     - \`issue\` — Fix the issue in the \`.md\` source(s), then add a reply explaining the fix and listing all modified files
 5. Add your reply to the \`replies\` array in the review JSON file`;
 
 const GLOBAL_TASK = `\
@@ -76,8 +78,8 @@ For each document:
    - Locate the anchored content using \`anchor.heading\` and \`anchor.exact\`
    - Process based on \`type\`:
      - \`question\` — Add a reply answering the question
-     - \`suggestion\` — Evaluate the suggestion; edit the \`.md\` source minimally if appropriate, then reply
-     - \`issue\` — Fix the issue in the \`.md\` source, then reply explaining the fix
+     - \`suggestion\` — Evaluate the suggestion; edit the \`.md\` source(s) minimally if appropriate, then reply; if you modified files other than the primary document, list them
+     - \`issue\` — Fix the issue in the \`.md\` source(s), then reply explaining the fix and listing all modified files
 4. Move to the next document
 
 ## Documents with Pending Reviews

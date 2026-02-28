@@ -57,6 +57,8 @@ export interface Capabilities {
   hasGlobalPrompt: boolean;
   /** Polling interval in ms when hasTrigger is true */
   intervalMs?: number;
+  /** Configured agent name — used to identify agent replies in old data lacking a role field */
+  agentName?: string;
 }
 
 export async function fetchCapabilities(): Promise<Capabilities> {
