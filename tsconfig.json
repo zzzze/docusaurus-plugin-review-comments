@@ -13,8 +13,8 @@
     "outDir": "lib",
     "rootDir": "src",
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    "declarationMap": false,
+    "sourceMap": false
   },
   "include": ["src"],
   "exclude": ["node_modules", "lib", "**/__tests__"]
