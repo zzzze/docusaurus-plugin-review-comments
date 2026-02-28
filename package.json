@@ -1,7 +1,28 @@
 {
   "name": "docusaurus-plugin-review-comments",
   "version": "0.0.1",
-  "private": true,
+  "description": "A Docusaurus plugin for adding inline review comments to your documentation site",
+  "keywords": [
+    "docusaurus",
+    "docusaurus-plugin",
+    "review",
+    "comments",
+    "annotation",
+    "documentation"
+  ],
+  "author": "zzzze",
+  "license": "MIT",
+  "homepage": "https://github.com/zzzze/docusaurus-plugin-review-comments#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zzzze/docusaurus-plugin-review-comments.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zzzze/docusaurus-plugin-review-comments/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
