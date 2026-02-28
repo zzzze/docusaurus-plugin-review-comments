@@ -9,6 +9,7 @@ const mockReview = {
   unresolveComment: vi.fn().mockResolvedValue(undefined),
   deleteComment: vi.fn().mockResolvedValue(undefined),
   editReply: vi.fn().mockResolvedValue(undefined),
+  deleteReply: vi.fn().mockResolvedValue(undefined),
   setHoveredCommentId: vi.fn(),
   addComment: vi.fn(),
   addReply: vi.fn(),
@@ -276,6 +277,80 @@ describe("CommentCard", () => {
 
     fireEvent.click(screen.getByText("1 reply"));
     expect(screen.getByLabelText("Edit reply")).toBeInTheDocument();
+  });
+
+  it("shows delete button for replies on open comments", () => {
+    const comment = createComment({
+      replies: [
+        { id: "r1", author: "bob", content: "A reply", createdAt: FIXED_DATE },
+      ],
+    });
+    render(<CommentCard comment={comment} />);
+
+    fireEvent.click(screen.getByText("1 reply"));
+    expect(screen.getByLabelText("Delete reply")).toBeInTheDocument();
+  });
+
+  it("shows delete confirmation when reply delete button clicked", () => {
+    const comment = createComment({
+      replies: [
+        { id: "r1", author: "bob", content: "A reply", createdAt: FIXED_DATE },
+      ],
+    });
+    render(<CommentCard comment={comment} />);
+
+    fireEvent.click(screen.getByText("1 reply"));
+    fireEvent.click(screen.getByLabelText("Delete reply"));
+
+    expect(screen.getByText("Delete reply?")).toBeInTheDocument();
+    expect(screen.getByLabelText("Confirm delete reply")).toBeInTheDocument();
+    expect(screen.getByLabelText("Cancel delete reply")).toBeInTheDocument();
+  });
+
+  it("calls deleteReply when confirming reply delete", () => {
+    const comment = createComment({
+      replies: [
+        { id: "r1", author: "bob", content: "A reply", createdAt: FIXED_DATE },
+      ],
+    });
+    render(<CommentCard comment={comment} />);
+
+    fireEvent.click(screen.getByText("1 reply"));
+    fireEvent.click(screen.getByLabelText("Delete reply"));
+    fireEvent.click(screen.getByLabelText("Confirm delete reply"));
+
+    expect(mockReview.deleteReply).toHaveBeenCalledWith("c1", "r1");
+  });
+
+  it("cancels reply delete confirmation when cancel clicked", () => {
+    const comment = createComment({
+      replies: [
+        { id: "r1", author: "bob", content: "A reply", createdAt: FIXED_DATE },
+      ],
+    });
+    render(<CommentCard comment={comment} />);
+
+    fireEvent.click(screen.getByText("1 reply"));
+    fireEvent.click(screen.getByLabelText("Delete reply"));
+    fireEvent.click(screen.getByLabelText("Cancel delete reply"));
+
+    expect(screen.queryByText("Delete reply?")).not.toBeInTheDocument();
+    expect(mockReview.deleteReply).not.toHaveBeenCalled();
+  });
+
+  it("hides delete button for replies on resolved comments", () => {
+    const comment = createComment({
+      status: "resolved",
+      replies: [
+        { id: "r1", author: "bob", content: "A reply", createdAt: FIXED_DATE },
+      ],
+    });
+    render(<CommentCard comment={comment} />);
+
+    fireEvent.click(screen.getByRole("button")); // expand resolved
+    fireEvent.click(screen.getByText("1 reply"));
+
+    expect(screen.queryByLabelText("Delete reply")).not.toBeInTheDocument();
   });
 
   it("hides edit button for replies on resolved comments", () => {

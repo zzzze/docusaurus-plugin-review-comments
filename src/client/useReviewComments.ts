@@ -14,6 +14,7 @@ interface ReviewCommentsState {
   addReply: (commentId: string, content: string) => Promise<void>;
   editComment: (commentId: string, content: string) => Promise<void>;
   editReply: (commentId: string, replyId: string, content: string) => Promise<void>;
+  deleteReply: (commentId: string, replyId: string) => Promise<void>;
   resolveComment: (commentId: string) => Promise<void>;
   unresolveComment: (commentId: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
@@ -114,6 +115,14 @@ export function useReviewComments(docPath: string): ReviewCommentsState {
     [docPath, refetch],
   );
 
+  const deleteReplyFn = useCallback(
+    async (commentId: string, replyId: string) => {
+      await api.updateComment(commentId, { doc: docPath, deleteReply: { replyId } });
+      await refetch();
+    },
+    [docPath, refetch],
+  );
+
   const resolveComment = useCallback(
     async (commentId: string) => {
       await api.updateComment(commentId, { doc: docPath, status: "resolved" });
@@ -146,6 +155,7 @@ export function useReviewComments(docPath: string): ReviewCommentsState {
     addReply,
     editComment,
     editReply,
+    deleteReply: deleteReplyFn,
     resolveComment,
     unresolveComment,
     deleteComment: deleteCommentFn,

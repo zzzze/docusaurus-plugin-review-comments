@@ -53,10 +53,12 @@ const config: Config = {
   plugins: [
     [
       require.resolve('../src/index.ts'),
+      // require.resolve('../lib/index.js'),
       {
         reviewsDir: '.reviews',
         defaultAuthor: 'Demo User',
         reviewService: {
+          enabled: true,
           contextDirs: ['../'],
         },
       },

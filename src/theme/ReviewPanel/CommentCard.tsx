@@ -39,6 +39,7 @@ export function CommentCard({
     unresolveComment,
     deleteComment,
     editReply,
+    deleteReply,
     setHoveredCommentId,
   } = useReview();
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -50,6 +51,7 @@ export function CommentCard({
   const [isRepliesExpanded, setIsRepliesExpanded] = useState(false);
   const [isContentClamped, setIsContentClamped] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [confirmingDeleteReplyId, setConfirmingDeleteReplyId] = useState<string | null>(null);
   const [confirmingResolve, setConfirmingResolve] = useState(false);
   const [confirmingReopen, setConfirmingReopen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -231,18 +233,51 @@ export function CommentCard({
                 <span className={styles.time}>
                   {formatRelativeTime(reply.createdAt)}
                 </span>
-                {!isResolved && editingReplyId !== reply.id && (
-                  <button
-                    type="button"
-                    className={styles.replyEditButton}
-                    onClick={() => {
-                      setEditingReplyId(reply.id);
-                      setEditingReplyContent(reply.content);
-                    }}
-                    aria-label="Edit reply"
-                  >
-                    <Pencil size={14} />
-                  </button>
+                {!isResolved && editingReplyId !== reply.id && confirmingDeleteReplyId !== reply.id && (
+                  <span className={styles.replyActions}>
+                    <button
+                      type="button"
+                      className={styles.replyEditButton}
+                      onClick={() => {
+                        setEditingReplyId(reply.id);
+                        setEditingReplyContent(reply.content);
+                      }}
+                      aria-label="Edit reply"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.replyEditButton}
+                      onClick={() => setConfirmingDeleteReplyId(reply.id)}
+                      aria-label="Delete reply"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </span>
+                )}
+                {!isResolved && confirmingDeleteReplyId === reply.id && (
+                  <span className={styles.replyDeleteConfirm}>
+                    <span className={styles.confirmText}>Delete reply?</span>
+                    <button
+                      type="button"
+                      className={styles.replyEditButton}
+                      onClick={() => {
+                        void deleteReply(comment.id, reply.id).then(() => setConfirmingDeleteReplyId(null));
+                      }}
+                      aria-label="Confirm delete reply"
+                    >
+                      <Check size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.replyEditButton}
+                      onClick={() => setConfirmingDeleteReplyId(null)}
+                      aria-label="Cancel delete reply"
+                    >
+                      <X size={14} />
+                    </button>
+                  </span>
                 )}
               </div>
               {editingReplyId === reply.id ? (

@@ -159,12 +159,13 @@ export function createReviewsMiddleware(
 
   app.patch("/api/reviews/:commentId", async (req, res) => {
     const { commentId } = req.params;
-    const { doc, status, content, reply, editReply } = req.body as {
+    const { doc, status, content, reply, editReply, deleteReply } = req.body as {
       doc?: string;
       status?: ReviewComment["status"];
       content?: string;
       reply?: { author: string; content: string };
       editReply?: { replyId: string; content: string };
+      deleteReply?: { replyId: string };
     };
 
     if (!doc) {
@@ -203,6 +204,13 @@ export function createReviewsMiddleware(
       const existing = comment.replies.find((r) => r.id === editReply.replyId);
       if (existing) {
         existing.content = editReply.content;
+      }
+    }
+
+    if (deleteReply) {
+      const idx = comment.replies.findIndex((r) => r.id === deleteReply.replyId);
+      if (idx !== -1) {
+        comment.replies.splice(idx, 1);
       }
     }
 

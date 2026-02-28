@@ -376,6 +376,12 @@
   margin-bottom: 2px;
 }
 
+.replyActions {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+}
+
 .replyEditButton {
   background: none;
   border: none;
@@ -384,9 +390,19 @@
   color: var(--ifm-color-secondary-darkest);
   opacity: 0;
   padding: 2px 4px;
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
+}
+
+.replyDeleteConfirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.replyDeleteConfirm .replyEditButton {
+  opacity: 1;
 }
 
 .reply:hover .replyEditButton {

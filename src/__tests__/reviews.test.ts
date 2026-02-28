@@ -332,6 +332,63 @@ describe("PATCH /api/reviews/:commentId", () => {
     expect(comment.replies[0]!.id).toBeTruthy();
   });
 
+  it("deletes an existing reply", async () => {
+    const app = makeApp(tmpDir);
+    const createRes = await request(app, "POST", "/api/reviews", {
+      doc: "guide/intro",
+      anchor: sampleAnchor,
+      content: "Q",
+      type: "question",
+    });
+    const commentId = (createRes.body as ReviewComment).id;
+
+    const replyRes = await request(app, "PATCH", `/api/reviews/${commentId}`, {
+      doc: "guide/intro",
+      reply: { author: "bob", content: "To be deleted" },
+    });
+    const replyId = (replyRes.body as ReviewComment).replies[0]!.id;
+
+    const deleteRes = await request(app, "PATCH", `/api/reviews/${commentId}`, {
+      doc: "guide/intro",
+      deleteReply: { replyId },
+    });
+    expect(deleteRes.status).toBe(200);
+    expect((deleteRes.body as ReviewComment).replies).toHaveLength(0);
+  });
+
+  it("deletes only the targeted reply when multiple replies exist", async () => {
+    const app = makeApp(tmpDir);
+    const createRes = await request(app, "POST", "/api/reviews", {
+      doc: "guide/intro",
+      anchor: sampleAnchor,
+      content: "Q",
+      type: "question",
+    });
+    const commentId = (createRes.body as ReviewComment).id;
+
+    await request(app, "PATCH", `/api/reviews/${commentId}`, {
+      doc: "guide/intro",
+      reply: { author: "bob", content: "Keep me" },
+    });
+    const replyRes = await request(app, "PATCH", `/api/reviews/${commentId}`, {
+      doc: "guide/intro",
+      reply: { author: "alice", content: "Delete me" },
+    });
+    const replies = (replyRes.body as ReviewComment).replies;
+    const keepId = replies[0]!.id;
+    const deleteId = replies[1]!.id;
+
+    const deleteRes = await request(app, "PATCH", `/api/reviews/${commentId}`, {
+      doc: "guide/intro",
+      deleteReply: { replyId: deleteId },
+    });
+    expect(deleteRes.status).toBe(200);
+    const remaining = (deleteRes.body as ReviewComment).replies;
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0]!.id).toBe(keepId);
+    expect(remaining[0]!.content).toBe("Keep me");
+  });
+
   it("edits an existing reply", async () => {
     const app = makeApp(tmpDir);
     const createRes = await request(app, "POST", "/api/reviews", {

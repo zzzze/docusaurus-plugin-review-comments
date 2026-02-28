@@ -37,6 +37,7 @@ export async function updateComment(
     content?: string;
     reply?: { author: string; content: string };
     editReply?: { replyId: string; content: string };
+    deleteReply?: { replyId: string };
   },
 ): Promise<ReviewComment> {
   const res = await fetch(`${API_BASE}/${commentId}`, {

@@ -62,7 +62,7 @@ export default {
           intervalMs: 300000,
           agentCommand: 'claude --dangerously-skip-permissions',
           agentPromptFile: 'path/to/prompt.md',
-          contextDirs: ['../source-repo'],
+          contextDirs: [{ dir: '../source-repo', desc: 'source repository' }],
         },
       },
     ],
