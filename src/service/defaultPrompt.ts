@@ -26,6 +26,7 @@ const REPLY_FORMAT = `\
 {
   "id": "<generate UUID v4>",
   "author": "{agentName}",
+  "role": "agent",
   "content": "<your response in markdown>",
   "createdAt": "<current ISO 8601 timestamp>"
 }

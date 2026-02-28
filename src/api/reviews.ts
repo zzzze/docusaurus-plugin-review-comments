@@ -15,7 +15,9 @@ export function createReviewsMiddleware(
   app: Express,
   opts: {
     reviewsDir: string;
-    reviewerName: string;
+    userName: string;
+    /** Used to identify agent replies when checking pending status (falls back to role field). */
+    agentName?: string;
     onTrigger?: () => Promise<void>;
     notifier?: SseNotifier;
     // When provided, registers GET /api/reviews/prompt for manual AI agent use.
@@ -26,7 +28,7 @@ export function createReviewsMiddleware(
     intervalMs?: number;
   },
 ): void {
-  const { reviewsDir, reviewerName, onTrigger, notifier, getPrompt, getGlobalPrompt, intervalMs } = opts;
+  const { reviewsDir, userName, agentName, onTrigger, notifier, getPrompt, getGlobalPrompt, intervalMs } = opts;
   app.use("/api/reviews", express.json());
 
   app.get("/api/reviews/capabilities", (_req, res) => {
@@ -91,7 +93,8 @@ export function createReviewsMiddleware(
         if (comment.status !== "open") return false;
         if (comment.replies.length === 0) return true;
         const lastReply = comment.replies[comment.replies.length - 1]!;
-        return lastReply.author !== "ai";
+        const isAgent = lastReply.role === "agent" || (agentName !== undefined && lastReply.author === agentName);
+        return !isAgent;
       });
       if (hasPending && reviewFile.documentPath) {
         pendingDocs.push(reviewFile.documentPath);
@@ -143,7 +146,7 @@ export function createReviewsMiddleware(
     const comment: ReviewComment = {
       id: uuidv4(),
       anchor,
-      author: reviewerName,
+      author: userName,
       type,
       status: "open",
       content,
@@ -193,7 +196,8 @@ export function createReviewsMiddleware(
     if (reply) {
       const newReply: ReviewReply = {
         id: uuidv4(),
-        author: reply.author || reviewerName,
+        author: reply.author || userName,
+        role: "user",
         content: reply.content,
         createdAt: new Date().toISOString(),
       };

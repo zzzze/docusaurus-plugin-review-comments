@@ -21,6 +21,8 @@ export type ReviewAnchor = TextAnchor | BlockAnchor | DocumentAnchor;
 export interface ReviewReply {
   id: string;
   author: string;
+  /** Stable role indicator unaffected by name changes. "agent" = AI-generated reply. */
+  role?: "agent" | "user";
   content: string;
   createdAt: string;
 }
@@ -72,7 +74,7 @@ export interface ReviewServiceOptions {
 
 export interface PluginOptions {
   reviewsDir: string;
-  reviewerName: string;
+  userName: string;
   // Display name used as the author field on AI-generated replies. Defaults to "Claude".
   // Used both by the review service and by the prompt endpoints for manual agent use.
   agentName?: string;

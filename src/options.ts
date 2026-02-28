@@ -9,9 +9,9 @@ export function validateOptions({
       "docusaurus-plugin-review-comments: 'reviewsDir' option is required",
     );
   }
-  if (!options.reviewerName || typeof options.reviewerName !== "string") {
+  if (!options.userName || typeof options.userName !== "string") {
     throw new Error(
-      "docusaurus-plugin-review-comments: 'reviewerName' option is required",
+      "docusaurus-plugin-review-comments: 'userName' option is required",
     );
   }
   if (options.agentName !== undefined && (typeof options.agentName !== "string" || !options.agentName)) {

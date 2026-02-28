@@ -67,6 +67,46 @@ describe("startReviewService", () => {
     stop();
   });
 
+  it("does not spawn agent when last reply has role: agent", async () => {
+    const reviewFile = {
+      documentPath: "docs/agent-role",
+      comments: [
+        {
+          id: "c1",
+          anchor: { scope: "document" },
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Q?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [
+            {
+              id: "r1",
+              author: "OldName",
+              role: "agent",
+              content: "Already answered.",
+              createdAt: "2025-01-02T00:00:00.000Z",
+            },
+          ],
+        },
+      ],
+    };
+    const filePath = path.join(reviewsDir, "docs/agent-role.reviews.json");
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(reviewFile));
+
+    const { stop, tick } = createReviewService({
+      siteDir,
+      reviewsDir,
+      siteConfig: makeConfig(),
+      agentName: "NewName", // different from reply author — role field takes precedence
+    });
+
+    await tick();
+    stop();
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
   it("does not spawn agent when no pending reviews", async () => {
     const { stop, tick } = createReviewService({
       siteDir,

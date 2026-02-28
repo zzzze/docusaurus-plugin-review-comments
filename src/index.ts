@@ -59,7 +59,8 @@ export default function pluginReviewComments(
               });
               createReviewsMiddleware(app, {
                 reviewsDir: resolvedReviewsDir,
-                reviewerName: options.reviewerName,
+                userName: options.userName,
+                agentName: options.agentName ?? DEFAULT_AGENT_NAME,
                 onTrigger: tick,
                 notifier,
                 intervalMs: rs.intervalMs ?? DEFAULT_INTERVAL_MS,
@@ -74,7 +75,8 @@ export default function pluginReviewComments(
               const agentName = options.agentName ?? DEFAULT_AGENT_NAME;
               createReviewsMiddleware(app, {
                 reviewsDir: resolvedReviewsDir,
-                reviewerName: options.reviewerName,
+                userName: options.userName,
+                agentName: options.agentName ?? DEFAULT_AGENT_NAME,
                 getPrompt: async (docPath: string) => {
                   const template = await loadPromptTemplate(agentPromptFile);
                   return buildPrompt({ template, siteDir: context.siteDir, reviewsDir: resolvedReviewsDir, docsPathMap, documentPath: docPath, contextDirs, agentName });
@@ -87,7 +89,9 @@ export default function pluginReviewComments(
                     const hasPending = rf.comments.some((c) => {
                       if (c.status !== "open") return false;
                       if (c.replies.length === 0) return true;
-                      return c.replies[c.replies.length - 1]!.author !== agentName;
+                      const lastReply = c.replies[c.replies.length - 1]!;
+                      const isAgent = lastReply.role === "agent" || lastReply.author === agentName;
+                      return !isAgent;
                     });
                     if (hasPending && rf.documentPath) pendingDocs.push(rf.documentPath);
                   }

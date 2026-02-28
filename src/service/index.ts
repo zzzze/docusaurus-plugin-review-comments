@@ -165,7 +165,8 @@ async function collectPendingDocs(reviewsDir: string, agentName: string): Promis
       if (comment.status !== "open") return false;
       if (comment.replies.length === 0) return true;
       const lastReply = comment.replies[comment.replies.length - 1]!;
-      return lastReply.author !== agentName;
+      const isAgent = lastReply.role === "agent" || lastReply.author === agentName;
+      return !isAgent;
     });
     if (hasPending && reviewFile.documentPath) {
       pendingDocs.push(reviewFile.documentPath);

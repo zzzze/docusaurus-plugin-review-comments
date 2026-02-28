@@ -8,9 +8,9 @@ import { createReviewsMiddleware } from "../api/reviews";
 import type { SseNotifier } from "../api/sseNotifier";
 import type { ReviewComment, ReviewFile } from "../types";
 
-function makeApp(reviewsDir: string, author = "tester", notifier?: SseNotifier) {
+function makeApp(reviewsDir: string, author = "tester", notifier?: SseNotifier, agentName?: string) {
   const app = express();
-  createReviewsMiddleware(app, { reviewsDir, reviewerName: author, notifier });
+  createReviewsMiddleware(app, { reviewsDir, userName: author, notifier, agentName });
   return app;
 }
 
@@ -328,6 +328,7 @@ describe("PATCH /api/reviews/:commentId", () => {
     const comment = patchRes.body as ReviewComment;
     expect(comment.replies).toHaveLength(1);
     expect(comment.replies[0]!.author).toBe("bob");
+    expect(comment.replies[0]!.role).toBe("user");
     expect(comment.replies[0]!.content).toBe("Answer!");
     expect(comment.replies[0]!.id).toBeTruthy();
   });
@@ -583,7 +584,7 @@ describe("GET /api/reviews/pending", () => {
     expect(res.body).toEqual({ docs: ["docs/intro"] });
   });
 
-  it("returns doc path when last reply is not from ai", async () => {
+  it("returns doc path when last reply is from user (role field)", async () => {
     await writeReview("docs/guide.reviews.json", {
       documentPath: "docs/guide",
       comments: [
@@ -598,13 +599,15 @@ describe("GET /api/reviews/pending", () => {
           replies: [
             {
               id: "r1",
-              author: "ai",
+              author: "Claude",
+              role: "agent",
               content: "Here is how...",
               createdAt: "2025-01-02T00:00:00.000Z",
             },
             {
               id: "r2",
               author: "alice",
+              role: "user",
               content: "Thanks, but what about X?",
               createdAt: "2025-01-03T00:00:00.000Z",
             },
@@ -612,13 +615,13 @@ describe("GET /api/reviews/pending", () => {
         },
       ],
     });
-    const app = makeApp(tmpDir);
+    const app = makeApp(tmpDir, "tester", undefined, "Claude");
     const res = await request(app, "GET", "/api/reviews/pending");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ docs: ["docs/guide"] });
   });
 
-  it("excludes doc when last reply is from ai", async () => {
+  it("excludes doc when last reply has role: agent", async () => {
     await writeReview("docs/done.reviews.json", {
       documentPath: "docs/done",
       comments: [
@@ -633,7 +636,8 @@ describe("GET /api/reviews/pending", () => {
           replies: [
             {
               id: "r1",
-              author: "ai",
+              author: "Claude",
+              role: "agent",
               content: "Yes, done.",
               createdAt: "2025-01-02T00:00:00.000Z",
             },
@@ -641,7 +645,36 @@ describe("GET /api/reviews/pending", () => {
         },
       ],
     });
-    const app = makeApp(tmpDir);
+    const app = makeApp(tmpDir, "tester", undefined, "Claude");
+    const res = await request(app, "GET", "/api/reviews/pending");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ docs: [] });
+  });
+
+  it("excludes doc when last reply matches agentName (no role field — backward compat)", async () => {
+    await writeReview("docs/compat.reviews.json", {
+      documentPath: "docs/compat",
+      comments: [
+        {
+          id: "c1",
+          anchor: sampleAnchor,
+          author: "alice",
+          type: "question",
+          status: "open",
+          content: "Old?",
+          createdAt: "2025-01-01T00:00:00.000Z",
+          replies: [
+            {
+              id: "r1",
+              author: "Claude",
+              content: "Old reply without role.",
+              createdAt: "2025-01-02T00:00:00.000Z",
+            },
+          ],
+        },
+      ],
+    });
+    const app = makeApp(tmpDir, "tester", undefined, "Claude");
     const res = await request(app, "GET", "/api/reviews/pending");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ docs: [] });
@@ -724,7 +757,7 @@ describe("POST /api/reviews/trigger", () => {
     let resolveTrigger!: () => void;
     const triggerDone = new Promise<void>((r) => { resolveTrigger = r; });
     const app = express();
-    createReviewsMiddleware(app, { reviewsDir: tmpDir, reviewerName: "tester", onTrigger: async () => { resolveTrigger(); } });
+    createReviewsMiddleware(app, { reviewsDir: tmpDir, userName: "tester", onTrigger: async () => { resolveTrigger(); } });
     const res = await request(app, "POST", "/api/reviews/trigger");
     await triggerDone;
     expect(res.status).toBe(200);
