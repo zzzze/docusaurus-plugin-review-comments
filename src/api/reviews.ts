@@ -15,7 +15,7 @@ export function createReviewsMiddleware(
   app: Express,
   opts: {
     reviewsDir: string;
-    defaultAuthor: string;
+    reviewerName: string;
     onTrigger?: () => Promise<void>;
     notifier?: SseNotifier;
     // When provided, registers GET /api/reviews/prompt for manual AI agent use.
@@ -26,7 +26,7 @@ export function createReviewsMiddleware(
     intervalMs?: number;
   },
 ): void {
-  const { reviewsDir, defaultAuthor, onTrigger, notifier, getPrompt, getGlobalPrompt, intervalMs } = opts;
+  const { reviewsDir, reviewerName, onTrigger, notifier, getPrompt, getGlobalPrompt, intervalMs } = opts;
   app.use("/api/reviews", express.json());
 
   app.get("/api/reviews/capabilities", (_req, res) => {
@@ -143,7 +143,7 @@ export function createReviewsMiddleware(
     const comment: ReviewComment = {
       id: uuidv4(),
       anchor,
-      author: defaultAuthor,
+      author: reviewerName,
       type,
       status: "open",
       content,
@@ -193,7 +193,7 @@ export function createReviewsMiddleware(
     if (reply) {
       const newReply: ReviewReply = {
         id: uuidv4(),
-        author: reply.author || defaultAuthor,
+        author: reply.author || reviewerName,
         content: reply.content,
         createdAt: new Date().toISOString(),
       };

@@ -72,6 +72,9 @@ export interface ReviewServiceOptions {
 
 export interface PluginOptions {
   reviewsDir: string;
-  defaultAuthor: string;
+  reviewerName: string;
+  // Display name used as the author field on AI-generated replies. Defaults to "Claude".
+  // Used both by the review service and by the prompt endpoints for manual agent use.
+  agentName?: string;
   reviewService?: ReviewServiceOptions;
 }

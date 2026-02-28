@@ -9,9 +9,14 @@ export function validateOptions({
       "docusaurus-plugin-review-comments: 'reviewsDir' option is required",
     );
   }
-  if (!options.defaultAuthor || typeof options.defaultAuthor !== "string") {
+  if (!options.reviewerName || typeof options.reviewerName !== "string") {
     throw new Error(
-      "docusaurus-plugin-review-comments: 'defaultAuthor' option is required",
+      "docusaurus-plugin-review-comments: 'reviewerName' option is required",
+    );
+  }
+  if (options.agentName !== undefined && (typeof options.agentName !== "string" || !options.agentName)) {
+    throw new Error(
+      "docusaurus-plugin-review-comments: 'agentName' must be a non-empty string",
     );
   }
   if (options.reviewService !== undefined) {

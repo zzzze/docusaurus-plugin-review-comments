@@ -9,6 +9,7 @@ import { buildPrompt, loadPromptTemplate } from "./prompt";
 import type { SseNotifier } from "../api/sseNotifier";
 
 export const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
+export const DEFAULT_AGENT_NAME = "Claude";
 
 function log(msg: string): void {
   logger.info`[review-service] ${msg}`;
@@ -44,6 +45,7 @@ export interface ReviewServiceConfig {
   intervalMs?: number;
   agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
+  agentName?: string;
   // Extra directories for read-only MCP context (--add-dir). siteDir is always included.
   contextDirs?: Array<string | ContextDir>;
   // Extra environment variables to pass to the agent process (merged with process.env).
@@ -73,6 +75,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     intervalMs = DEFAULT_INTERVAL_MS,
     agentCommand = defaultAgentCommand,
     agentPromptFile,
+    agentName = DEFAULT_AGENT_NAME,
     contextDirs: extraContextDirs = [],
     env,
     notifier,
@@ -96,7 +99,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
   const tick = () =>
-    runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, env, inProgress, notifier });
+    runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, inProgress, notifier });
 
   const intervalId = setInterval(() => { void tick(); }, intervalMs);
 
@@ -114,13 +117,14 @@ async function runTick(opts: {
   contextDirs: ContextDir[];
   agentCommand: string | AgentCommandFn;
   agentPromptFile: string | undefined;
+  agentName: string;
   env: Record<string, string> | undefined;
   inProgress: Set<string>;
   notifier?: SseNotifier;
 }): Promise<void> {
-  const { siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, env, inProgress, notifier } = opts;
+  const { siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, inProgress, notifier } = opts;
 
-  const pendingDocs = await collectPendingDocs(reviewsDir);
+  const pendingDocs = await collectPendingDocs(reviewsDir, agentName);
   if (pendingDocs.length === 0) return;
 
   log(`Found ${pendingDocs.length} pending doc(s): ${pendingDocs.join(", ")}`);
@@ -140,13 +144,13 @@ async function runTick(opts: {
       continue;
     }
 
-    const prompt = buildPrompt({ template: promptTemplate, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs });
+    const prompt = buildPrompt({ template: promptTemplate, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs, agentName });
     inProgress.add(documentPath);
     spawnAgent({ agentCommand: resolvedCommand, prompt, cwd: siteDir, documentPath, env, onDone: () => inProgress.delete(documentPath), notifier });
   }
 }
 
-async function collectPendingDocs(reviewsDir: string): Promise<string[]> {
+async function collectPendingDocs(reviewsDir: string, agentName: string): Promise<string[]> {
   const pendingDocs: string[] = [];
   let files: string[];
   try {
@@ -161,7 +165,7 @@ async function collectPendingDocs(reviewsDir: string): Promise<string[]> {
       if (comment.status !== "open") return false;
       if (comment.replies.length === 0) return true;
       const lastReply = comment.replies[comment.replies.length - 1]!;
-      return lastReply.author !== "ai";
+      return lastReply.author !== agentName;
     });
     if (hasPending && reviewFile.documentPath) {
       pendingDocs.push(reviewFile.documentPath);

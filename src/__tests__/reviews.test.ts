@@ -10,7 +10,7 @@ import type { ReviewComment, ReviewFile } from "../types";
 
 function makeApp(reviewsDir: string, author = "tester", notifier?: SseNotifier) {
   const app = express();
-  createReviewsMiddleware(app, { reviewsDir, defaultAuthor: author, notifier });
+  createReviewsMiddleware(app, { reviewsDir, reviewerName: author, notifier });
   return app;
 }
 
@@ -724,7 +724,7 @@ describe("POST /api/reviews/trigger", () => {
     let resolveTrigger!: () => void;
     const triggerDone = new Promise<void>((r) => { resolveTrigger = r; });
     const app = express();
-    createReviewsMiddleware(app, { reviewsDir: tmpDir, defaultAuthor: "tester", onTrigger: async () => { resolveTrigger(); } });
+    createReviewsMiddleware(app, { reviewsDir: tmpDir, reviewerName: "tester", onTrigger: async () => { resolveTrigger(); } });
     const res = await request(app, "POST", "/api/reviews/trigger");
     await triggerDone;
     expect(res.status).toBe(200);

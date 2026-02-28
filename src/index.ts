@@ -2,7 +2,7 @@ import type { LoadContext, Plugin } from "@docusaurus/types";
 import type { PluginOptions, ContextDir } from "./types";
 import path from "node:path";
 import { createReviewsMiddleware } from "./api/reviews";
-import { createReviewService, DEFAULT_INTERVAL_MS } from "./service/index";
+import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "./service/index";
 import { buildDocsPathMap } from "./service/pathMap";
 import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "./service/prompt";
 import { globReviewFiles, readReviewFile } from "./api/storage";
@@ -52,13 +52,14 @@ export default function pluginReviewComments(
                 intervalMs: rs?.intervalMs,
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,
+                agentName: options.agentName ?? DEFAULT_AGENT_NAME,
                 contextDirs: rs?.contextDirs,
                 env: rs?.env,
                 notifier,
               });
               createReviewsMiddleware(app, {
                 reviewsDir: resolvedReviewsDir,
-                defaultAuthor: options.defaultAuthor,
+                reviewerName: options.reviewerName,
                 onTrigger: tick,
                 notifier,
                 intervalMs: rs.intervalMs ?? DEFAULT_INTERVAL_MS,
@@ -70,12 +71,13 @@ export default function pluginReviewComments(
                 return { dir: path.resolve(context.siteDir, dir), desc };
               });
               const agentPromptFile = options.reviewService?.agentPromptFile;
+              const agentName = options.agentName ?? DEFAULT_AGENT_NAME;
               createReviewsMiddleware(app, {
                 reviewsDir: resolvedReviewsDir,
-                defaultAuthor: options.defaultAuthor,
+                reviewerName: options.reviewerName,
                 getPrompt: async (docPath: string) => {
                   const template = await loadPromptTemplate(agentPromptFile);
-                  return buildPrompt({ template, siteDir: context.siteDir, reviewsDir: resolvedReviewsDir, docsPathMap, documentPath: docPath, contextDirs });
+                  return buildPrompt({ template, siteDir: context.siteDir, reviewsDir: resolvedReviewsDir, docsPathMap, documentPath: docPath, contextDirs, agentName });
                 },
                 getGlobalPrompt: async () => {
                   const files = await globReviewFiles(resolvedReviewsDir).catch(() => [] as string[]);
@@ -85,11 +87,11 @@ export default function pluginReviewComments(
                     const hasPending = rf.comments.some((c) => {
                       if (c.status !== "open") return false;
                       if (c.replies.length === 0) return true;
-                      return c.replies[c.replies.length - 1]!.author !== "ai";
+                      return c.replies[c.replies.length - 1]!.author !== agentName;
                     });
                     if (hasPending && rf.documentPath) pendingDocs.push(rf.documentPath);
                   }
-                  return buildGlobalPrompt({ siteDir: context.siteDir, reviewsDir: resolvedReviewsDir, docsPathMap, pendingDocs, contextDirs });
+                  return buildGlobalPrompt({ siteDir: context.siteDir, reviewsDir: resolvedReviewsDir, docsPathMap, pendingDocs, contextDirs, agentName });
                 },
               });
             }

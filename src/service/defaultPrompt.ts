@@ -25,7 +25,7 @@ const REPLY_FORMAT = `\
 \`\`\`json
 {
   "id": "<generate UUID v4>",
-  "author": "ai",
+  "author": "{agentName}",
   "content": "<your response in markdown>",
   "createdAt": "<current ISO 8601 timestamp>"
 }
@@ -49,7 +49,7 @@ Process reviews for document: \`{documentPath}\`
 1. Read the review file at \`{reviewsDir}/{documentPath}.reviews.json\`
 2. Find comments that need a response:
    - status is "open", AND
-   - either no replies yet, OR the last reply's author is not "ai"
+   - either no replies yet, OR the last reply's author is not "{agentName}"
 3. If there are no such comments, do nothing and exit.
 4. For each comment that needs a response:
    - Read the full source \`.md\` file first (path resolved using the map above)
@@ -69,7 +69,7 @@ For each document:
 1. Read its \`.reviews.json\` file
 2. Find comments that need a response:
    - status is "open", AND
-   - either no replies yet, OR the last reply's author is not "ai"
+   - either no replies yet, OR the last reply's author is not "{agentName}"
 3. For each such comment:
    - Read the full source \`.md\` file first
    - Locate the anchored content using \`anchor.heading\` and \`anchor.exact\`

@@ -8,8 +8,9 @@ export function buildGlobalPrompt(opts: {
   docsPathMap: Map<string, string>;
   pendingDocs: string[];
   contextDirs: ContextDir[];
+  agentName: string;
 }): string {
-  const { siteDir, reviewsDir, docsPathMap, pendingDocs, contextDirs } = opts;
+  const { siteDir, reviewsDir, docsPathMap, pendingDocs, contextDirs, agentName } = opts;
 
   const pathMapEntries =
     docsPathMap.size === 0
@@ -45,7 +46,8 @@ export function buildGlobalPrompt(opts: {
     .replace(/\{pendingCount\}/g, String(pendingDocs.length))
     .replace(/\{pendingDocsList\}/g, pendingDocsList)
     .replace(/\{allowedPaths\}/g, allowedPathsText)
-    .replace(/\{contextDirs\}/g, contextDirsText);
+    .replace(/\{contextDirs\}/g, contextDirsText)
+    .replace(/\{agentName\}/g, agentName);
 }
 
 export async function loadPromptTemplate(
@@ -68,8 +70,9 @@ export function buildPrompt(opts: {
   docsPathMap: Map<string, string>;
   documentPath: string;
   contextDirs: ContextDir[];
+  agentName: string;
 }): string {
-  const { template, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs } = opts;
+  const { template, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs, agentName } = opts;
 
   const pathMapEntries =
     docsPathMap.size === 0
@@ -99,5 +102,6 @@ export function buildPrompt(opts: {
     .replace(/\{pathMapEntries\}/g, pathMapEntries)
     .replace(/\{documentPath\}/g, documentPath)
     .replace(/\{allowedPaths\}/g, allowedPathsText)
-    .replace(/\{contextDirs\}/g, contextDirsText);
+    .replace(/\{contextDirs\}/g, contextDirsText)
+    .replace(/\{agentName\}/g, agentName);
 }
