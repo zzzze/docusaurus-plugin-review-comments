@@ -4,6 +4,11 @@ import { useReview } from "../../client/ReviewContext";
 import { CommentCard } from "./CommentCard";
 import { CommentForm } from "../CommentForm";
 import { BottomSheet } from "../BottomSheet";
+import * as api from "../../client/api";
+import { copyToClipboard } from "../../client/domUtils";
+import { useCapabilities, formatInterval } from "../../client/useCapabilities";
+import { HintButton } from "../HintButton";
+import { RotateCcw, X } from "lucide-react";
 import styles from "./styles.module.css";
 
 const PANEL_MIN_WIDTH = 240;
@@ -153,15 +158,21 @@ function useIsMobile(): boolean {
   return isMobile;
 }
 
+type ActionState = "idle" | "pending" | "done" | "error";
+
 export function ReviewPanel(): React.ReactElement | null {
   const {
+    docPath,
     comments,
     isLoading,
+    refetch,
     isPanelOpen,
     setIsPanelOpen,
     orphanedCommentIds,
     unresolveComment,
   } = useReview();
+  const [actionState, setActionState] = useState<ActionState>("idle");
+  const caps = useCapabilities();
   const [orphanedExpanded, setOrphanedExpanded] = useState(false);
   const [resolvedExpanded, setResolvedExpanded] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);
@@ -188,6 +199,41 @@ export function ReviewPanel(): React.ReactElement | null {
   );
 
   const openCount = comments.filter((c) => c.status === "open").length;
+
+  // Comments that have no AI reply yet — these need manual agent review
+  const hasPending = useMemo(
+    () => comments.some((c) => {
+      if (c.status !== "open") return false;
+      if (c.replies.length === 0) return true;
+      return c.replies[c.replies.length - 1]!.author !== "ai";
+    }),
+    [comments],
+  );
+
+  const handleCopyPrompt = useCallback(async () => {
+    setActionState("pending");
+    try {
+      const prompt = await api.fetchPrompt(docPath);
+      await copyToClipboard(prompt);
+      setActionState("done");
+      setTimeout(() => setActionState("idle"), 2000);
+    } catch {
+      setActionState("error");
+      setTimeout(() => setActionState("idle"), 2000);
+    }
+  }, [docPath]);
+
+  const handleTrigger = useCallback(async () => {
+    setActionState("pending");
+    try {
+      await api.triggerReview();
+      setActionState("done");
+      setTimeout(() => setActionState("idle"), 2000);
+    } catch {
+      setActionState("error");
+      setTimeout(() => setActionState("idle"), 2000);
+    }
+  }, []);
 
   const handleToggle = useCallback(
     () => setIsPanelOpen(!isPanelOpen),
@@ -346,13 +392,45 @@ export function ReviewPanel(): React.ReactElement | null {
           Comments ({openCount})
         </span>
         <div className={styles.headerActions}>
+          {hasPending && (
+            <>
+              <button
+                type="button"
+                className={styles.copyPromptButton}
+                onClick={() => { void (caps?.hasTrigger ? handleTrigger() : handleCopyPrompt()); }}
+                disabled={actionState === "pending"}
+                title={caps?.hasTrigger ? "Trigger AI review now" : "Copy AI prompt to clipboard"}
+              >
+                {actionState === "done"
+                  ? (caps?.hasTrigger ? "Started!" : "Copied!")
+                  : actionState === "error"
+                  ? "Failed"
+                  : caps?.hasTrigger
+                  ? "Trigger Review"
+                  : "Copy AI Prompt"}
+                {caps?.hasTrigger && caps.intervalMs !== undefined && (
+                  <HintButton text={`Auto-review runs every ${formatInterval(caps.intervalMs)}`} direction="down" />
+                )}
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            className={styles.refreshButton}
+            onClick={() => { void refetch(); }}
+            disabled={isLoading}
+            title="Refresh comments"
+            aria-label="Refresh comments"
+          >
+            <RotateCcw size={14} />
+          </button>
           <button
             type="button"
             className={styles.closeButton}
             onClick={() => setIsPanelOpen(false)}
             aria-label="Close review panel"
           >
-            &times;
+            <X size={16} />
           </button>
         </div>
       </div>

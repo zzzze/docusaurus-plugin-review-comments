@@ -1,14 +1,13 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
 import type { AgentCommandFn, ContextDir } from "../types";
-import { DEFAULT_PROMPT_TEMPLATE } from "./defaultPrompt";
+import { buildPrompt, loadPromptTemplate } from "./prompt";
 import type { SseNotifier } from "../api/sseNotifier";
 
-const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
+export const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
 const LOG_PREFIX = "[review-service]";
 
 function log(msg: string): void {
@@ -172,59 +171,6 @@ async function collectPendingDocs(reviewsDir: string): Promise<string[]> {
   return pendingDocs;
 }
 
-async function loadPromptTemplate(
-  agentPromptFile: string | undefined,
-): Promise<string> {
-  if (agentPromptFile === undefined) {
-    return DEFAULT_PROMPT_TEMPLATE;
-  }
-  try {
-    return await fs.readFile(agentPromptFile, "utf-8");
-  } catch {
-    return "";
-  }
-}
-
-function buildPrompt(opts: {
-  template: string;
-  siteDir: string;
-  reviewsDir: string;
-  docsPathMap: Map<string, string>;
-  documentPath: string;
-  contextDirs: ContextDir[];
-}): string {
-  const { template, siteDir, reviewsDir, docsPathMap, documentPath, contextDirs } = opts;
-  const pathMapEntries =
-    docsPathMap.size === 0
-      ? "  (none configured — using documentPath prefix as-is)"
-      : Array.from(docsPathMap.entries())
-          .map(([route, fsPath]) => `  ${route} → ${fsPath}`)
-          .join("\n");
-
-  // Compute allowed paths automatically from reviewsDir + docsPathMap
-  const allowedPaths = [
-    `${reviewsDir}/**/*.reviews.json`,
-    ...Array.from(docsPathMap.values()).map((fsPath) => `${siteDir}/${fsPath}/**/*.md`),
-  ];
-  const allowedPathsText = allowedPaths.map((p) => `- ${p}`).join("\n");
-
-  const contextDirsText =
-    contextDirs.length === 0
-      ? ""
-      : "\nAdditional context directories (read-only):\n" +
-        contextDirs
-          .map((d) => `- \`${d.dir}\`${d.desc ? ` — ${d.desc}` : ""}`)
-          .join("\n") +
-        "\n";
-
-  return template
-    .replace(/\{reviewsDir\}/g, reviewsDir)
-    .replace(/\{siteDir\}/g, siteDir)
-    .replace(/\{pathMapEntries\}/g, pathMapEntries)
-    .replace(/\{documentPath\}/g, documentPath)
-    .replace(/\{allowedPaths\}/g, allowedPathsText)
-    .replace(/\{contextDirs\}/g, contextDirsText);
-}
 
 function spawnAgent(opts: {
   agentCommand: string;

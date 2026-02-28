@@ -3,6 +3,7 @@ import type { ReviewAnchor, ReviewComment } from "../types";
 import * as api from "./api";
 
 interface ReviewCommentsState {
+  docPath: string;
   comments: ReviewComment[];
   isLoading: boolean;
   addComment: (
@@ -22,6 +23,7 @@ interface ReviewCommentsState {
   setIsPanelOpen: (open: boolean) => void;
   orphanedCommentIds: Set<string>;
   setOrphanedCommentIds: (ids: Set<string>) => void;
+  refetch: () => Promise<void>;
 }
 
 export function useReviewComments(docPath: string): ReviewCommentsState {
@@ -137,6 +139,7 @@ export function useReviewComments(docPath: string): ReviewCommentsState {
   );
 
   return {
+    docPath,
     comments,
     isLoading,
     addComment,
@@ -152,5 +155,6 @@ export function useReviewComments(docPath: string): ReviewCommentsState {
     setIsPanelOpen,
     orphanedCommentIds,
     setOrphanedCommentIds,
+    refetch,
   };
 }

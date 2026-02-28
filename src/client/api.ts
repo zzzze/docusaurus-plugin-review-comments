@@ -50,6 +50,47 @@ export async function updateComment(
   return res.json() as Promise<ReviewComment>;
 }
 
+export interface Capabilities {
+  hasTrigger: boolean;
+  hasPrompt: boolean;
+  hasGlobalPrompt: boolean;
+  /** Polling interval in ms when hasTrigger is true */
+  intervalMs?: number;
+}
+
+export async function fetchCapabilities(): Promise<Capabilities> {
+  const res = await fetch(`${API_BASE}/capabilities`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch capabilities: ${res.statusText}`);
+  }
+  return res.json() as Promise<Capabilities>;
+}
+
+export async function triggerReview(): Promise<void> {
+  const res = await fetch(`${API_BASE}/trigger`, { method: "POST" });
+  if (!res.ok) {
+    throw new Error(`Failed to trigger review: ${res.statusText}`);
+  }
+}
+
+export async function fetchGlobalPrompt(): Promise<string> {
+  const res = await fetch(`${API_BASE}/global-prompt`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch global prompt: ${res.statusText}`);
+  }
+  const data = await res.json() as { prompt: string };
+  return data.prompt;
+}
+
+export async function fetchPrompt(docPath: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/prompt?doc=${encodeURIComponent(docPath)}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch prompt: ${res.statusText}`);
+  }
+  const data = await res.json() as { prompt: string };
+  return data.prompt;
+}
+
 export async function deleteComment(
   commentId: string,
   docPath: string,

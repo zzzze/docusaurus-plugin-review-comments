@@ -17,10 +17,25 @@ export function createReviewsMiddleware(
     defaultAuthor: string;
     onTrigger?: () => Promise<void>;
     notifier?: SseNotifier;
+    // When provided, registers GET /api/reviews/prompt for manual AI agent use.
+    getPrompt?: (docPath: string) => Promise<string>;
+    // When provided, registers GET /api/reviews/global-prompt covering all pending docs.
+    getGlobalPrompt?: () => Promise<string>;
+    /** Polling interval in ms — exposed via capabilities when hasTrigger is true */
+    intervalMs?: number;
   },
 ): void {
-  const { reviewsDir, defaultAuthor, onTrigger, notifier } = opts;
+  const { reviewsDir, defaultAuthor, onTrigger, notifier, getPrompt, getGlobalPrompt, intervalMs } = opts;
   app.use("/api/reviews", express.json());
+
+  app.get("/api/reviews/capabilities", (_req, res) => {
+    res.json({
+      hasTrigger: !!onTrigger,
+      hasPrompt: !!getPrompt,
+      hasGlobalPrompt: !!getGlobalPrompt,
+      ...(onTrigger && intervalMs !== undefined ? { intervalMs } : {}),
+    });
+  });
 
   if (onTrigger) {
     app.post("/api/reviews/trigger", (_req, res) => {
@@ -28,6 +43,25 @@ export function createReviewsMiddleware(
         console.error("[review-service] trigger failed:", (err instanceof Error ? err.message : String(err)));
       });
       res.json({ started: true });
+    });
+  }
+
+  if (getPrompt) {
+    app.get("/api/reviews/prompt", async (req, res) => {
+      const doc = req.query.doc as string | undefined;
+      if (!doc) {
+        res.status(400).json({ error: "Missing 'doc' query parameter" });
+        return;
+      }
+      const prompt = await getPrompt(doc);
+      res.json({ prompt });
+    });
+  }
+
+  if (getGlobalPrompt) {
+    app.get("/api/reviews/global-prompt", async (_req, res) => {
+      const prompt = await getGlobalPrompt();
+      res.json({ prompt });
     });
   }
 

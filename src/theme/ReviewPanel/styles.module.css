@@ -8,7 +8,7 @@
   flex-direction: column;
   background: var(--review-panel-bg, var(--ifm-background-surface-color));
   border-left: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
-  overflow: hidden;
+  overflow: visible;
 }
 
 .collapsed {
@@ -92,9 +92,10 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
   color: var(--ifm-color-secondary-darkest);
-  padding: 2px 6px;
+  padding: 4px;
   border-radius: 4px;
 }
 
@@ -102,9 +103,54 @@
   background: var(--ifm-color-emphasis-200);
 }
 
+.copyPromptButton {
+  position: relative;
+  overflow: visible;
+  background: none;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 8px;
+  color: var(--ifm-color-secondary-darkest);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
+.copyPromptButton:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.copyPromptButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.refreshButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--ifm-color-secondary-darkest);
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.refreshButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* Scrollable body */
 .body {
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 8px 12px;
