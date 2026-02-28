@@ -1,5 +1,6 @@
 import path from "node:path";
 import { spawn } from "node:child_process";
+import logger from "@docusaurus/logger";
 import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";
@@ -8,18 +9,17 @@ import { buildPrompt, loadPromptTemplate } from "./prompt";
 import type { SseNotifier } from "../api/sseNotifier";
 
 export const DEFAULT_INTERVAL_MS = 300_000; // 5 minutes — gives agent time to finish before next tick
-const LOG_PREFIX = "[review-service]";
 
 function log(msg: string): void {
-  console.log(`${LOG_PREFIX} ${msg}`);
+  logger.info`[review-service] ${msg}`;
 }
 
 function warn(msg: string): void {
-  console.warn(`${LOG_PREFIX} ${msg}`);
+  logger.warn`[review-service] ${msg}`;
 }
 
 function error(msg: string): void {
-  console.error(`${LOG_PREFIX} ${msg}`);
+  logger.error`[review-service] ${msg}`;
 }
 
 // Claude Code treats /path as project-relative; //path as a true filesystem absolute path.

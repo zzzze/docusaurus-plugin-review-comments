@@ -23,6 +23,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@docusaurus/logger": "^3.9.2",
     "@docusaurus/types": "3.9.2",
     "@rollup/rollup-linux-arm64-gnu": "^4.59.0",
     "@testing-library/dom": "^10.4.1",

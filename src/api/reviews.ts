@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import express from "express";
+import logger from "@docusaurus/logger";
 import { v4 as uuidv4 } from "uuid";
 import type { ReviewComment, ReviewReply } from "../types";
 import {
@@ -40,7 +41,7 @@ export function createReviewsMiddleware(
   if (onTrigger) {
     app.post("/api/reviews/trigger", (_req, res) => {
       onTrigger().catch((err: unknown) => {
-        console.error("[review-service] trigger failed:", (err instanceof Error ? err.message : String(err)));
+        logger.error`[review-service] trigger failed: ${err instanceof Error ? err.message : String(err)}`;
       });
       res.json({ started: true });
     });
