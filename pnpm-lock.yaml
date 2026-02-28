@@ -13,6 +13,7 @@ specifiers:
   dom-anchor-text-quote: ^4.0.2
   express: ^4.21.0
   happy-dom: ^17.0.0
+  jsonrepair: ^3.13.2
   lucide-react: ^0.468.0
   react: ^19.0.0
   react-dom: ^19.0.0
@@ -25,6 +26,7 @@ specifiers:
 dependencies:
   dom-anchor-text-quote: 4.0.2
   express: 4.22.1
+  jsonrepair: 3.13.2
   lucide-react: 0.468.0_react@19.2.4
   react-markdown: 9.1.0_d2vw5qqqcfk7p7wqok4lqumjlu
   remark-gfm: 4.0.1
@@ -1935,6 +1937,11 @@ packages:
   /json-schema-traverse/1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
     dev: true
+
+  /jsonrepair/3.13.2:
+    resolution: {integrity: sha512-Leuly0nbM4R+S5SVJk3VHfw1oxnlEK9KygdZvfUtEtTawNDyzB4qa1xWTmFt1aeoA7sXZkVTRuIixJ8bAvqVUg==}
+    hasBin: true
+    dev: false
 
   /kind-of/6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}

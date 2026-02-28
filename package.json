@@ -17,6 +17,7 @@
   "dependencies": {
     "dom-anchor-text-quote": "^4.0.2",
     "express": "^4.21.0",
+    "jsonrepair": "^3.13.2",
     "lucide-react": "^0.468.0",
     "react-markdown": "^9.0.0",
     "remark-gfm": "^4.0.1",
