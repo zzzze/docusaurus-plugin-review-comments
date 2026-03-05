@@ -25,6 +25,9 @@
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "bin": {
+    "docusaurus-review": "lib/cli/index.js"
+  },
   "files": [
     "lib"
   ],
