@@ -12,7 +12,7 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "docusaurus-plugin-review-comments": "file:PLUGIN_PATH_PLACEHOLDER"
+    "@review-comments/plugin": "^0.0.3"
   },
   "engines": {
     "node": ">=18.0"

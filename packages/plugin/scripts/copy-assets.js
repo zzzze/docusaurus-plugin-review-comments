@@ -24,21 +24,3 @@ function copyDir(dir) {
 }
 
 copyDir(SRC);
-
-// Copy CLI template directory (all files, not just assets)
-const CLI_TEMPLATE_SRC = path.resolve(__dirname, '../src/cli/template');
-const CLI_TEMPLATE_LIB = path.resolve(__dirname, '../lib/cli/template');
-if (fs.existsSync(CLI_TEMPLATE_SRC)) {
-  fs.cpSync(CLI_TEMPLATE_SRC, CLI_TEMPLATE_LIB, { recursive: true });
-  console.log('copied: cli/template/ (all files)');
-}
-
-// Ensure CLI entry point has shebang
-const cliEntry = path.resolve(__dirname, '../lib/cli/index.js');
-if (fs.existsSync(cliEntry)) {
-  const content = fs.readFileSync(cliEntry, 'utf-8');
-  if (!content.startsWith('#!')) {
-    fs.writeFileSync(cliEntry, '#!/usr/bin/env node\n' + content);
-    console.log('added shebang to cli/index.js');
-  }
-}

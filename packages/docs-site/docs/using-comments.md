@@ -9,8 +9,8 @@ How to leave and manage review comments on a Docusaurus site that has this plugi
 ## Leaving a Comment
 
 1. Select any text on the page
-2. A **comment button** appears next to your selection
-3. Click it to open the comment form
+2. A **floating toolbar** appears above or below your selection with options to add Question, Suggestion, or Issue comments
+3. Click one of the buttons to open the comment form
 4. Choose a comment type and write your comment
 5. Submit — the comment is saved immediately
 

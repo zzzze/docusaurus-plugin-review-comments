@@ -9,12 +9,14 @@ While reading your documentation locally, you can select any text and leave a co
 
 The plugin also supports an optional **AI review service**: an AI agent (such as Claude Code) runs periodically, reads open comments, and responds directly — answering questions, applying suggestions, or fixing issues in your Markdown source files.
 
+**Note:** This is a **local development tool** designed for reviewing documentation during development. Since it requires a server, local file system access, and optionally an AI agent, it does not work in production static deployments — the plugin has no effect when your Docusaurus site is deployed statically.
+
 ## How It Works
 
 1. Run your Docusaurus site locally with `npm start`
 2. Select text on any page — a comment button appears
 3. Leave a comment (question, suggestion, or issue)
-4. Optionally, configure an AI agent to process comments automatically
+4. Optionally, configure an AI agent to process comments automatically, or manually copy the AI prompt and use it in your project's AI assistant
 
 Comments are stored as `.reviews.json` files in a directory you configure. They can be committed to version control or kept local.
 

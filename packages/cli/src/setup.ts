@@ -3,7 +3,7 @@ import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
 
-const PACKAGE_VERSION: string = require("../../package.json").version;
+const PACKAGE_VERSION: string = require("../package.json").version;
 
 export interface SetupOptions {
   docsPath: string;
@@ -30,15 +30,8 @@ export function ensureCache(cacheDir: string, cleanCache: boolean): void {
     fs.readFileSync(versionFile, "utf-8").trim() !== PACKAGE_VERSION;
 
   if (needsInstall) {
-    const templateDir = path.join(__dirname, "template");
+    const templateDir = path.join(__dirname, "../template");
     fs.cpSync(templateDir, cacheDir, { recursive: true, force: true });
-
-    // Patch package.json with real plugin path
-    const pkgPath = path.join(cacheDir, "package.json");
-    const pluginRoot = path.resolve(__dirname, "../..");
-    let pkg = fs.readFileSync(pkgPath, "utf-8");
-    pkg = pkg.replace("file:PLUGIN_PATH_PLACEHOLDER", `file:${pluginRoot}`);
-    fs.writeFileSync(pkgPath, pkg);
 
     console.log("Installing dependencies (first run or version changed)...");
     execFileSync("npm", ["install", "--prefer-offline"], {
@@ -94,7 +87,7 @@ const config: Config = {
     } satisfies Preset.Options],
   ],
   plugins: [
-    [require.resolve('docusaurus-plugin-review-comments'), ${pluginOpts}],
+    [require.resolve('@review-comments/plugin'), ${pluginOpts}],
   ],
   themeConfig: {
     navbar: { title: 'Document Review', items: [] },

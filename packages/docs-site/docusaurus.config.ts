@@ -52,14 +52,16 @@ const config: Config = {
 
   plugins: [
     [
-      require.resolve('../src/index.ts'),
-      // require.resolve('../lib/index.js'),
+      '@review-comments/plugin',
       {
         reviewsDir: '.reviews',
-        defaultAuthor: 'Demo User',
+        userName: 'Vin',
         reviewService: {
           enabled: true,
-          contextDirs: ['../'],
+          contextDirs: [{
+              dir: '../../',
+              desc: 'plugin source code',
+          }],
         },
       },
     ],

@@ -26,7 +26,7 @@ export default {
       'docusaurus-plugin-review-comments',
       {
         reviewsDir: 'reviews',
-        defaultAuthor: 'Your Name',
+        userName: 'Your Name',
       },
     ],
   ],
@@ -43,6 +43,6 @@ Start your dev server:
 npm start
 ```
 
-Open any documentation page. Select some text — you should see a comment button appear next to your selection.
+Open any documentation page. Select some text — you should see a floating toolbar appear above or below your selection with options to add Question, Suggestion, or Issue comments.
 
 > **Note:** The plugin only runs in development mode (`npm start`). It has no effect on production builds.
