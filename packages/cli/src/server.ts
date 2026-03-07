@@ -64,9 +64,11 @@ export function startServer(opts: ServerOptions): http.Server {
   });
 
   // Docs API — read file content
-  app.get("/api/docs/*", (req, res) => {
-    const wildcardSegments = req.params[""];
-    const docRelPath = Array.isArray(wildcardSegments) ? wildcardSegments.join("/") : undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  app.get("/api/docs/*", (req: any, res: any) => {
+    // Express 4 uses params[0], Express 5 uses params[""]
+    const raw = req.params[0] ?? req.params[""];
+    const docRelPath: string | undefined = Array.isArray(raw) ? raw.join("/") : raw;
     if (!docRelPath) {
       res.status(400).json({ error: "Missing document path" });
       return;
