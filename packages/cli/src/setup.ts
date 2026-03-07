@@ -31,13 +31,23 @@ export function ensureCache(cacheDir: string, cleanCache: boolean): void {
 
   if (needsInstall) {
     const templateDir = path.join(__dirname, "../template");
+    // Remove stale lockfile before copying template to avoid resolution conflicts
+    const lockFile = path.join(cacheDir, "package-lock.json");
+    try { fs.unlinkSync(lockFile); } catch { /* ignore if missing */ }
     fs.cpSync(templateDir, cacheDir, { recursive: true, force: true });
 
     console.log("Installing dependencies (first run or version changed)...");
-    execFileSync("npm", ["install", "--prefer-offline"], {
-      cwd: cacheDir,
-      stdio: "inherit",
-    });
+    try {
+      execFileSync("npm", ["install", "--prefer-offline"], {
+        cwd: cacheDir,
+        stdio: "inherit",
+      });
+    } catch {
+      execFileSync("npm", ["install"], {
+        cwd: cacheDir,
+        stdio: "inherit",
+      });
+    }
 
     fs.writeFileSync(versionFile, PACKAGE_VERSION);
   }
@@ -46,16 +56,34 @@ export function ensureCache(cacheDir: string, cleanCache: boolean): void {
 export function linkDocs(cacheDir: string, docsPath: string): void {
   const target = path.join(cacheDir, "docs");
   try { fs.rmSync(target, { recursive: true, force: true }); } catch { /* ignore */ }
-  fs.symlinkSync(docsPath, target, "junction");
+
+  // Create a real directory and symlink each entry from the user's docs
+  fs.mkdirSync(target, { recursive: true });
+  for (const entry of fs.readdirSync(docsPath)) {
+    if (entry.startsWith(".")) continue;
+    fs.symlinkSync(path.join(docsPath, entry), path.join(target, entry));
+  }
+
+  // Generate an index page if the user's docs don't have one
+  const hasIndex = fs.readdirSync(docsPath)
+    .some((f) => /^index\.(md|mdx)$/i.test(f));
+  if (!hasIndex) {
+    fs.writeFileSync(path.join(target, "index.md"), `---
+slug: /
+title: Documents
+displayed_sidebar: docsSidebar
+---
+
+# Documents
+
+Use the sidebar to navigate documents.
+`);
+  }
 }
 
 export function unlinkDocs(cacheDir: string): void {
   const target = path.join(cacheDir, "docs");
-  try {
-    if (fs.lstatSync(target).isSymbolicLink()) {
-      fs.unlinkSync(target);
-    }
-  } catch { /* ignore */ }
+  try { fs.rmSync(target, { recursive: true, force: true }); } catch { /* ignore */ }
 }
 
 export function generateConfig(cacheDir: string, opts: SetupOptions): void {
@@ -78,6 +106,7 @@ const config: Config = {
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   future: { v4: true },
+  markdown: { format: 'detect' },
   i18n: { defaultLocale: 'en', locales: ['en'] },
   presets: [
     ['classic', {
@@ -87,7 +116,36 @@ const config: Config = {
     } satisfies Preset.Options],
   ],
   plugins: [
-    [require.resolve('@review-comments/plugin'), ${pluginOpts}],
+    function () {
+      return {
+        name: 'fix-cjs-theme',
+        configureWebpack(config: any) {
+          // The plugin ships CJS-compiled theme files. Docusaurus's Babel
+          // preset uses useESModules:true in @babel/plugin-transform-runtime,
+          // which injects ESM \`import\` helpers into CJS files. Webpack then
+          // misclassifies the module as ESM, leaving \`exports\` undefined.
+          // Fix: exclude the plugin's compiled CJS theme/client files from
+          // the Babel loader so webpack correctly handles them as CJS.
+          const jsRule = config.module?.rules?.find(
+            (r: any) => r?.test?.toString?.().includes('jt')
+          );
+          if (jsRule) {
+            const origExclude = jsRule.exclude;
+            jsRule.exclude = (p: string) => {
+              if (/docusaurus-plugin-review-comments[\\\\/]lib[\\\\/](theme|client)/.test(p)) return true;
+              return typeof origExclude === 'function' ? origExclude(p) : false;
+            };
+          }
+          // Docs are symlinked into the cache directory. By default webpack
+          // resolves symlinks to their real paths, which fall outside the
+          // cache dir and miss the MDX loader \`include\` rule. Disabling
+          // symlink resolution keeps paths within the cache dir so the
+          // plugin-content-docs MDX loader matches them correctly.
+          return { resolve: { symlinks: false } };
+        },
+      };
+    },
+    ['docusaurus-plugin-review-comments', ${pluginOpts}],
   ],
   themeConfig: {
     navbar: { title: 'Document Review', items: [] },
@@ -125,7 +183,7 @@ function scanDocsDir(basePath: string, relativePath: string): unknown[] {
     if (entry.isDirectory()) {
       const subItems = scanDocsDir(basePath, relPath);
       if (subItems.length > 0) {
-        items.push({ type: "category", label: entry.name, items: subItems });
+        items.push({ type: "category", label: entry.name, items: subItems, link: { type: "generated-index" as const } });
       }
     } else if (/\.(md|mdx)$/i.test(entry.name)) {
       items.push(relPath.replace(/\.(md|mdx)$/i, ""));

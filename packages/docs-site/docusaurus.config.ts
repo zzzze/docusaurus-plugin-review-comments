@@ -52,7 +52,7 @@ const config: Config = {
 
   plugins: [
     [
-      '@review-comments/plugin',
+      'docusaurus-plugin-review-comments',
       {
         reviewsDir: '.reviews',
         userName: 'Vin',

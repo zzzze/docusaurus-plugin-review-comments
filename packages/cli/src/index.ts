@@ -35,10 +35,13 @@ function parseArgs(argv: string[]) {
   let port: number | undefined;
   let noOpen = false;
   let cleanCache = false;
+  let cacheDir: string | undefined;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
-    if (arg === "--reviews-dir" && args[i + 1]) {
+    if (arg === "--cache-dir" && args[i + 1]) {
+      cacheDir = args[++i];
+    } else if (arg === "--reviews-dir" && args[i + 1]) {
       reviewsDir = args[++i];
     } else if (arg === "--user" && args[i + 1]) {
       user = args[++i];
@@ -58,7 +61,7 @@ function parseArgs(argv: string[]) {
     }
   }
 
-  return { path: targetPath, reviewsDir, user, agent, port, noOpen, cleanCache };
+  return { path: targetPath, reviewsDir, user, agent, port, noOpen, cleanCache, cacheDir };
 }
 
 function printUsage(): void {
@@ -74,6 +77,7 @@ Options:
   --agent               Enable AI review service
   --port <number>       Specify port (default: random)
   --no-open             Don't auto-open browser
+  --cache-dir <dir>     Custom cache directory (default: ~/.cache/docusaurus-review-cli)
   --clean-cache         Force reinstall of cached Docusaurus project
   -h, --help            Show this help
 `);
@@ -126,7 +130,7 @@ function main(): void {
     cleanCache: parsed.cleanCache,
   };
 
-  const cacheDir = getCacheDir();
+  const cacheDir = parsed.cacheDir ? path.resolve(parsed.cacheDir) : getCacheDir();
   console.log(`Cache directory: ${cacheDir}`);
 
   ensureCache(cacheDir, opts.cleanCache);
@@ -139,7 +143,7 @@ function main(): void {
   console.log(`Reviews stored in: ${reviewsDir}`);
 
   const docusaurusArgs = ["docusaurus", "start", "--port", String(port)];
-  if (!parsed.noOpen) docusaurusArgs.push("--open");
+  if (parsed.noOpen) docusaurusArgs.push("--no-open");
 
   const child = spawn("npx", docusaurusArgs, {
     cwd: cacheDir,

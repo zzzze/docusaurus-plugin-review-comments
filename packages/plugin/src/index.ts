@@ -24,7 +24,7 @@ export default function pluginReviewComments(
     name: "docusaurus-plugin-review-comments",
 
     getThemePath() {
-      return path.resolve(__dirname, "./theme");
+      return path.resolve(__dirname, "./src/theme");
     },
 
     getClientModules() {
