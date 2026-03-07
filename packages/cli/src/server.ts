@@ -65,7 +65,8 @@ export function startServer(opts: ServerOptions): http.Server {
 
   // Docs API — read file content
   app.get("/api/docs/*", (req, res) => {
-    const docRelPath = req.params[0];
+    const wildcardSegments = req.params[""];
+    const docRelPath = Array.isArray(wildcardSegments) ? wildcardSegments.join("/") : undefined;
     if (!docRelPath) {
       res.status(400).json({ error: "Missing document path" });
       return;

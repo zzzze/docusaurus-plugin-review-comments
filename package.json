@@ -4,6 +4,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
+    "docs-site": "pnpm --filter docs-site start -p 3005",
     "typecheck": "pnpm -r typecheck"
   },
   "engines": {
