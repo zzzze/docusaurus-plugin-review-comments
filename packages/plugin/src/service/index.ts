@@ -1,6 +1,6 @@
 import path from "node:path";
 import { spawn } from "node:child_process";
-import logger from "@docusaurus/logger";
+import logger from "../logger";
 import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
 import { buildDocsPathMap } from "./pathMap";

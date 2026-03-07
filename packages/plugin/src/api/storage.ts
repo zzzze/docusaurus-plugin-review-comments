@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import logger from "@docusaurus/logger";
+import logger from "../logger";
 import { jsonrepair } from "jsonrepair";
 import type { ReviewFile } from "../types";
 

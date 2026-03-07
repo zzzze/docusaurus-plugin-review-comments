@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import express from "express";
-import logger from "@docusaurus/logger";
+import logger from "../logger";
 import { v4 as uuidv4 } from "uuid";
 import type { ReviewComment, ReviewReply } from "../types";
 import {
