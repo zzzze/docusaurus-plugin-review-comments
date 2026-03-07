@@ -19,6 +19,11 @@
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./api": "./lib/api/index.js",
+    "./types": "./lib/types.js"
+  },
   "files": ["lib"],
   "scripts": {
     "build": "tsc && node scripts/copy-assets.js",
