@@ -1,8 +1,15 @@
+import type React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useDocContent } from "../hooks/useDocContent";
 
-export function DocViewer({ docPath }: { docPath: string }) {
+export function DocViewer({
+  docPath,
+  contentRef,
+}: {
+  docPath: string;
+  contentRef?: React.Ref<HTMLElement>;
+}) {
   const { content, loading } = useDocContent(docPath);
 
   if (loading) {
@@ -18,7 +25,7 @@ export function DocViewer({ docPath }: { docPath: string }) {
 
   return (
     <div className="doc-viewer">
-      <article className="markdown-body">
+      <article className="markdown-body" ref={contentRef}>
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{stripped}</ReactMarkdown>
       </article>
     </div>

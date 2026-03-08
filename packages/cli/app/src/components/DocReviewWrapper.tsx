@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import { ReviewProvider, useReview } from "@plugin/client/ReviewContext";
 import { useHighlights } from "@plugin/client/useHighlights";
 import { useKeyboardShortcuts } from "@plugin/client/useKeyboardShortcuts";
@@ -73,17 +73,12 @@ function ReviewOverlay({
 export function DocReviewWrapper({
   docPath,
   children,
+  contentRef,
 }: {
   docPath: string;
   children: React.ReactNode;
+  contentRef: React.RefObject<HTMLElement | null>;
 }) {
-  const contentRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const el = document.querySelector<HTMLElement>(".markdown-body");
-    if (el) contentRef.current = el;
-  });
-
   return (
     <ReviewProvider docPath={docPath}>
       {children}
