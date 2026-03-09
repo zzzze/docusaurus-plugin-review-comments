@@ -1,9 +1,7 @@
 import path from "node:path";
 import { spawn } from "node:child_process";
 import logger from "../logger";
-import type { DocusaurusConfig } from "@docusaurus/types";
 import { globReviewFiles, readReviewFile } from "../api/storage";
-import { buildDocsPathMap } from "./pathMap";
 import type { AgentCommandFn, ContextDir } from "../types";
 import { buildPrompt, loadPromptTemplate } from "./prompt";
 import type { SseNotifier } from "../api/sseNotifier";
@@ -41,7 +39,7 @@ function defaultAgentCommand({ reviewsDir, docsDirs, contextDirs }: { reviewsDir
 export interface ReviewServiceConfig {
   siteDir: string;
   reviewsDir: string;
-  siteConfig: DocusaurusConfig;
+  docsPathMap: Map<string, string>;
   intervalMs?: number;
   agentCommand?: string | AgentCommandFn;
   agentPromptFile?: string;
@@ -71,7 +69,7 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
   const {
     siteDir,
     reviewsDir,
-    siteConfig,
+    docsPathMap,
     intervalMs = DEFAULT_INTERVAL_MS,
     agentCommand = defaultAgentCommand,
     agentPromptFile,
@@ -81,7 +79,6 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     notifier,
   } = config;
 
-  const docsPathMap = buildDocsPathMap(siteConfig);
   // Compute docsDirs once: absolute paths of all docs content directories
   const docsDirs = Array.from(docsPathMap.values()).map((fsPath) =>
     path.join(siteDir, fsPath),

@@ -45,10 +45,11 @@ export default function pluginReviewComments(
             const rs = options.reviewService;
             if (rs !== undefined && rs.enabled !== false) {
               const notifier = createSseNotifier();
+              const docsPathMap = buildDocsPathMap(context.siteConfig);
               const { tick } = createReviewService({
                 siteDir: context.siteDir,
                 reviewsDir: resolvedReviewsDir,
-                siteConfig: context.siteConfig,
+                docsPathMap,
                 intervalMs: rs?.intervalMs,
                 agentCommand: rs?.agentCommand,
                 agentPromptFile: rs?.agentPromptFile,

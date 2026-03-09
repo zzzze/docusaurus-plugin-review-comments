@@ -3,13 +3,21 @@ import path from "node:path";
 import fs from "node:fs";
 import http from "node:http";
 import { execFileSync } from "node:child_process";
-import { createReviewsMiddleware, createSseNotifier } from "@review-comments/plugin/api";
+import { createReviewsMiddleware, createSseNotifier, globReviewFiles, readReviewFile } from "@review-comments/plugin/api";
+import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "@review-comments/plugin/prompt";
+import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "@review-comments/plugin/service";
+import type { AgentCommandFn } from "@review-comments/plugin/types";
 
 export interface ServerOptions {
   docsPath: string;
   reviewsDir: string;
   userName: string;
   agent: boolean;
+  agentCommand?: string | AgentCommandFn;
+  agentName?: string;
+  agentPromptFile?: string;
+  intervalMs?: number;
+  contextDirs?: string[];
   port: number;
   noOpen: boolean;
 }
@@ -48,7 +56,7 @@ function buildDocTree(basePath: string, relativePath: string = ""): DocTreeEntry
 }
 
 export function startServer(opts: ServerOptions): http.Server {
-  const { docsPath, reviewsDir, userName, port, noOpen } = opts;
+  const { docsPath, reviewsDir, userName, agent, port, noOpen } = opts;
   const app = express();
 
   // Serve pre-built SPA static files
@@ -92,11 +100,64 @@ export function startServer(opts: ServerOptions): http.Server {
 
   // Reviews API — reuse from plugin
   const notifier = createSseNotifier();
-  createReviewsMiddleware(app, {
-    reviewsDir,
-    userName,
-    notifier,
-  });
+  const agentName = opts.agentName ?? DEFAULT_AGENT_NAME;
+  const siteDir = path.dirname(docsPath);
+  const docsPathMap = new Map([["", path.basename(docsPath)]]);
+  const contextDirs = (opts.contextDirs ?? []).map((dir) => ({
+    dir: path.resolve(dir),
+  }));
+
+  if (agent) {
+    // Agent mode: auto-spawn AI agent to process reviews
+    const intervalMs = opts.intervalMs ?? DEFAULT_INTERVAL_MS;
+    const { tick } = createReviewService({
+      siteDir,
+      reviewsDir,
+      docsPathMap,
+      intervalMs,
+      agentCommand: opts.agentCommand,
+      agentPromptFile: opts.agentPromptFile,
+      agentName,
+      contextDirs,
+      notifier,
+    });
+    createReviewsMiddleware(app, {
+      reviewsDir,
+      userName,
+      agentName,
+      onTrigger: tick,
+      notifier,
+      intervalMs,
+    });
+  } else {
+    // Manual mode: copy prompt to clipboard
+    createReviewsMiddleware(app, {
+      reviewsDir,
+      userName,
+      agentName,
+      notifier,
+      getPrompt: async (docPath: string) => {
+        const template = await loadPromptTemplate(opts.agentPromptFile);
+        return buildPrompt({ template, siteDir, reviewsDir, docsPathMap, documentPath: docPath, contextDirs, agentName });
+      },
+      getGlobalPrompt: async () => {
+        const files = await globReviewFiles(reviewsDir).catch(() => [] as string[]);
+        const pendingDocs: string[] = [];
+        for (const filePath of files) {
+          const rf = await readReviewFile(filePath);
+          const hasPending = rf.comments.some((c) => {
+            if (c.status !== "open") return false;
+            if (c.replies.length === 0) return true;
+            const lastReply = c.replies[c.replies.length - 1]!;
+            const isAgent = lastReply.role === "agent" || lastReply.author === agentName;
+            return !isAgent;
+          });
+          if (hasPending && rf.documentPath) pendingDocs.push(rf.documentPath);
+        }
+        return buildGlobalPrompt({ siteDir, reviewsDir, docsPathMap, pendingDocs, contextDirs, agentName });
+      },
+    });
+  }
 
   // SPA fallback — serve index.html for client-side routing
   app.get("*", (_req, res) => {

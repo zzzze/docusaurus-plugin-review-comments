@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { startServer } from "./server";
+import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
 
 function getRandomPort(): number {
   return 3000 + Math.floor(Math.random() * 5000);
@@ -23,6 +24,11 @@ function parseArgs(argv: string[]) {
   let reviewsDir: string | undefined;
   let user: string | undefined;
   let agent = false;
+  let agentCommand: string | undefined;
+  let agentName: string | undefined;
+  let agentPromptFile: string | undefined;
+  let interval: number | undefined;
+  const contextDirs: string[] = [];
   let port: number | undefined;
   let noOpen = false;
 
@@ -34,6 +40,16 @@ function parseArgs(argv: string[]) {
       user = args[++i];
     } else if (arg === "--agent") {
       agent = true;
+    } else if (arg === "--agent-command" && args[i + 1]) {
+      agentCommand = args[++i];
+    } else if (arg === "--agent-name" && args[i + 1]) {
+      agentName = args[++i];
+    } else if (arg === "--agent-prompt-file" && args[i + 1]) {
+      agentPromptFile = args[++i];
+    } else if (arg === "--interval" && args[i + 1]) {
+      interval = parseInt(args[++i]!, 10);
+    } else if (arg === "--context-dir" && args[i + 1]) {
+      contextDirs.push(args[++i]!);
     } else if (arg === "--port" && args[i + 1]) {
       port = parseInt(args[++i]!, 10);
     } else if (arg === "--no-open") {
@@ -46,7 +62,7 @@ function parseArgs(argv: string[]) {
     }
   }
 
-  return { path: targetPath, reviewsDir, user, agent, port, noOpen };
+  return { path: targetPath, reviewsDir, user, agent, agentCommand, agentName, agentPromptFile, interval, contextDirs, port, noOpen };
 }
 
 function printUsage(): void {
@@ -54,21 +70,57 @@ function printUsage(): void {
 Usage: docusaurus-review [path] [options]
 
 Arguments:
-  path                  Directory or .md file to review (default: ".")
+  path                        Directory or .md file to review (default: ".")
 
 Options:
-  --reviews-dir <dir>   Where to store .reviews.json files (default: ".reviews" next to source)
-  --user <name>         Reviewer name (default: git user.name or "Reviewer")
-  --agent               Enable AI review service
-  --port <number>       Specify port (default: random)
-  --no-open             Don't auto-open browser
-  -h, --help            Show this help
+  --reviews-dir <dir>         Where to store .reviews.json files (default: ".reviews" next to source)
+  --user <name>               Reviewer name (default: git user.name or "Reviewer")
+  --port <number>             Specify port (default: random)
+  --no-open                   Don't auto-open browser
+  -h, --help                  Show this help
+
+Agent Options:
+  --agent                     Enable AI review service (auto-spawns agent)
+  --agent-command <cmd>       Agent shell command (default: "claude -p")
+                              Use {prompt} placeholder for inline substitution,
+                              otherwise prompt is piped via stdin
+  --agent-name <name>         Agent display name (default: "Claude")
+  --agent-prompt-file <path>  Custom prompt template file
+  --interval <ms>             Auto-review polling interval in ms (default: 300000)
+  --context-dir <dir>         Extra read-only context directory (repeatable)
+
+Config File:
+  Looks for review.config.mjs or review.config.js from the target directory
+  upward. Config file options have lower priority than CLI arguments.
+  The agentCommand option in a config file can be a function:
+
+    export default {
+      agentCommand: ({ reviewsDir }) => \`claude --allowedTools "Edit(\${reviewsDir}/**)" -p\`
+    }
 `);
 }
 
-function main(): void {
-  const parsed = parseArgs(process.argv);
-  const resolvedPath = path.resolve(parsed.path);
+async function main(): Promise<void> {
+  const cliArgs = parseArgs(process.argv);
+
+  // Load config file (search from the target directory upward)
+  const searchDir = path.resolve(cliArgs.path);
+  const configPath = findConfigFile(fs.existsSync(searchDir) && fs.statSync(searchDir).isDirectory() ? searchDir : path.dirname(searchDir));
+  let fileConfig = {};
+  let configDir = process.cwd();
+  if (configPath) {
+    try {
+      const loaded = await loadConfigFile(configPath);
+      fileConfig = loaded.config;
+      configDir = loaded.configDir;
+      console.log(`Loaded config from ${configPath}`);
+    } catch (err) {
+      console.warn(`Warning: failed to load config file ${configPath}: ${err instanceof Error ? err.message : err}`);
+    }
+  }
+  const merged = mergeConfigWithArgs(fileConfig, configDir, cliArgs);
+
+  const resolvedPath = path.resolve(merged.path);
 
   if (!fs.existsSync(resolvedPath)) {
     console.error(`Error: path does not exist: ${resolvedPath}`);
@@ -95,19 +147,24 @@ function main(): void {
     process.exit(1);
   }
 
-  const reviewsDir = parsed.reviewsDir
-    ? path.resolve(parsed.reviewsDir)
+  const reviewsDir = merged.reviewsDir
+    ? path.resolve(merged.reviewsDir)
     : path.join(docsPath, ".reviews");
-  const userName = parsed.user || getGitUserName();
-  const port = parsed.port || getRandomPort();
+  const userName = merged.user || getGitUserName();
+  const port = merged.port || getRandomPort();
 
   const server = startServer({
     docsPath,
     reviewsDir,
     userName,
-    agent: parsed.agent,
+    agent: merged.agent,
+    agentCommand: merged.agentCommand,
+    agentName: merged.agentName,
+    agentPromptFile: merged.agentPromptFile,
+    intervalMs: merged.interval,
+    contextDirs: merged.contextDirs,
     port,
-    noOpen: parsed.noOpen,
+    noOpen: merged.noOpen,
   });
 
   function cleanup(): void {
@@ -118,4 +175,7 @@ function main(): void {
   process.on("SIGTERM", () => { cleanup(); process.exit(0); });
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

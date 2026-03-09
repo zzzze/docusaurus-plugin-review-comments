@@ -22,6 +22,8 @@
   "exports": {
     ".": "./lib/index.js",
     "./api": "./lib/api/index.js",
+    "./prompt": "./lib/service/prompt.js",
+    "./service": "./lib/service/index.js",
     "./types": "./lib/types.js"
   },
   "files": ["lib"],
