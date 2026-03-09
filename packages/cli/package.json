@@ -13,7 +13,7 @@
     "node": ">=18.0.0"
   },
   "bin": {
-    "docusaurus-review": "lib/index.js"
+    "mdreview": "lib/index.js"
   },
   "main": "lib/index.js",
   "files": ["lib", "dist"],
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "express": "^4.21.0",
+    "open-browsers": "^1.4.2",
     "@review-comments/plugin": "workspace:*"
   },
   "devDependencies": {

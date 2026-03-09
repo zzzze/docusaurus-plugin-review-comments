@@ -2,7 +2,8 @@ import express from "express";
 import path from "node:path";
 import fs from "node:fs";
 import http from "node:http";
-import { execFileSync } from "node:child_process";
+// @ts-ignore -- no type declarations
+import openBrowsers from "open-browsers";
 import { createReviewsMiddleware, createSseNotifier, globReviewFiles, readReviewFile } from "@review-comments/plugin/api";
 import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "@review-comments/plugin/prompt";
 import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "@review-comments/plugin/service";
@@ -176,18 +177,7 @@ export function startServer(opts: ServerOptions): http.Server {
   });
 
   if (!noOpen) {
-    const url = `http://localhost:${port}`;
-    try {
-      if (process.platform === "darwin") {
-        execFileSync("open", [url]);
-      } else if (process.platform === "win32") {
-        execFileSync("cmd", ["/c", "start", url]);
-      } else {
-        execFileSync("xdg-open", [url]);
-      }
-    } catch {
-      // Browser open failed — not critical
-    }
+    openBrowsers(`http://localhost:${port}`);
   }
 
   return server;

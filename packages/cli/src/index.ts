@@ -2,12 +2,29 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import net from "node:net";
 import { execFileSync } from "node:child_process";
 import { startServer } from "./server";
 import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
 
-function getRandomPort(): number {
-  return 3000 + Math.floor(Math.random() * 5000);
+const DEFAULT_PORT = 4100;
+
+function isPortAvailable(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.once("error", () => resolve(false));
+    server.once("listening", () => {
+      server.close(() => resolve(true));
+    });
+    server.listen(port);
+  });
+}
+
+async function findAvailablePort(startPort: number): Promise<number> {
+  for (let port = startPort; port < startPort + 100; port++) {
+    if (await isPortAvailable(port)) return port;
+  }
+  return 0;
 }
 
 function getGitUserName(): string {
@@ -67,7 +84,7 @@ function parseArgs(argv: string[]) {
 
 function printUsage(): void {
   console.log(`
-Usage: docusaurus-review [path] [options]
+Usage: mdreview [path] [options]
 
 Arguments:
   path                        Directory or .md file to review (default: ".")
@@ -75,7 +92,7 @@ Arguments:
 Options:
   --reviews-dir <dir>         Where to store .reviews.json files (default: ".reviews" next to source)
   --user <name>               Reviewer name (default: git user.name or "Reviewer")
-  --port <number>             Specify port (default: random)
+  --port <number>             Specify port (default: ${DEFAULT_PORT}, auto-increments if busy)
   --no-open                   Don't auto-open browser
   -h, --help                  Show this help
 
@@ -151,7 +168,7 @@ async function main(): Promise<void> {
     ? path.resolve(merged.reviewsDir)
     : path.join(docsPath, ".reviews");
   const userName = merged.user || getGitUserName();
-  const port = merged.port || getRandomPort();
+  const port = await findAvailablePort(merged.port || DEFAULT_PORT);
 
   const server = startServer({
     docsPath,

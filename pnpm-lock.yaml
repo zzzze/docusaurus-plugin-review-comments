@@ -14,6 +14,7 @@ importers:
       '@types/react-dom': ^19.0.0
       '@vitejs/plugin-react': ^4.3.0
       express: ^4.21.0
+      open-browsers: ^1.4.2
       react: ^19.0.0
       react-dom: ^19.0.0
       react-markdown: ^9.0.0
@@ -24,6 +25,7 @@ importers:
     dependencies:
       '@review-comments/plugin': link:../plugin
       express: 4.22.1
+      open-browsers: 1.4.2
     devDependencies:
       '@types/express': 5.0.6
       '@types/node': 22.19.15
@@ -5422,6 +5424,11 @@ packages:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
     dev: false
 
+  /colors-cli/1.0.33:
+    resolution: {integrity: sha512-PWGsmoJFdOB0t+BeHgmtuoRZUQucOLl5ii81NBzOOGVxlgE04muFNHlR5j8i8MKbOPELBl3243AI6lGBTj5ICQ==}
+    hasBin: true
+    dev: false
+
   /combine-promises/1.2.0:
     resolution: {integrity: sha512-VcQB1ziGD0NXrhKxiwyNbCDmRzs/OShMs2GqW2DlU2A/Sd0nQxE1oWDAE5O0ygSx5mgQOn9eIFh7yKPgFRVkPQ==}
     engines: {node: '>=10'}
@@ -8508,6 +8515,14 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       mimic-fn: 2.1.0
+    dev: false
+
+  /open-browsers/1.4.2:
+    resolution: {integrity: sha512-91DkuXIxLeP/f5yHZHTfEWFbcWGv0Uc78Z4s+4nRo0gSwtsyXIe1cb/+75sOizYfwX1TBTHQ7jnP5+FkMMZ5tw==}
+    dependencies:
+      colors-cli: 1.0.33
+      cross-spawn: 7.0.6
+      open: 8.4.2
     dev: false
 
   /open/10.2.0:
