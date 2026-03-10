@@ -9,6 +9,7 @@ export interface DocTreeEntry {
 
 export function useDocs() {
   const [tree, setTree] = useState<DocTreeEntry[]>([]);
+  const [singleFile, setSingleFile] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,10 +17,11 @@ export function useDocs() {
       .then((res) => res.json())
       .then((data) => {
         setTree(data.tree);
+        setSingleFile(!!data.singleFile);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  return { tree, loading };
+  return { tree, singleFile, loading };
 }

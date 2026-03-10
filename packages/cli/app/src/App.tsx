@@ -18,14 +18,14 @@ function findFirstDoc(tree: DocTreeEntry[]): string | null {
 }
 
 function AppContent() {
-  const { tree, loading } = useDocs();
+  const { tree, singleFile, loading } = useDocs();
 
   if (loading) return <div className="loading-screen">Loading documents...</div>;
 
   const firstDoc = findFirstDoc(tree);
 
   return (
-    <Layout tree={tree}>
+    <Layout tree={tree} hideSidebar={singleFile}>
       <Routes>
         {firstDoc && <Route path="/" element={<Navigate to={firstDoc} replace />} />}
         <Route path="/*" element={<DocPage />} />

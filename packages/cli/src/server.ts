@@ -21,6 +21,7 @@ export interface ServerOptions {
   contextDirs?: string[];
   port: number;
   noOpen: boolean;
+  singleFile?: string;
 }
 
 interface DocTreeEntry {
@@ -68,8 +69,13 @@ export function startServer(opts: ServerOptions): http.Server {
 
   // Docs API — list file tree
   app.get("/api/docs", (_req, res) => {
-    const tree = buildDocTree(docsPath);
-    res.json({ tree, basePath: docsPath });
+    let tree: DocTreeEntry[];
+    if (opts.singleFile) {
+      tree = [{ name: opts.singleFile, path: opts.singleFile, type: "file" }];
+    } else {
+      tree = buildDocTree(docsPath);
+    }
+    res.json({ tree, basePath: docsPath, singleFile: !!opts.singleFile });
   });
 
   // Docs API — read file content
@@ -177,7 +183,11 @@ export function startServer(opts: ServerOptions): http.Server {
   });
 
   if (!noOpen) {
-    openBrowsers(`http://localhost:${port}`);
+    let url = `http://localhost:${port}`;
+    if (opts.singleFile) {
+      url += `/${opts.singleFile.replace(/\.(md|mdx)$/i, "")}`;
+    }
+    openBrowsers(url);
   }
 
   return server;

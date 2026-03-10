@@ -145,6 +145,7 @@ async function main(): Promise<void> {
   }
 
   let docsPath: string;
+  let singleFile: string | undefined;
   const stat = fs.statSync(resolvedPath);
 
   if (stat.isFile()) {
@@ -153,6 +154,7 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     docsPath = path.dirname(resolvedPath);
+    singleFile = path.basename(resolvedPath);
   } else {
     docsPath = resolvedPath;
   }
@@ -182,6 +184,7 @@ async function main(): Promise<void> {
     contextDirs: merged.contextDirs,
     port,
     noOpen: merged.noOpen,
+    singleFile,
   });
 
   function cleanup(): void {

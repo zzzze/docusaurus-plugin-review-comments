@@ -4,13 +4,23 @@ import type { DocTreeEntry } from "../hooks/useDocs";
 
 export function Layout({
   tree,
+  hideSidebar,
   children,
 }: {
   tree: DocTreeEntry[];
+  hideSidebar?: boolean;
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+
+  if (hideSidebar) {
+    return (
+      <div className="layout">
+        <main className="main-content" style={{ marginLeft: 0 }}>{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className="layout">
