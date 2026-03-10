@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
+import os from "node:os";
 
 /**
  * Walk from `startDir` upward looking for a `.git` directory.
@@ -28,4 +29,20 @@ export function getProjectNamespace(absolutePath: string): string {
     .digest("hex")
     .slice(0, 8);
   return `${name}-${hash}`;
+}
+
+/**
+ * Compute the default reviews directory under ~/.mdreview/reviews/.
+ * Path: ~/.mdreview/reviews/<namespace>/<docsRelPath>
+ * where <namespace> is derived from the project root and <docsRelPath>
+ * is the relative path from project root to the docs directory.
+ */
+export function getDefaultReviewsDir(opts: {
+  docsPath: string;
+  projectRoot: string;
+}): string {
+  const namespace = getProjectNamespace(opts.projectRoot);
+  const docsRelPath = path.relative(opts.projectRoot, opts.docsPath);
+  const base = path.join(os.homedir(), ".mdreview", "reviews", namespace);
+  return docsRelPath ? path.join(base, docsRelPath) : base;
 }

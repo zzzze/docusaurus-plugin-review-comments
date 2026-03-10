@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { findProjectRoot, getProjectNamespace } from "./project";
+import { findProjectRoot, getProjectNamespace, getDefaultReviewsDir } from "./project";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
@@ -34,5 +34,31 @@ describe("getProjectNamespace", () => {
     const a = getProjectNamespace("/path/a");
     const b = getProjectNamespace("/path/b");
     expect(a).not.toBe(b);
+  });
+});
+
+describe("getDefaultReviewsDir", () => {
+  it("returns path under ~/.mdreview/reviews/ with namespace and docsRelPath", () => {
+    const result = getDefaultReviewsDir({
+      docsPath: "/Users/vin/code/my-project/docs",
+      projectRoot: "/Users/vin/code/my-project",
+    });
+    expect(result).toMatch(/^.*\/\.mdreview\/reviews\/my-project-[a-f0-9]{8}\/docs$/);
+  });
+
+  it("omits docsRelPath when docsPath equals projectRoot", () => {
+    const result = getDefaultReviewsDir({
+      docsPath: "/Users/vin/code/my-project",
+      projectRoot: "/Users/vin/code/my-project",
+    });
+    expect(result).toMatch(/^.*\/\.mdreview\/reviews\/my-project-[a-f0-9]{8}$/);
+  });
+
+  it("handles nested docs paths", () => {
+    const result = getDefaultReviewsDir({
+      docsPath: "/Users/vin/code/proj/src/docs",
+      projectRoot: "/Users/vin/code/proj",
+    });
+    expect(result).toMatch(/\/src\/docs$/);
   });
 });

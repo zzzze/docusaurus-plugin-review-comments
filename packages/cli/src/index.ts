@@ -6,6 +6,7 @@ import net from "node:net";
 import { execFileSync } from "node:child_process";
 import { startServer } from "./server";
 import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
+import { findProjectRoot, getDefaultReviewsDir } from "./project";
 
 const DEFAULT_PORT = 4100;
 
@@ -90,7 +91,7 @@ Arguments:
   path                        Directory or .md file to review (default: ".")
 
 Options:
-  --reviews-dir <dir>         Where to store .reviews.json files (default: ".reviews" next to source)
+  --reviews-dir <dir>         Where to store .reviews.json files (default: ~/.mdreview/reviews/<project>/)
   --user <name>               Reviewer name (default: git user.name or "Reviewer")
   --port <number>             Specify port (default: ${DEFAULT_PORT}, auto-increments if busy)
   --no-open                   Don't auto-open browser
@@ -159,6 +160,8 @@ async function main(): Promise<void> {
     docsPath = resolvedPath;
   }
 
+  const projectRoot = findProjectRoot(docsPath) ?? docsPath;
+
   const hasMarkdown = fs.readdirSync(docsPath, { recursive: true })
     .some((f) => /\.(md|mdx)$/i.test(String(f)));
   if (!hasMarkdown) {
@@ -168,7 +171,7 @@ async function main(): Promise<void> {
 
   const reviewsDir = merged.reviewsDir
     ? path.resolve(merged.reviewsDir)
-    : path.join(docsPath, ".reviews");
+    : getDefaultReviewsDir({ docsPath, projectRoot });
   const userName = merged.user || getGitUserName();
   const port = await findAvailablePort(merged.port || DEFAULT_PORT);
 
