@@ -7,7 +7,7 @@ import openBrowsers from "open-browsers";
 import { createReviewsMiddleware, createSseNotifier, globReviewFiles, readReviewFile } from "@review-comments/plugin/api";
 import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "@review-comments/plugin/prompt";
 import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "@review-comments/plugin/service";
-import type { AgentCommandFn } from "@review-comments/plugin/types";
+import type { AgentCommandFn, ContextDir } from "@review-comments/plugin/types";
 
 export interface ServerOptions {
   docsPath: string;
@@ -18,7 +18,7 @@ export interface ServerOptions {
   agentName?: string;
   agentPromptFile?: string;
   intervalMs?: number;
-  contextDirs?: string[];
+  contextDirs?: ContextDir[];
   port: number;
   noOpen: boolean;
   singleFile?: string;
@@ -110,9 +110,7 @@ export function startServer(opts: ServerOptions): http.Server {
   const agentName = opts.agentName ?? DEFAULT_AGENT_NAME;
   const siteDir = path.dirname(docsPath);
   const docsPathMap = new Map([["", path.basename(docsPath)]]);
-  const contextDirs = (opts.contextDirs ?? []).map((dir) => ({
-    dir: path.resolve(dir),
-  }));
+  const contextDirs = opts.contextDirs ?? [];
 
   if (agent) {
     // Agent mode: auto-spawn AI agent to process reviews
