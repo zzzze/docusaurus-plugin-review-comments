@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Configuration
 
-All options for `docusaurus-plugin-review-comments`.
+All options for `docusaurus-plugin-mdreview`.
 
 ## Options
 
@@ -85,7 +85,7 @@ Each file contains the comments for that document. You can commit these files to
 export default {
   plugins: [
     [
-      'docusaurus-plugin-review-comments',
+      'docusaurus-plugin-mdreview',
       {
         reviewsDir: 'reviews',
         userName: 'Alice',

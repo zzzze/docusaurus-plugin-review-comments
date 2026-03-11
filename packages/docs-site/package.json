@@ -18,7 +18,7 @@
   "dependencies": {
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
-    "docusaurus-plugin-review-comments": "^0.0.3",
+    "@mdreview/plugin": "workspace:*",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",

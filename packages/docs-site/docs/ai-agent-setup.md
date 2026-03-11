@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # AI Agent Setup
 
-The plugin can run an AI agent periodically to process open review comments automatically.
+The plugin can run an AI agent periodically to process open comments automatically.
 
 ## How It Works
 
@@ -134,4 +134,4 @@ For automated workflows where you want to skip permission prompts:
 
 ## Triggering Manually
 
-To run the agent immediately without waiting for the next interval, use the **Run Now** button in the review comments panel in your browser.
+To run the agent immediately without waiting for the next interval, use the **Run Now** button in the mdreview panel in your browser.

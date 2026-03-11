@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
-import type { AgentCommandFn } from "@review-comments/plugin/types";
+import type { AgentCommandFn } from "@mdreview/plugin/types";
 
 export interface ReviewConfig {
   path?: string;

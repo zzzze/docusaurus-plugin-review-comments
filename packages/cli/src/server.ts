@@ -4,10 +4,10 @@ import fs from "node:fs";
 import http from "node:http";
 // @ts-ignore -- no type declarations
 import openBrowsers from "open-browsers";
-import { createReviewsMiddleware, createSseNotifier, globReviewFiles, readReviewFile } from "@review-comments/plugin/api";
-import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "@review-comments/plugin/prompt";
-import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "@review-comments/plugin/service";
-import type { AgentCommandFn, ContextDir } from "@review-comments/plugin/types";
+import { createReviewsMiddleware, createSseNotifier, globReviewFiles, readReviewFile } from "@mdreview/plugin/api";
+import { buildPrompt, buildGlobalPrompt, loadPromptTemplate } from "@mdreview/plugin/prompt";
+import { createReviewService, DEFAULT_INTERVAL_MS, DEFAULT_AGENT_NAME } from "@mdreview/plugin/service";
+import type { AgentCommandFn, ContextDir } from "@mdreview/plugin/types";
 
 export interface ServerOptions {
   docsPath: string;

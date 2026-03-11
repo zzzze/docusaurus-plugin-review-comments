@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-`docusaurus-plugin-review-comments` adds inline review comments to your Docusaurus site.
+`docusaurus-plugin-mdreview` adds inline review comments to your Docusaurus site.
 While reading your documentation locally, you can select any text and leave a comment — a question, a suggestion, or a reported issue. Comments are saved as JSON files alongside your docs.
 
 The plugin also supports an optional **AI review service**: an AI agent (such as Claude Code) runs periodically, reads open comments, and responds directly — answering questions, applying suggestions, or fixing issues in your Markdown source files.

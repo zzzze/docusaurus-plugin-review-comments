@@ -82,7 +82,7 @@ export function ReviewQueueBadge(): React.ReactElement | null {
         className={styles.badge}
         onClick={() => { void handleClick(); }}
         disabled={actionState === "working"}
-        title={caps.hasTrigger ? "Trigger AI review for all pending comments" : "Copy AI prompt for all pending review comments"}
+        title={caps.hasTrigger ? "Trigger AI review for all pending comments" : "Copy AI prompt for all pending comments"}
       >
         {label}
         {intervalHint && <HintButton text={intervalHint} align="start" />}

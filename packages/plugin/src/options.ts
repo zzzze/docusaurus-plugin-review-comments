@@ -6,17 +6,17 @@ export function validateOptions({
 }: OptionValidationContext<PluginOptions, PluginOptions>): PluginOptions {
   if (!options.reviewsDir || typeof options.reviewsDir !== "string") {
     throw new Error(
-      "docusaurus-plugin-review-comments: 'reviewsDir' option is required",
+      "docusaurus-plugin-mdreview: 'reviewsDir' option is required",
     );
   }
   if (!options.userName || typeof options.userName !== "string") {
     throw new Error(
-      "docusaurus-plugin-review-comments: 'userName' option is required",
+      "docusaurus-plugin-mdreview: 'userName' option is required",
     );
   }
   if (options.agentName !== undefined && (typeof options.agentName !== "string" || !options.agentName)) {
     throw new Error(
-      "docusaurus-plugin-review-comments: 'agentName' must be a non-empty string",
+      "docusaurus-plugin-mdreview: 'agentName' must be a non-empty string",
     );
   }
   if (options.reviewService !== undefined) {
@@ -26,7 +26,7 @@ export function validateOptions({
       (typeof rs.intervalMs !== "number" || rs.intervalMs <= 0)
     ) {
       throw new Error(
-        "docusaurus-plugin-review-comments: 'reviewService.intervalMs' must be a positive number",
+        "docusaurus-plugin-mdreview: 'reviewService.intervalMs' must be a positive number",
       );
     }
     if (
@@ -35,7 +35,7 @@ export function validateOptions({
       typeof rs.agentCommand !== "function"
     ) {
       throw new Error(
-        "docusaurus-plugin-review-comments: 'reviewService.agentCommand' must be a string or function",
+        "docusaurus-plugin-mdreview: 'reviewService.agentCommand' must be a string or function",
       );
     }
     if (rs.contextDirs !== undefined) {
@@ -52,7 +52,7 @@ export function validateOptions({
         })
       ) {
         throw new Error(
-          "docusaurus-plugin-review-comments: 'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects",
+          "docusaurus-plugin-mdreview: 'reviewService.contextDirs' must be an array of strings or { dir: string; desc?: string } objects",
         );
       }
     }
@@ -64,7 +64,7 @@ export function validateOptions({
         Object.values(rs.env).some((v) => typeof v !== "string")
       ) {
         throw new Error(
-          "docusaurus-plugin-review-comments: 'reviewService.env' must be a Record<string, string>",
+          "docusaurus-plugin-mdreview: 'reviewService.env' must be a Record<string, string>",
         );
       }
     }

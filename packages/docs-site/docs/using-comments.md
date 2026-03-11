@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Using Comments
 
-How to leave and manage review comments on a Docusaurus site that has this plugin installed.
+How to leave and manage review comments on a Docusaurus site with mdreview installed.
 
 ## Leaving a Comment
 

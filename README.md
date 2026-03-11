@@ -1,4 +1,4 @@
-# docusaurus-plugin-review-comments
+# mdreview
 
 A Docusaurus plugin for adding inline review comments to your documentation site. Select any text while reading your docs locally, leave a comment, and optionally have an AI agent process comments automatically.
 
@@ -18,7 +18,7 @@ Comments are saved as `.reviews.json` files alongside your docs. They can be com
 **Prerequisites:** Docusaurus 3.0+, Node.js 18+
 
 ```bash
-npm install docusaurus-plugin-review-comments
+npm install docusaurus-plugin-mdreview
 ```
 
 Add the plugin to your `docusaurus.config.js` (or `.ts`):
@@ -27,7 +27,7 @@ Add the plugin to your `docusaurus.config.js` (or `.ts`):
 export default {
   plugins: [
     [
-      'docusaurus-plugin-review-comments',
+      'docusaurus-plugin-mdreview',
       {
         reviewsDir: 'reviews',
         defaultAuthor: 'Your Name',
@@ -124,7 +124,7 @@ contextDirs: [
 
 ### Manual Trigger
 
-To run the agent immediately without waiting for the next interval, use the **Run Now** button in the review comments panel in your browser.
+To run the agent immediately without waiting for the next interval, use the **Run Now** button in the mdreview panel in your browser.
 
 ## Using Comments
 

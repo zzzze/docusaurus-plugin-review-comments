@@ -10,18 +10,18 @@ import { createSseNotifier } from "./api/sseNotifier";
 
 export { validateOptions } from "./options";
 
-export default function pluginReviewComments(
+export default function pluginMdReview(
   context: LoadContext,
   options: PluginOptions,
 ): Plugin {
   if (process.env.NODE_ENV !== "development") {
-    return { name: "docusaurus-plugin-review-comments" };
+    return { name: "docusaurus-plugin-mdreview" };
   }
 
   const resolvedReviewsDir = path.resolve(context.siteDir, options.reviewsDir);
 
   return {
-    name: "docusaurus-plugin-review-comments",
+    name: "docusaurus-plugin-mdreview",
 
     getThemePath() {
       return path.resolve(__dirname, "./src/theme");

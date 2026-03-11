@@ -12,7 +12,7 @@ sidebar_position: 2
 ## Install
 
 ```bash
-npm install docusaurus-plugin-review-comments
+npm install docusaurus-plugin-mdreview
 ```
 
 ## Configure
@@ -23,7 +23,7 @@ Add the plugin to your `docusaurus.config.js` (or `.ts`):
 export default {
   plugins: [
     [
-      'docusaurus-plugin-review-comments',
+      'docusaurus-plugin-mdreview',
       {
         reviewsDir: 'reviews',
         userName: 'Your Name',

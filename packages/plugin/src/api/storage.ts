@@ -14,14 +14,14 @@ export function resolveReviewFilePath(
 
 function normalizeReviewFile(data: unknown, filePath: string): ReviewFile {
   if (typeof data !== "object" || data === null) {
-    logger.warn`[review-comments] Corrupted review file (not an object), ignoring: ${filePath}`;
+    logger.warn`[mdreview] Corrupted review file (not an object), ignoring: ${filePath}`;
     return { documentPath: "", comments: [] };
   }
   const raw = data as Record<string, unknown>;
   const documentPath = typeof raw["documentPath"] === "string" ? raw["documentPath"] : "";
   const rawComments = Array.isArray(raw["comments"]) ? raw["comments"] : [];
   if (!Array.isArray(raw["comments"])) {
-    logger.warn`[review-comments] Review file missing or invalid "comments" field, treating as empty: ${filePath}`;
+    logger.warn`[mdreview] Review file missing or invalid "comments" field, treating as empty: ${filePath}`;
   }
   const comments = rawComments.map((c: unknown) => {
     const comment = c as Record<string, unknown>;
@@ -44,15 +44,15 @@ export async function readReviewFile(filePath: string): Promise<ReviewFile> {
   try {
     return normalizeReviewFile(JSON.parse(content), filePath);
   } catch {
-    logger.warn`[review-comments] Failed to parse review file, attempting auto-repair: ${filePath}`;
+    logger.warn`[mdreview] Failed to parse review file, attempting auto-repair: ${filePath}`;
     try {
       const repaired = jsonrepair(content);
       const result = normalizeReviewFile(JSON.parse(repaired), filePath);
-      logger.warn`[review-comments] Auto-repair succeeded, writing back: ${filePath}`;
+      logger.warn`[mdreview] Auto-repair succeeded, writing back: ${filePath}`;
       await writeReviewFile(filePath, result);
       return result;
     } catch {
-      logger.warn`[review-comments] Auto-repair failed, ignoring: ${filePath}`;
+      logger.warn`[mdreview] Auto-repair failed, ignoring: ${filePath}`;
       return { documentPath: "", comments: [] };
     }
   }

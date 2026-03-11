@@ -1,4 +1,4 @@
-const INTRO = "You are an AI assistant helping respond to review comments on documentation.";
+const INTRO = "You are an AI assistant helping respond to review comments on documentation. This system is called mdreview.";
 
 const ALLOWED_FILE_OPS = `\
 ## Allowed File Operations
@@ -91,11 +91,11 @@ function assemble(title: string, taskSection: string): string {
 }
 
 export const DEFAULT_PROMPT_TEMPLATE = assemble(
-  "# Review Comments — AI Agent Instructions",
+  "# mdreview — AI Agent Instructions",
   SINGLE_DOC_TASK,
 );
 
 export const DEFAULT_GLOBAL_PROMPT_TEMPLATE = assemble(
-  "# Review Comments — AI Agent Instructions (All Pending)",
+  "# mdreview — AI Agent Instructions (All Pending)",
   GLOBAL_TASK,
 );

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
-import { useReviewComments } from "../client/useReviewComments";
+import { useMdReview } from "../client/useMdReview";
 import * as api from "../client/api";
 import type { ReviewFile, ReviewComment } from "../types";
 
@@ -66,7 +66,7 @@ const reviewFileWithComment: ReviewFile = {
   comments: [sampleComment],
 };
 
-describe("useReviewComments", () => {
+describe("useMdReview", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(api.fetchComments).mockResolvedValue(emptyReviewFile);
@@ -75,7 +75,7 @@ describe("useReviewComments", () => {
   it("fetches comments on mount", async () => {
     vi.mocked(api.fetchComments).mockResolvedValue(reviewFileWithComment);
 
-    const { result } = renderHook(() => useReviewComments("guide/intro"));
+    const { result } = renderHook(() => useMdReview("guide/intro"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -86,7 +86,7 @@ describe("useReviewComments", () => {
   });
 
   it("starts with isLoading true", () => {
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
     expect(result.current.isLoading).toBe(true);
   });
 
@@ -96,7 +96,7 @@ describe("useReviewComments", () => {
       .mockResolvedValueOnce(emptyReviewFile)
       .mockResolvedValueOnce(reviewFileWithComment);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -117,7 +117,7 @@ describe("useReviewComments", () => {
   it("addReply calls api.updateComment with reply payload", async () => {
     vi.mocked(api.updateComment).mockResolvedValue(sampleComment);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -136,7 +136,7 @@ describe("useReviewComments", () => {
   it("editComment calls api.updateComment with content", async () => {
     vi.mocked(api.updateComment).mockResolvedValue(sampleComment);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -155,7 +155,7 @@ describe("useReviewComments", () => {
   it("editReply calls api.updateComment with editReply payload", async () => {
     vi.mocked(api.updateComment).mockResolvedValue(sampleComment);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -177,7 +177,7 @@ describe("useReviewComments", () => {
       status: "resolved",
     });
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -196,7 +196,7 @@ describe("useReviewComments", () => {
   it("unresolveComment sets status to open", async () => {
     vi.mocked(api.updateComment).mockResolvedValue(sampleComment);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -215,7 +215,7 @@ describe("useReviewComments", () => {
   it("deleteComment calls api.deleteComment", async () => {
     vi.mocked(api.deleteComment).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -229,7 +229,7 @@ describe("useReviewComments", () => {
   });
 
   it("manages hoveredCommentId state", async () => {
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -251,7 +251,7 @@ describe("useReviewComments", () => {
   });
 
   it("manages isPanelOpen state", async () => {
-    const { result } = renderHook(() => useReviewComments("doc"));
+    const { result } = renderHook(() => useMdReview("doc"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -267,14 +267,14 @@ describe("useReviewComments", () => {
   });
 });
 
-describe("useReviewComments SSE subscription", () => {
+describe("useMdReview SSE subscription", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(api.fetchComments).mockResolvedValue(emptyReviewFile);
   });
 
   it("creates an EventSource for /api/reviews/events on mount", async () => {
-    renderHook(() => useReviewComments("guide/intro"));
+    renderHook(() => useMdReview("guide/intro"));
 
     await waitFor(() => {
       expect(MockEventSource.instances.length).toBeGreaterThan(0);
@@ -284,7 +284,7 @@ describe("useReviewComments SSE subscription", () => {
   });
 
   it("calls refetch when agent:done event matches docPath", async () => {
-    const { result } = renderHook(() => useReviewComments("guide/intro"));
+    const { result } = renderHook(() => useMdReview("guide/intro"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -302,7 +302,7 @@ describe("useReviewComments SSE subscription", () => {
   });
 
   it("does NOT call refetch when agent:done event is for a different docPath", async () => {
-    const { result } = renderHook(() => useReviewComments("guide/intro"));
+    const { result } = renderHook(() => useMdReview("guide/intro"));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -320,7 +320,7 @@ describe("useReviewComments SSE subscription", () => {
   });
 
   it("does not create EventSource when docPath is empty", () => {
-    renderHook(() => useReviewComments(""));
+    renderHook(() => useMdReview(""));
     expect(MockEventSource.instances.length).toBe(0);
   });
 });

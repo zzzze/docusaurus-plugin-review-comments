@@ -7,7 +7,7 @@ importers:
 
   packages/cli:
     specifiers:
-      '@review-comments/plugin': workspace:*
+      '@mdreview/plugin': workspace:*
       '@types/express': ^5.0.0
       '@types/node': ^22.0.0
       '@types/react': ^19.0.0
@@ -24,7 +24,7 @@ importers:
       vite: ^6.0.0
       vitest: ^3.0.0
     dependencies:
-      '@review-comments/plugin': link:../plugin
+      '@mdreview/plugin': link:../plugin
       express: 4.22.1
       open-browsers: 1.4.2
     devDependencies:
@@ -49,11 +49,11 @@ importers:
       '@docusaurus/preset-classic': 3.9.2
       '@docusaurus/tsconfig': 3.9.2
       '@docusaurus/types': 3.9.2
+      '@mdreview/plugin': workspace:*
       '@mdx-js/react': ^3.0.0
       '@types/express': ^5.0.0
       '@types/uuid': ^10.0.0
       clsx: ^2.0.0
-      docusaurus-plugin-review-comments: ^0.0.3
       prism-react-renderer: ^2.3.0
       react: ^19.0.0
       react-dom: ^19.0.0
@@ -61,9 +61,9 @@ importers:
     dependencies:
       '@docusaurus/core': 3.9.2_h2rsa75jsqplivttijgk76jw3i
       '@docusaurus/preset-classic': 3.9.2_h2rsa75jsqplivttijgk76jw3i
+      '@mdreview/plugin': link:../plugin
       '@mdx-js/react': 3.1.1_react@19.2.4
       clsx: 2.1.1
-      docusaurus-plugin-review-comments: 0.0.3_zb6lk5jip635uqmwhsyttlnr7u
       prism-react-renderer: 2.4.1_react@19.2.4
       react: 19.2.4
       react-dom: 19.2.4_react@19.2.4
@@ -4610,7 +4610,7 @@ packages:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.21
-      vite: 6.4.1_@types+node@22.19.15
+      vite: 6.4.1
     dev: true
 
   /@vitest/pretty-format/3.2.4:
@@ -6012,29 +6012,6 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
-    dev: false
-
-  /docusaurus-plugin-review-comments/0.0.3_zb6lk5jip635uqmwhsyttlnr7u:
-    resolution: {integrity: sha512-EUHm4qNgMxFCH3lA2nXsuWTpqFtMKFomXPOD/YpgefmZ6Rm5AGeRM9UaGQmU2gVPTH/bYWuleCpjCNoVVONLdQ==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@docusaurus/core': '>=3.0.0'
-      react: '>=18.0.0'
-      react-dom: '>=18.0.0'
-    dependencies:
-      '@docusaurus/core': 3.9.2_h2rsa75jsqplivttijgk76jw3i
-      dom-anchor-text-quote: 4.0.2
-      express: 4.22.1
-      jsonrepair: 3.13.2
-      lucide-react: 0.468.0_react@19.2.4
-      react: 19.2.4
-      react-dom: 19.2.4_react@19.2.4
-      react-markdown: 9.1.0_react@19.2.4
-      remark-gfm: 4.0.1
-      uuid: 11.1.0
-    transitivePeerDependencies:
-      - '@types/react'
-      - supports-color
     dev: false
 
   /dom-accessibility-api/0.5.16:
@@ -9727,28 +9704,6 @@ packages:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-
-  /react-markdown/9.1.0_react@19.2.4:
-    resolution: {integrity: sha512-xaijuJB0kzGiUdG7nc2MOMDUDBWPyGAjZtUrow9XxUeua8IqeP+VlIfAZ3bphpcLTnSZXz6z9jcVC/TCwbfgdw==}
-    peerDependencies:
-      '@types/react': '>=18'
-      react: '>=18'
-    dependencies:
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      devlop: 1.1.0
-      hast-util-to-jsx-runtime: 2.3.6
-      html-url-attributes: 3.0.1
-      mdast-util-to-hast: 13.2.1
-      react: 19.2.4
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.2
-      unified: 11.0.5
-      unist-util-visit: 5.1.0
-      vfile: 6.0.3
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
 
   /react-refresh/0.17.0:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}

@@ -1,6 +1,6 @@
-# Review Comments Plugin - Example Site
+# mdreview - Example Site
 
-Complete Docusaurus documentation site demonstrating the review comments plugin.
+Complete Docusaurus documentation site demonstrating the mdreview plugin.
 
 ## Quick Start
 
@@ -32,7 +32,7 @@ npm start
 
 ## Review Data
 
-Review comments are stored in the `reviews/` directory, mirroring the `docs/` structure. Each document has a corresponding `.reviews.json` file.
+Reviews are stored in the `reviews/` directory, mirroring the `docs/` structure. Each document has a corresponding `.reviews.json` file.
 
 ## Local Development
 

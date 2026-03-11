@@ -1,18 +1,18 @@
 {
-  "name": "@review-comments/plugin",
+  "name": "@mdreview/plugin",
   "version": "0.0.3",
   "description": "A Docusaurus plugin for adding inline review comments to your documentation site",
-  "keywords": ["docusaurus", "docusaurus-plugin", "review", "comments", "annotation", "documentation"],
+  "keywords": ["docusaurus", "docusaurus-plugin", "mdreview", "review", "comments", "annotation", "documentation"],
   "author": "zzzze",
   "license": "MIT",
-  "homepage": "https://github.com/zzzze/docusaurus-plugin-review-comments#readme",
+  "homepage": "https://github.com/nicepkg/mdreview#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zzzze/docusaurus-plugin-review-comments.git",
+    "url": "git+https://github.com/nicepkg/mdreview.git",
     "directory": "packages/plugin"
   },
   "bugs": {
-    "url": "https://github.com/zzzze/docusaurus-plugin-review-comments/issues"
+    "url": "https://github.com/nicepkg/mdreview/issues"
   },
   "engines": {
     "node": ">=18.0.0"

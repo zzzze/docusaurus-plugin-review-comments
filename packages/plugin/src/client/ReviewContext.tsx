@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from "react";
-import { useReviewComments } from "./useReviewComments";
+import { useMdReview } from "./useMdReview";
 
-type ReviewContextValue = ReturnType<typeof useReviewComments>;
+type ReviewContextValue = ReturnType<typeof useMdReview>;
 
 const ReviewContext = createContext<ReviewContextValue | null>(null);
 
@@ -12,7 +12,7 @@ export function ReviewProvider({
   docPath: string;
   children: React.ReactNode;
 }): React.ReactElement {
-  const value = useReviewComments(docPath);
+  const value = useMdReview(docPath);
   return (
     <ReviewContext.Provider value={value}>{children}</ReviewContext.Provider>
   );

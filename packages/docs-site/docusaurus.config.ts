@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Review Comments Plugin',
+  title: 'mdreview',
   tagline: 'Inline review comments for Docusaurus',
   favicon: 'img/favicon.ico',
 
@@ -23,7 +23,7 @@ const config: Config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'your-org', // Usually your GitHub org/user name.
-  projectName: 'docusaurus-plugin-review-comments', // Usually your repo name.
+  projectName: 'mdreview', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -52,7 +52,7 @@ const config: Config = {
 
   plugins: [
     [
-      'docusaurus-plugin-review-comments',
+      '@mdreview/plugin',
       {
         reviewsDir: '.reviews',
         userName: 'Vin',
@@ -87,7 +87,7 @@ const config: Config = {
           label: 'Docs',
         },
         {
-          href: 'https://github.com/your-org/docusaurus-plugin-review-comments',
+          href: 'https://github.com/nicepkg/mdreview',
           label: 'GitHub',
           position: 'right',
         },
@@ -110,7 +110,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/your-org/docusaurus-plugin-review-comments',
+              href: 'https://github.com/nicepkg/mdreview',
             },
           ],
         },

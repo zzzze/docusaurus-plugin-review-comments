@@ -7,7 +7,7 @@ import { execFileSync } from "node:child_process";
 import { startServer } from "./server";
 import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
 import { findProjectRoot, getDefaultReviewsDir } from "./project";
-import type { ContextDir } from "@review-comments/plugin/types";
+import type { ContextDir } from "@mdreview/plugin/types";
 
 const DEFAULT_PORT = 4100;
 

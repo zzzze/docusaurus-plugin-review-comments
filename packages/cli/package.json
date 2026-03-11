@@ -1,12 +1,12 @@
 {
-  "name": "@review-comments/cli",
+  "name": "@mdreview/cli",
   "version": "0.0.3",
   "description": "CLI tool to review markdown documents with inline comments",
   "author": "zzzze",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zzzze/docusaurus-plugin-review-comments.git",
+    "url": "git+https://github.com/nicepkg/mdreview.git",
     "directory": "packages/cli"
   },
   "engines": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "express": "^4.21.0",
     "open-browsers": "^1.4.2",
-    "@review-comments/plugin": "workspace:*"
+    "@mdreview/plugin": "workspace:*"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
