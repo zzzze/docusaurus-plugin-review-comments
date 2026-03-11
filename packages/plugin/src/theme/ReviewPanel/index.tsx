@@ -170,6 +170,8 @@ export function ReviewPanel(): React.ReactElement | null {
     setIsPanelOpen,
     orphanedCommentIds,
     unresolveComment,
+    agentError,
+    dismissAgentError,
   } = useReview();
   const [actionState, setActionState] = useState<ActionState>("idle");
   const caps = useCapabilities();
@@ -244,6 +246,20 @@ export function ReviewPanel(): React.ReactElement | null {
   );
 
   const documentAnchor = { scope: "document" as const };
+
+  const agentErrorBanner = agentError && (
+    <div className={styles.agentErrorBanner} role="alert">
+      <span className={styles.agentErrorText}>{agentError}</span>
+      <button
+        type="button"
+        className={styles.agentErrorDismiss}
+        onClick={dismissAgentError}
+        aria-label="Dismiss"
+      >
+        &times;
+      </button>
+    </div>
+  );
 
   const commentListContent = (
     <>
@@ -356,6 +372,7 @@ export function ReviewPanel(): React.ReactElement | null {
         commentCount={openCount}
         onToggle={handleToggle}
       >
+        {agentErrorBanner}
         {commentListContent}
         {undoToast}
       </BottomSheet>
@@ -439,6 +456,7 @@ export function ReviewPanel(): React.ReactElement | null {
       </div>
 
       <div className={styles.body}>
+        {agentErrorBanner}
         {commentListContent}
         {undoToast}
       </div>

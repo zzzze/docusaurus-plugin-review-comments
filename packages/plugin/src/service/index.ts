@@ -95,6 +95,15 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
 
   log(`Started (interval=${intervalMs / 1000}s, reviewsDir=${reviewsDir})`);
 
+  // Async health check — verify the agent command is available (only when SSE notifier exists to report errors)
+  if (notifier) {
+    const resolvedCommand =
+      typeof agentCommand === "function"
+        ? agentCommand({ reviewsDir, docsDirs, contextDirs })
+        : agentCommand;
+    void checkAgentHealth(resolvedCommand, siteDir, env, notifier);
+  }
+
   const tick = () =>
     runTick({ siteDir, reviewsDir, docsPathMap, docsDirs, contextDirs, agentCommand, agentPromptFile, agentName, env, agentLock, notifier });
 
@@ -104,6 +113,67 @@ export function createReviewService(config: ReviewServiceConfig): ReviewServiceH
     stop: () => clearInterval(intervalId),
     tick,
   };
+}
+
+const HEALTH_CHECK_TIMEOUT_MS = 10_000;
+
+async function checkAgentHealth(
+  agentCommand: string,
+  cwd: string,
+  env: Record<string, string> | undefined,
+  notifier?: SseNotifier,
+): Promise<void> {
+  // Extract the base binary name from the command (first word)
+  const binary = agentCommand.trim().split(/\s+/)[0] ?? agentCommand;
+
+  return new Promise<void>((resolve) => {
+    const spawnEnv = env ? { ...process.env, ...env } : process.env;
+    let stderr = "";
+    let settled = false;
+
+    const child = spawn("sh", ["-c", `command -v ${binary}`], {
+      cwd,
+      env: spawnEnv,
+      stdio: ["ignore", "ignore", "pipe"],
+    });
+
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        child.kill();
+        // Timeout means `command -v` hung which is unusual, treat as OK
+        resolve();
+      }
+    }, HEALTH_CHECK_TIMEOUT_MS);
+
+    child.stderr?.on("data", (chunk: Buffer) => {
+      stderr += chunk.toString();
+    });
+
+    child.on("error", (err) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      const msg = `Agent command not available: ${err.message}`;
+      error(msg);
+      notifier?.broadcastError(msg);
+      resolve();
+    });
+
+    child.on("close", (code) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (code !== 0) {
+        const msg = `Agent command not found: "${binary}". Make sure it is installed and available on your PATH.`;
+        error(msg);
+        notifier?.broadcastError(msg);
+      } else {
+        log(`Agent health check passed: "${binary}" is available`);
+      }
+      resolve();
+    });
+  });
 }
 
 async function runTick(opts: {

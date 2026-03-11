@@ -3,6 +3,7 @@ import type { Response } from "express";
 export interface SseNotifier {
   connect(res: Response): void;
   broadcast(docPath: string): void;
+  broadcastError(message: string): void;
 }
 
 export function createSseNotifier(): SseNotifier {
@@ -21,6 +22,12 @@ export function createSseNotifier(): SseNotifier {
       const data = JSON.stringify({ docPath });
       for (const res of clients) {
         res.write(`event: agent:done\ndata: ${data}\n\n`);
+      }
+    },
+    broadcastError(message) {
+      const data = JSON.stringify({ message });
+      for (const res of clients) {
+        res.write(`event: agent:error\ndata: ${data}\n\n`);
       }
     },
   };
