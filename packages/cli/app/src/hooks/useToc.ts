@@ -8,22 +8,32 @@ export interface TocItem {
 
 /**
  * Observes headings inside a container and tracks the active one on scroll.
+ * Pass a changing `key` (e.g. docPath) so the effect re-runs after navigation.
  */
-export function useToc(contentRef: React.RefObject<HTMLElement | null>) {
+export function useToc(
+  contentRef: React.RefObject<HTMLElement | null>,
+  key?: string,
+) {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   // Extract headings whenever content changes
   useEffect(() => {
     const el = contentRef.current;
-    if (!el) return;
 
     const extract = () => {
-      const headings = el.querySelectorAll<HTMLHeadingElement>("h2, h3");
+      if (!contentRef.current) return;
+      const headings =
+        contentRef.current.querySelectorAll<HTMLHeadingElement>("h2, h3");
       const result: TocItem[] = [];
       headings.forEach((h) => {
         if (!h.id) {
-          h.id = h.textContent?.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "") || "";
+          h.id =
+            h.textContent
+              ?.trim()
+              .toLowerCase()
+              .replace(/\s+/g, "-")
+              .replace(/[^\w-]/g, "") || "";
         }
         if (h.id) {
           result.push({
@@ -36,22 +46,31 @@ export function useToc(contentRef: React.RefObject<HTMLElement | null>) {
       setItems(result);
     };
 
-    // Wait for ReactMarkdown to render
-    const timer = setTimeout(extract, 100);
-    // Re-extract on DOM changes (e.g. content swap)
-    const observer = new MutationObserver(extract);
-    observer.observe(el, { childList: true, subtree: true });
+    // If element already has content, extract immediately
+    if (el && el.childElementCount > 0) {
+      extract();
+    }
 
-    return () => {
-      clearTimeout(timer);
-      observer.disconnect();
-    };
-  }, [contentRef]);
+    // Also observe for DOM changes (async render / content swap)
+    if (el) {
+      const observer = new MutationObserver(extract);
+      observer.observe(el, { childList: true, subtree: true });
+      return () => observer.disconnect();
+    }
+
+    // If ref not yet attached, poll briefly
+    const timer = setInterval(() => {
+      if (contentRef.current) {
+        extract();
+        clearInterval(timer);
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, [contentRef, key]);
 
   // Track active heading via IntersectionObserver
   useEffect(() => {
-    const el = contentRef.current;
-    if (!el || items.length === 0) return;
+    if (items.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -71,7 +90,7 @@ export function useToc(contentRef: React.RefObject<HTMLElement | null>) {
     });
 
     return () => observer.disconnect();
-  }, [contentRef, items]);
+  }, [items]);
 
   return { items, activeId };
 }

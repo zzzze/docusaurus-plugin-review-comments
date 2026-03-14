@@ -9,7 +9,7 @@ export function DocPage() {
   const location = useLocation();
   const docPath = location.pathname.replace(/^\//, "") || "index";
   const contentRef = useRef<HTMLElement | null>(null);
-  const { items, activeId } = useToc(contentRef);
+  const { items, activeId } = useToc(contentRef, docPath);
 
   return (
     <DocReviewWrapper docPath={docPath} contentRef={contentRef}>
