@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Sidebar } from "./Sidebar";
+import { useSidebarResize } from "../hooks/useSidebarResize";
 import type { DocTreeEntry } from "../hooks/useDocs";
 
 export function Layout({
@@ -13,6 +14,7 @@ export function Layout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const { width, handleRef } = useSidebarResize();
 
   if (hideSidebar) {
     return (
@@ -45,8 +47,12 @@ export function Layout({
         <div className="sidebar-backdrop" onClick={closeSidebar} />
       )}
 
-      <div className={`sidebar-container${sidebarOpen ? " open" : ""}`}>
+      <div
+        className={`sidebar-container${sidebarOpen ? " open" : ""}`}
+        style={{ width }}
+      >
         <Sidebar tree={tree} onNavigate={closeSidebar} />
+        <div ref={handleRef} className="sidebar-resize-handle" aria-hidden="true" />
       </div>
       <main className="main-content">{children}</main>
     </div>
