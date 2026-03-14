@@ -183,7 +183,70 @@ body {
   flex: 1;
   min-width: 0;
   padding: 24px 48px;
+  max-width: 1200px;
+}
+
+.doc-with-toc {
+  display: flex;
+  gap: 0;
+}
+
+.doc-with-toc .doc-viewer {
+  flex: 1;
+  min-width: 0;
   max-width: 900px;
+}
+
+/* Table of Contents */
+.toc {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  align-self: flex-start;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding-left: 24px;
+  border-left: 1px solid var(--ifm-color-emphasis-300);
+  margin-left: 24px;
+}
+
+.toc-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-item.toc-level-3 {
+  padding-left: 12px;
+}
+
+.toc-link {
+  display: block;
+  padding: 3px 0;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-700, #555);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.15s ease;
+}
+
+.toc-link:hover {
+  color: var(--ifm-color-primary);
+}
+
+.toc-link.active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
 }
 
 /* Markdown body styles — GitHub-like */
@@ -362,5 +425,9 @@ body {
   .main-content {
     padding: 16px;
     max-width: 100%;
+  }
+
+  .toc {
+    display: none;
   }
 }
