@@ -11,7 +11,7 @@ export function TableOfContents({
 
   return (
     <nav className="toc">
-      <div className="toc-title">目录</div>
+      <div className="toc-title">On this page</div>
       <ul className="toc-list">
         {items.map((item) => (
           <li key={item.id} className={`toc-item toc-level-${item.level}`}>
