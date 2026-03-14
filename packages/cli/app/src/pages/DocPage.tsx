@@ -9,12 +9,16 @@ export function DocPage() {
   const location = useLocation();
   const docPath = location.pathname.replace(/^\//, "") || "index";
   const contentRef = useRef<HTMLElement | null>(null);
-  const { items, activeId } = useToc(contentRef, docPath);
+  const { items, activeId, tocContentRef } = useToc();
 
   return (
     <DocReviewWrapper docPath={docPath} contentRef={contentRef}>
       <div className="doc-with-toc">
-        <DocViewer docPath={docPath + ".md"} contentRef={contentRef} />
+        <DocViewer
+          docPath={docPath + ".md"}
+          contentRef={contentRef}
+          tocContentRef={tocContentRef}
+        />
         <TableOfContents items={items} activeId={activeId} />
       </div>
     </DocReviewWrapper>
