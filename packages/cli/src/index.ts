@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import net from "node:net";
-import { execFileSync } from "node:child_process";
 import { startServer } from "./server";
 import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
 import { findProjectRoot, getDefaultReviewsDir } from "./project";
@@ -29,9 +29,9 @@ async function findAvailablePort(startPort: number): Promise<number> {
   return 0;
 }
 
-function getGitUserName(): string {
+function getDefaultUserName(): string {
   try {
-    return execFileSync("git", ["config", "user.name"], { encoding: "utf-8" }).trim();
+    return os.userInfo().username;
   } catch {
     return "Reviewer";
   }
@@ -173,7 +173,7 @@ async function main(): Promise<void> {
   const reviewsDir = merged.reviewsDir
     ? path.resolve(merged.reviewsDir)
     : getDefaultReviewsDir({ docsPath, projectRoot });
-  const userName = merged.user || getGitUserName();
+  const userName = merged.user || getDefaultUserName();
   const port = await findAvailablePort(merged.port || DEFAULT_PORT);
 
   const server = startServer({
