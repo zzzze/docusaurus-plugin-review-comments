@@ -22,6 +22,8 @@ importers:
       react-router-dom: ^7.0.0
       rehype-highlight: ^7.0.2
       remark-gfm: ^4.0.1
+      simplebar: ^6.3.3
+      simplebar-react: ^3.3.2
       typescript: ~5.6.2
       vite: ^6.0.0
       vitest: ^3.0.0
@@ -42,6 +44,8 @@ importers:
       react-router-dom: 7.13.1_ju5i5k46jjvnblsfiwqzrn6cj4
       rehype-highlight: 7.0.2
       remark-gfm: 4.0.1
+      simplebar: 6.3.3
+      simplebar-react: 3.3.2_react@19.2.4
       typescript: 5.6.3
       vite: 6.4.1_@types+node@22.19.15
       vitest: 3.2.4_@types+node@22.19.15
@@ -7589,6 +7593,10 @@ packages:
       p-locate: 6.0.0
     dev: false
 
+  /lodash-es/4.17.23:
+    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
+    dev: true
+
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
     dev: false
@@ -7603,7 +7611,6 @@ packages:
 
   /lodash/4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
-    dev: false
 
   /longest-streak/3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
@@ -10413,6 +10420,28 @@ packages:
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
     dev: false
+
+  /simplebar-core/1.3.2:
+    resolution: {integrity: sha512-qKgTTuTqapjsFGkNhCjyPhysnbZGpQqNmjk0nOYjFN5ordC/Wjvg+RbYCyMSnW60l/Z0ZS82GbNltly6PMUH1w==}
+    dependencies:
+      lodash: 4.17.23
+      lodash-es: 4.17.23
+    dev: true
+
+  /simplebar-react/3.3.2_react@19.2.4:
+    resolution: {integrity: sha512-ZsgcQhKLtt5ra0BRIJeApfkTBQCa1vUPA/WXI4HcYReFt+oCEOvdVz6rR/XsGJcKxTlCRPmdGx1uJIUChupo+A==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 19.2.4
+      simplebar-core: 1.3.2
+    dev: true
+
+  /simplebar/6.3.3:
+    resolution: {integrity: sha512-ni9cIiA8GRitiaenV7A/gh8nTStiVqO3gLxrfCMmq6CSy/pB+fz+QxqvJLo142QHb2Tvgvr8ILwZxf3qzAq7pg==}
+    dependencies:
+      simplebar-core: 1.3.2
+    dev: true
 
   /sirv/2.0.4:
     resolution: {integrity: sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==}

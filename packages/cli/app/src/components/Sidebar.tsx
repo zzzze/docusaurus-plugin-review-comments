@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import SimpleBar from "simplebar-react";
 import type { DocTreeEntry } from "../hooks/useDocs";
 
 function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () => void }) {
@@ -29,13 +30,13 @@ function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () 
 
 export function Sidebar({ tree, onNavigate }: { tree: DocTreeEntry[]; onNavigate?: () => void }) {
   return (
-    <nav className="sidebar">
+    <SimpleBar className="sidebar">
       <div className="sidebar-title">Document Review</div>
       <div className="sidebar-items">
         {tree.map((entry) => (
           <TreeItem key={entry.path} entry={entry} onNavigate={onNavigate} />
         ))}
       </div>
-    </nav>
+    </SimpleBar>
   );
 }

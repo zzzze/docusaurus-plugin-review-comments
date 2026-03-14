@@ -1,3 +1,4 @@
+import SimpleBar from "simplebar-react";
 import type { TocItem } from "../hooks/useToc";
 
 export function TableOfContents({
@@ -10,7 +11,7 @@ export function TableOfContents({
   if (items.length === 0) return null;
 
   return (
-    <nav className="toc">
+    <SimpleBar className="toc">
       <div className="toc-title">On this page</div>
       <ul className="toc-list">
         {items.map((item) => (
@@ -28,6 +29,6 @@ export function TableOfContents({
           </li>
         ))}
       </ul>
-    </nav>
+    </SimpleBar>
   );
 }

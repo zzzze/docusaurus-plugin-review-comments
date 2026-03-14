@@ -1,3 +1,4 @@
+import "simplebar-react/dist/simplebar.min.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDocs } from "./hooks/useDocs";
 import { Layout } from "./components/Layout";
