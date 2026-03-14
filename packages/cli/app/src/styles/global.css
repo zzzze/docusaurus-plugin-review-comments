@@ -183,7 +183,6 @@ body {
   flex: 1;
   min-width: 0;
   padding: 24px 48px;
-  max-width: 1200px;
 }
 
 .doc-with-toc {
