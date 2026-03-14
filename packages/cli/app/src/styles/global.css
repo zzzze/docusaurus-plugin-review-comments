@@ -225,8 +225,17 @@ body {
   padding: 0;
 }
 
+.toc-item.toc-level-2 .toc-link {
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
 .toc-item.toc-level-3 {
   padding-left: 12px;
+}
+
+.toc-item.toc-level-3 .toc-link {
+  color: var(--ifm-color-emphasis-600, #777);
 }
 
 .toc-link {
