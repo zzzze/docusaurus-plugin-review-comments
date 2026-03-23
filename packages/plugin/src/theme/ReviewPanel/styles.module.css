@@ -95,12 +95,17 @@
   display: inline-flex;
   align-items: center;
   color: var(--ifm-color-secondary-darkest);
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: var(--review-radius-sm);
 }
 
 .closeButton:hover {
   background: var(--ifm-color-emphasis-200);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .copyPromptButton {
@@ -108,7 +113,7 @@
   overflow: visible;
   background: none;
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 4px;
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
   font-size: 11px;
   padding: 2px 8px;
@@ -122,6 +127,11 @@
   background: var(--ifm-color-emphasis-200);
 }
 
+.copyPromptButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
+}
+
 .copyPromptButton:disabled {
   opacity: 0.6;
   cursor: default;
@@ -133,13 +143,18 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: var(--review-radius-sm);
   color: var(--ifm-color-secondary-darkest);
 }
 
 .refreshButton:hover:not(:disabled) {
   background: var(--ifm-color-emphasis-200);
+}
+
+.refreshButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .refreshButton:disabled {
@@ -172,8 +187,8 @@
 
 /* Comment card */
 .card {
-  border: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
-  border-radius: 6px;
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius);
   padding: 10px 12px;
   margin-bottom: 8px;
   background: var(--ifm-background-color);
@@ -226,26 +241,26 @@
 /* Type badges */
 .typeBadge {
   font-size: 0.7rem;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 3px;
-  text-transform: uppercase;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: none;
   letter-spacing: 0.03em;
 }
 
 .badgeQuestion {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: color-mix(in srgb, #3b82f6 15%, transparent);
+  color: #2563eb;
 }
 
 .badgeSuggestion {
-  background: #ffedd5;
-  color: #c2410c;
+  background: color-mix(in srgb, #f97316 15%, transparent);
+  color: #ea580c;
 }
 
 .badgeIssue {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: color-mix(in srgb, #ef4444 15%, transparent);
+  color: #dc2626;
 }
 
 /* Anchor excerpt */
@@ -441,7 +456,7 @@
   font-size: var(--ifm-font-size-small);
   color: var(--ifm-color-secondary-darkest);
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--review-radius-sm);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -450,6 +465,11 @@
 .footerButton:hover {
   background: var(--ifm-color-emphasis-200);
   color: var(--ifm-color-secondary-contrast-foreground);
+}
+
+.footerButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .deleteButton {
@@ -481,7 +501,7 @@
   min-height: 48px;
   padding: 8px;
   border: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
-  border-radius: 4px;
+  border-radius: var(--review-radius-sm);
   font-size: var(--ifm-font-size-small);
   font-family: inherit;
   resize: vertical;
@@ -489,9 +509,10 @@
   color: var(--ifm-font-color-base);
 }
 
-.replyTextarea:focus {
-  outline: none;
-  border-color: var(--ifm-color-primary);
+.replyTextarea:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
+  border-color: transparent;
 }
 
 .replyFormActions {
@@ -504,7 +525,7 @@
 .replyFormActions button {
   font-size: var(--ifm-font-size-small);
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -536,7 +557,7 @@
   margin-bottom: 12px;
   background: none;
   border: 1px dashed var(--ifm-color-emphasis-300);
-  border-radius: 6px;
+  border-radius: var(--review-radius);
   cursor: pointer;
   font-size: var(--ifm-font-size-small);
   color: var(--ifm-color-secondary-darkest);
@@ -598,8 +619,8 @@
 /* Orphaned / unanchored comments */
 .orphanedSection {
   margin-top: 16px;
-  border: 1px dashed var(--ifm-color-emphasis-300);
-  border-radius: 6px;
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius);
   padding: 8px;
   opacity: 0.6;
 }
@@ -634,8 +655,8 @@
 /* Resolved comments section */
 .resolvedSection {
   margin-top: 16px;
-  border: 1px dashed var(--ifm-color-emphasis-300);
-  border-radius: 6px;
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius);
   padding: 8px;
   opacity: 0.6;
 }
@@ -670,8 +691,11 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--ifm-color-emphasis-200);
-  border-top: 1px solid var(--review-card-border, var(--ifm-toc-border-color));
+  margin: 8px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-size: var(--ifm-font-size-small);
   animation: undoSlideIn 0.2s ease;
 }
@@ -722,7 +746,7 @@
   margin-bottom: 8px;
   background: var(--ifm-color-danger-lightest, #fef2f2);
   border: 1px solid var(--ifm-color-danger-light, #fca5a5);
-  border-radius: 6px;
+  border-radius: var(--review-radius);
   font-size: var(--ifm-font-size-small);
   color: var(--ifm-color-danger-darkest, #991b1b);
   animation: undoSlideIn 0.2s ease;
