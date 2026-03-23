@@ -13,12 +13,14 @@ export function DocPage() {
 
   return (
     <DocReviewWrapper docPath={docPath} contentRef={contentRef}>
-      <div className="doc-with-toc">
-        <DocViewer
-          docPath={docPath + ".md"}
-          contentRef={contentRef}
-          tocContentRef={tocContentRef}
-        />
+      <div className="flex">
+        <div className="min-w-0 flex-1 max-w-[900px]">
+          <DocViewer
+            docPath={docPath + ".md"}
+            contentRef={contentRef}
+            tocContentRef={tocContentRef}
+          />
+        </div>
         <TableOfContents items={items} activeId={activeId} />
       </div>
     </DocReviewWrapper>

@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
+import { Menu } from "lucide-react";
 import { Sidebar } from "./Sidebar";
-import { useSidebarResize } from "../hooks/useSidebarResize";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "./ui/resizable";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import type { DocTreeEntry } from "../hooks/useDocs";
 
 export function Layout({
@@ -12,49 +14,52 @@ export function Layout({
   hideSidebar?: boolean;
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
-  const { width, handleRef } = useSidebarResize();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const closeSheet = useCallback(() => setSheetOpen(false), []);
 
   if (hideSidebar) {
     return (
-      <div className="layout">
-        <main className="main-content" style={{ marginLeft: 0 }}>{children}</main>
+      <div className="flex min-h-screen">
+        <main className="flex-1 min-w-0 px-12 py-6">{children}</main>
       </div>
     );
   }
 
   return (
-    <div className="layout">
-      {/* Mobile navbar */}
-      <header className="mobile-navbar">
-        <button
-          className="menu-button"
-          onClick={() => setSidebarOpen((v) => !v)}
-          aria-label="Toggle sidebar"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-        <span className="mobile-navbar-title">Document Review</span>
+    <>
+      {/* Mobile navbar + Sheet drawer */}
+      <header className="fixed inset-x-0 top-0 z-50 flex h-12 items-center gap-3 border-b bg-background px-4 lg:hidden">
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <button
+              className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted"
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[260px] p-0">
+            <Sidebar tree={tree} onNavigate={closeSheet} />
+          </SheetContent>
+        </Sheet>
+        <span className="text-base font-bold">Document Review</span>
       </header>
 
-      {/* Backdrop */}
-      {sidebarOpen && (
-        <div className="sidebar-backdrop" onClick={closeSidebar} />
-      )}
-
-      <div
-        className={`sidebar-container${sidebarOpen ? " open" : ""}`}
-        style={{ width }}
-      >
-        <Sidebar tree={tree} onNavigate={closeSidebar} />
-        <div ref={handleRef} className="sidebar-resize-handle" aria-hidden="true" />
+      {/* Desktop layout */}
+      <div className="hidden lg:flex min-h-screen">
+        <ResizablePanelGroup orientation="horizontal" className="min-h-screen">
+          <ResizablePanel defaultSize={20} minSize={12} maxSize={35} className="border-r">
+            <Sidebar tree={tree} />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={80}>
+            <main className="min-w-0 px-12 py-6">{children}</main>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
-      <main className="main-content">{children}</main>
-    </div>
+
+      {/* Mobile content */}
+      <main className="min-w-0 px-4 pt-14 pb-6 lg:hidden">{children}</main>
+    </>
   );
 }

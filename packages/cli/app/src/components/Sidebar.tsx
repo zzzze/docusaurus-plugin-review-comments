@@ -1,13 +1,15 @@
 import { NavLink } from "react-router-dom";
-import SimpleBar from "simplebar-react";
+import { ScrollArea } from "./ui/scroll-area";
 import type { DocTreeEntry } from "../hooks/useDocs";
 
 function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () => void }) {
   if (entry.type === "directory") {
     return (
-      <div className="sidebar-category">
-        <div className="sidebar-category-label">{entry.name}</div>
-        <div className="sidebar-category-items">
+      <div className="mt-4 first:mt-0">
+        <div className="px-2 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {entry.name}
+        </div>
+        <div className="ml-2">
           {entry.children?.map((child) => (
             <TreeItem key={child.path} entry={child} onNavigate={onNavigate} />
           ))}
@@ -15,12 +17,15 @@ function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () 
       </div>
     );
   }
-
   const docRoute = "/" + entry.path.replace(/\.(md|mdx)$/i, "");
   return (
     <NavLink
       to={docRoute}
-      className={({ isActive }) => `sidebar-item${isActive ? " active" : ""}`}
+      className={({ isActive }) =>
+        `block rounded-md px-2 py-1 text-sm transition-colors ${
+          isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+        }`
+      }
       onClick={onNavigate}
     >
       {entry.name.replace(/\.(md|mdx)$/i, "")}
@@ -30,13 +35,15 @@ function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () 
 
 export function Sidebar({ tree, onNavigate }: { tree: DocTreeEntry[]; onNavigate?: () => void }) {
   return (
-    <SimpleBar className="sidebar">
-      <div className="sidebar-title">Document Review</div>
-      <div className="sidebar-items">
-        {tree.map((entry) => (
-          <TreeItem key={entry.path} entry={entry} onNavigate={onNavigate} />
-        ))}
+    <ScrollArea className="h-full">
+      <div className="p-4">
+        <div className="mb-3 border-b pb-3 text-lg font-bold">Document Review</div>
+        <nav className="space-y-1">
+          {tree.map((entry) => (
+            <TreeItem key={entry.path} entry={entry} onNavigate={onNavigate} />
+          ))}
+        </nav>
       </div>
-    </SimpleBar>
+    </ScrollArea>
   );
 }

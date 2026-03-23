@@ -6,7 +6,9 @@ node_modules/
 # Build outputs
 dist/
 build/
-lib/
+/lib/
+**/lib/
+!packages/cli/app/src/lib/
 *.tsbuildinfo
 
 # Testing
