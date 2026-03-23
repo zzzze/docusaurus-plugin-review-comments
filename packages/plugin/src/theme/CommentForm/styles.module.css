@@ -1,7 +1,7 @@
 .form {
   background: var(--ifm-background-surface-color);
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-global-radius);
+  border-radius: var(--review-radius);
   box-shadow: var(--ifm-global-shadow-md);
   padding: 12px;
   min-width: 320px;
@@ -23,8 +23,8 @@
   display: flex;
   gap: 2px;
   background: var(--ifm-color-emphasis-100);
-  border-radius: var(--ifm-global-radius);
-  padding: 2px;
+  border-radius: var(--review-radius);
+  padding: 3px;
   margin-bottom: 8px;
 }
 
@@ -35,7 +35,7 @@
   background: transparent;
   color: var(--ifm-font-color-secondary);
   font-size: var(--ifm-font-size-small);
-  border-radius: calc(var(--ifm-global-radius) - 2px);
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
 }
 
@@ -43,6 +43,7 @@
   background: var(--ifm-background-surface-color);
   color: var(--ifm-font-color-base);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
 }
 
 .scopeSelector {
@@ -57,7 +58,7 @@
   background: transparent;
   color: var(--ifm-font-color-secondary);
   font-size: 0.75rem;
-  border-radius: var(--ifm-global-radius);
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
 }
 
@@ -74,25 +75,33 @@
 
 .tabs {
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  gap: 2px;
+  background: var(--review-muted);
+  border-radius: var(--review-radius);
+  padding: 3px;
   margin-bottom: 8px;
+  border-bottom: none;
 }
 
 .tab {
+  flex: 1;
   padding: 4px 12px;
   border: none;
   background: transparent;
   color: var(--ifm-font-color-secondary);
   font-size: var(--ifm-font-size-small);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border-radius: var(--review-radius-sm);
+  border-bottom: none;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .tabActive {
-  color: var(--ifm-color-primary);
-  border-bottom-color: var(--ifm-color-primary);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
 }
 
 .textarea {
@@ -100,8 +109,8 @@
   min-height: 72px;
   max-height: 240px;
   padding: 8px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius-sm);
   background: var(--ifm-background-color);
   color: var(--ifm-font-color-base);
   font-family: inherit;
@@ -111,16 +120,17 @@
 }
 
 .textarea:focus {
-  outline: none;
-  border-color: var(--ifm-color-primary);
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
+  border-color: transparent;
 }
 
 .preview {
   min-height: 72px;
   max-height: 240px;
   padding: 8px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--review-border);
+  border-radius: var(--review-radius-sm);
   overflow-y: auto;
   font-size: var(--ifm-font-size-small);
 }
@@ -164,28 +174,41 @@
 
 .cancelButton {
   padding: 4px 12px;
+  height: 32px;
   border: 1px solid var(--ifm-color-emphasis-300);
   background: transparent;
   color: var(--ifm-font-color-base);
   font-size: var(--ifm-font-size-small);
-  border-radius: var(--ifm-global-radius);
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
 
+.cancelButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
+}
+
 .submitButton {
   padding: 4px 12px;
+  height: 32px;
   border: none;
   background: var(--review-btn-primary-bg, var(--ifm-color-primary));
   color: var(--review-btn-primary-fg, #fff);
   font-size: var(--ifm-font-size-small);
-  border-radius: var(--ifm-global-radius);
+  font-weight: 500;
+  border-radius: var(--review-radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.submitButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .submitButton:disabled {
