@@ -1,27 +1,29 @@
 .form {
   background: var(--ifm-background-surface-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: var(--review-radius);
-  box-shadow: var(--ifm-global-shadow-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
   padding: 12px;
   min-width: 320px;
   max-width: 420px;
 }
 
 .formInline {
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 0;
+  border: 1px solid var(--review-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: var(--review-radius);
+  padding: 12px;
   min-width: 0;
   max-width: none;
   width: 100%;
-  background: transparent;
+  background: var(--review-card-bg);
 }
+
+/* ── Type segmented control ── */
 
 .segmentedControl {
   display: flex;
-  gap: 2px;
+  gap: 1px;
   background: var(--ifm-color-emphasis-100);
   border-radius: var(--review-radius);
   padding: 3px;
@@ -30,120 +32,209 @@
 
 .segment {
   flex: 1;
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 10px;
   border: none;
   background: transparent;
-  color: var(--ifm-font-color-secondary);
-  font-size: var(--ifm-font-size-small);
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8125rem;
   border-radius: var(--review-radius-sm);
   cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.segment:hover:not(.segmentActive) {
+  color: var(--ifm-font-color-base);
+  background: var(--ifm-color-emphasis-100);
 }
 
 .segmentActive {
   background: var(--ifm-background-surface-color);
-  color: var(--ifm-font-color-base);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-.scopeSelector {
+.segmentQuestion {
+  color: var(--ifm-color-primary);
+}
+
+.segmentSuggestion {
+  color: #d97706;
+}
+
+.segmentIssue {
+  color: #dc2626;
+}
+
+/* ── Textarea header (scope + preview) ── */
+
+.textareaHeader {
   display: flex;
-  gap: 2px;
-  background: var(--ifm-color-emphasis-100);
-  border-radius: var(--review-radius);
-  padding: 3px;
-  margin-bottom: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  min-height: 24px;
 }
 
-.scopeButton {
-  flex: 1;
-  padding: 2px 8px;
+.scopeGroup {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.scopeLabel {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  user-select: none;
+}
+
+.scopeTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
   border: none;
   background: transparent;
-  color: var(--ifm-font-color-secondary);
+  color: var(--ifm-font-color-base);
   font-size: 0.75rem;
-  border-radius: var(--review-radius-sm);
+  font-weight: 500;
   cursor: pointer;
-  text-align: center;
-  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  border-radius: var(--review-radius-sm);
+  transition: background 0.15s, color 0.15s;
 }
 
-.scopeButton:disabled {
-  opacity: 0.4;
+.scopeTrigger:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.scopeDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  min-width: 120px;
+  padding: 4px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--review-radius);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  animation: scopeDropdownIn 0.1s ease-out;
+}
+
+@keyframes scopeDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scopeItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  padding-left: 24px;
+  border: none;
+  background: transparent;
+  color: var(--ifm-font-color-base);
+  font-size: 0.8125rem;
+  border-radius: var(--review-radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.scopeItem:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.scopeItem:disabled {
+  color: var(--ifm-color-emphasis-400);
   cursor: not-allowed;
 }
 
-.scopeActive {
-  background: var(--ifm-background-surface-color);
-  color: var(--ifm-font-color-base);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.scopeItemActive {
+  padding-left: 8px;
   font-weight: 500;
 }
 
-.tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--review-muted);
-  border-radius: var(--review-radius);
-  padding: 3px;
-  margin-bottom: 8px;
-  border-bottom: none;
-}
-
-.tab {
-  flex: 1;
-  padding: 4px 12px;
+.previewToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
   border: none;
   background: transparent;
-  color: var(--ifm-font-color-secondary);
-  font-size: var(--ifm-font-size-small);
+  color: var(--ifm-color-emphasis-500);
+  font-size: 0.75rem;
   cursor: pointer;
   border-radius: var(--review-radius-sm);
-  border-bottom: none;
-  margin-bottom: 0;
-  text-align: center;
+  transition: color 0.15s, background 0.15s;
+  margin-left: auto;
 }
 
-.tabActive {
-  background: var(--ifm-background-surface-color);
+.previewToggle:hover {
   color: var(--ifm-font-color-base);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  font-weight: 500;
+  background: var(--ifm-color-emphasis-100);
 }
+
+.previewToggleActive {
+  color: var(--ifm-color-primary);
+}
+
+/* ── Textarea & preview ── */
 
 .textarea {
   width: 100%;
   min-height: 80px;
   max-height: 240px;
-  padding: 8px;
-  border: 1px solid var(--review-border);
+  padding: 8px 10px;
+  border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: var(--review-radius-sm);
   background: var(--ifm-background-color);
   color: var(--ifm-font-color-base);
   font-family: inherit;
-  font-size: var(--ifm-font-size-small);
+  font-size: 0.8125rem;
+  line-height: 1.5;
   resize: none;
   overflow-y: auto;
+  transition: border-color 0.15s;
 }
 
 .textarea:focus {
   outline: 2px solid var(--review-ring);
-  outline-offset: 2px;
+  outline-offset: -1px;
   border-color: transparent;
 }
 
 .preview {
   min-height: 72px;
   max-height: 240px;
-  padding: 8px;
-  border: 1px solid var(--review-border);
+  padding: 8px 10px;
+  border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: var(--review-radius-sm);
   overflow-y: auto;
-  font-size: var(--ifm-font-size-small);
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }
 
 .previewEmpty {
-  color: var(--ifm-font-color-secondary);
+  color: var(--ifm-color-emphasis-400);
   font-style: italic;
 }
 
@@ -156,7 +247,7 @@
 
 .preview th,
 .preview td {
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: 1px solid var(--ifm-color-emphasis-200);
   padding: 4px 8px;
   text-align: left;
 }
@@ -166,36 +257,39 @@
   font-weight: 600;
 }
 
+/* ── Actions bar ── */
+
 .actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .hint {
-  font-size: 0.7rem;
-  color: var(--ifm-font-color-secondary);
+  font-size: 0.6875rem;
+  color: var(--ifm-color-emphasis-400);
   margin-right: auto;
 }
 
 .cancelButton {
-  padding: 4px 12px;
+  padding: 0 12px;
   height: 32px;
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: 1px solid var(--ifm-color-emphasis-200);
   background: transparent;
   color: var(--ifm-font-color-base);
-  font-size: var(--ifm-font-size-small);
+  font-size: 0.8125rem;
   border-radius: var(--review-radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .cancelButton:hover {
-  background: var(--review-muted);
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-300);
 }
 
 .cancelButton:focus-visible {
@@ -204,19 +298,19 @@
 }
 
 .submitButton {
-  padding: 4px 12px;
+  padding: 0 12px;
   height: 32px;
   border: none;
   background: var(--review-btn-primary-bg, var(--ifm-color-primary));
   color: var(--review-btn-primary-fg, #fff);
-  font-size: var(--ifm-font-size-small);
+  font-size: 0.8125rem;
   font-weight: 500;
   border-radius: var(--review-radius-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  transition: background 0.15s, opacity 0.15s;
+  transition: opacity 0.15s;
 }
 
 .submitButton:hover:not(:disabled) {

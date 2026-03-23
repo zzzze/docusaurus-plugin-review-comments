@@ -4,6 +4,7 @@ export interface SseNotifier {
   connect(res: Response): void;
   broadcast(docPath: string): void;
   broadcastError(message: string): void;
+  broadcastDocChanged(docPath: string): void;
 }
 
 export function createSseNotifier(): SseNotifier {
@@ -28,6 +29,12 @@ export function createSseNotifier(): SseNotifier {
       const data = JSON.stringify({ message });
       for (const res of clients) {
         res.write(`event: agent:error\ndata: ${data}\n\n`);
+      }
+    },
+    broadcastDocChanged(docPath) {
+      const data = JSON.stringify({ docPath });
+      for (const res of clients) {
+        res.write(`event: doc:changed\ndata: ${data}\n\n`);
       }
     },
   };

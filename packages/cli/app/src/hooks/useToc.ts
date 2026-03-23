@@ -36,7 +36,7 @@ export function useToc() {
               ?.trim()
               .toLowerCase()
               .replace(/\s+/g, "-")
-              .replace(/[^\w-]/g, "") || "";
+              .replace(/[^\p{L}\p{N}_-]/gu, "") || "";
         }
         if (h.id) {
           result.push({

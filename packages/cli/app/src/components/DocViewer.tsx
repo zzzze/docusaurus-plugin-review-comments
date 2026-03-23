@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import type React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { useDocContent } from "../hooks/useDocContent";
 import { Skeleton } from "./ui/skeleton";
@@ -54,7 +55,7 @@ export function DocViewer({
   return (
     <div>
       <article className="markdown-body" ref={mergedRef}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{stripped}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeHighlight]}>{stripped}</ReactMarkdown>
       </article>
     </div>
   );

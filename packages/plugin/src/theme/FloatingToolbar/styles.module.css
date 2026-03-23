@@ -4,21 +4,28 @@
 }
 
 .buttons {
-  display: flex;
-  gap: 2px;
-  background: var(--ifm-background-surface-color);
-  border: 1px solid var(--review-border);
+  display: inline-flex;
+  gap: 1px;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: var(--review-radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  padding: 4px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  padding: 3px;
 }
 
 .typeButton {
-  padding: 4px 10px;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 10px;
   border: none;
   background: transparent;
-  color: var(--ifm-font-color-base);
-  font-size: var(--ifm-font-size-small);
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8125rem;
   font-weight: 500;
   border-radius: var(--review-radius-sm);
   cursor: pointer;
@@ -27,8 +34,20 @@
 }
 
 .typeButton:hover {
-  background: var(--review-muted);
+  background: var(--ifm-background-surface-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.typeQuestion:hover {
   color: var(--ifm-color-primary);
+}
+
+.typeSuggestion:hover {
+  color: #d97706;
+}
+
+.typeIssue:hover {
+  color: #dc2626;
 }
 
 .typeButton:focus-visible {

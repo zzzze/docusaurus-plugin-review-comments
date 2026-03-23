@@ -12,7 +12,9 @@ import {
 interface UseHighlightsOptions {
   comments: ReviewComment[];
   hoveredCommentId: string | null;
-  contentRef: React.RefObject<HTMLElement | null>;
+  /** The content container element. Pass as state (not ref.current) so
+   *  React re-runs the highlight effect when the element mounts/unmounts. */
+  contentEl: HTMLElement | null;
   onOrphanedFound: (orphanedIds: string[]) => void;
   onHighlightClick: (commentId: string) => void;
 }
@@ -20,15 +22,17 @@ interface UseHighlightsOptions {
 export function useHighlights({
   comments,
   hoveredCommentId,
-  contentRef,
+  contentEl,
   onOrphanedFound,
   onHighlightClick,
 }: UseHighlightsOptions): void {
   const prevHoveredRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const contentEl = contentRef.current;
-    if (!contentEl) return;
+    if (!contentEl) {
+      onOrphanedFound([]);
+      return;
+    }
 
     removeAllHighlights();
     removeAllBlockHighlights();
@@ -63,7 +67,7 @@ export function useHighlights({
       removeAllHighlights();
       removeAllBlockHighlights();
     };
-  }, [comments, contentRef, onOrphanedFound]);
+  }, [comments, contentEl, onOrphanedFound]);
 
   useEffect(() => {
     if (prevHoveredRef.current) {

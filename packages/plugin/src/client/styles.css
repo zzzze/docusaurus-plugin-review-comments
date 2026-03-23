@@ -3,7 +3,7 @@
 :root {
   --review-highlight-bg: rgba(255, 212, 0, 0.2);
   --review-highlight-hover-bg: rgba(255, 212, 0, 0.4);
-  --review-panel-bg: var(--ifm-background-surface-color);
+  --review-panel-bg: #f5f5f5;
   --review-card-border: var(--ifm-color-emphasis-300);
   --review-btn-primary-bg: var(--ifm-color-primary);
   --review-btn-primary-fg: #fff;
@@ -17,6 +17,7 @@
   --review-muted-fg: var(--ifm-color-emphasis-800);
   --review-accent: var(--ifm-color-emphasis-100);
   --review-accent-fg: var(--ifm-color-emphasis-800);
+  --review-card-bg: #fff;
 }
 
 [data-theme="dark"] {
@@ -24,6 +25,8 @@
   --review-highlight-hover-bg: rgba(255, 212, 0, 0.3);
   --review-btn-primary-bg: var(--ifm-color-primary-light, var(--ifm-color-primary));
   --review-btn-primary-fg: var(--ifm-background-color);
+  --review-panel-bg: var(--ifm-background-surface-color);
+  --review-card-bg: var(--ifm-color-emphasis-100);
 }
 
 mark.review-highlight {

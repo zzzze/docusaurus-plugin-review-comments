@@ -33,11 +33,15 @@ function TreeItem({ entry, onNavigate }: { entry: DocTreeEntry; onNavigate?: () 
   );
 }
 
-export function Sidebar({ tree, onNavigate }: { tree: DocTreeEntry[]; onNavigate?: () => void }) {
+export function Sidebar({ tree, onNavigate, headerExtra }: { tree: DocTreeEntry[]; onNavigate?: () => void; headerExtra?: React.ReactNode }) {
   return (
     <ScrollArea className="h-full">
       <div className="p-4">
-        <div className="mb-3 border-b pb-3 text-lg font-bold">Document Review</div>
+        <div className="mb-3 flex items-center gap-2.5 border-b border-border/60 pb-3 text-base font-semibold text-foreground">
+          <img src="/logo.svg" alt="Logo" className="h-6 w-6 shrink-0 rounded" />
+          <span className="flex-1">Document Review</span>
+          {headerExtra}
+        </div>
         <nav className="space-y-1">
           {tree.map((entry) => (
             <TreeItem key={entry.path} entry={entry} onNavigate={onNavigate} />

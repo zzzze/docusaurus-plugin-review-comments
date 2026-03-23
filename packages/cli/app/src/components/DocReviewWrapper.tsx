@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useCallback } from "react";
 import { ReviewProvider, useReview } from "@plugin/client/ReviewContext";
 import { useHighlights } from "@plugin/client/useHighlights";
 import { useKeyboardShortcuts } from "@plugin/client/useKeyboardShortcuts";
@@ -7,8 +7,10 @@ import { FloatingToolbar } from "@plugin/theme/FloatingToolbar";
 import { GutterButton } from "@plugin/theme/GutterButton";
 
 function ReviewOverlay({
+  contentEl,
   contentRef,
 }: {
+  contentEl: HTMLElement | null;
   contentRef: React.RefObject<HTMLElement | null>;
 }) {
   const {
@@ -56,7 +58,7 @@ function ReviewOverlay({
   useHighlights({
     comments,
     hoveredCommentId,
-    contentRef,
+    contentEl,
     onOrphanedFound: handleOrphanedFound,
     onHighlightClick: handleHighlightClick,
   });
@@ -73,16 +75,18 @@ function ReviewOverlay({
 export function DocReviewWrapper({
   docPath,
   children,
+  contentEl,
   contentRef,
 }: {
   docPath: string;
   children: React.ReactNode;
+  contentEl: HTMLElement | null;
   contentRef: React.RefObject<HTMLElement | null>;
 }) {
   return (
     <ReviewProvider docPath={docPath}>
       {children}
-      <ReviewOverlay contentRef={contentRef} />
+      <ReviewOverlay contentEl={contentEl} contentRef={contentRef} />
     </ReviewProvider>
   );
 }

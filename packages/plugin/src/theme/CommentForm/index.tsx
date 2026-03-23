@@ -1,7 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { X, Check, Reply, MessageSquare, Pencil } from "lucide-react";
+import {
+  X, Check, Reply, MessageSquare, Eye, EyeOff,
+  HelpCircle, Lightbulb, AlertTriangle, ChevronDown,
+} from "lucide-react";
 import type { ReviewAnchor, ReviewComment } from "../../types";
 import { useReview } from "../../client/ReviewContext";
 import styles from "./styles.module.css";
@@ -63,7 +66,9 @@ export function CommentForm({
   );
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scopeOpen, setScopeOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const scopeRef = useRef<HTMLDivElement>(null);
 
   // Cache the original text anchor so we can restore it
   const cachedTextAnchor = useRef<ReviewAnchor | null>(
@@ -121,6 +126,18 @@ export function CommentForm({
     [handleSubmit, onCancel],
   );
 
+  // Close scope dropdown on outside click
+  useEffect(() => {
+    if (!scopeOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (scopeRef.current && !scopeRef.current.contains(e.target as Node)) {
+        setScopeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [scopeOpen]);
+
   const autoGrow = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const textarea = e.target;
@@ -131,54 +148,78 @@ export function CommentForm({
     [],
   );
 
+  const typeConfig = {
+    question:   { icon: HelpCircle,    colorClass: styles.segmentQuestion },
+    suggestion: { icon: Lightbulb,     colorClass: styles.segmentSuggestion },
+    issue:      { icon: AlertTriangle, colorClass: styles.segmentIssue },
+  } as const;
+
   return (
     <div className={`${styles.form} ${variant === "inline" ? styles.formInline : ""}`}>
       {mode === "create" && (
-        <>
-          <div className={styles.segmentedControl}>
-            {(["question", "suggestion", "issue"] as const).map((t) => (
+        <div className={styles.segmentedControl}>
+          {(["question", "suggestion", "issue"] as const).map((t) => {
+            const { icon: Icon, colorClass } = typeConfig[t];
+            const isActive = commentType === t;
+            return (
               <button
                 key={t}
-                className={`${styles.segment} ${commentType === t ? styles.segmentActive : ""}`}
+                className={`${styles.segment} ${isActive ? `${styles.segmentActive} ${colorClass}` : ""}`}
                 onClick={() => setCommentType(t)}
               >
+                <Icon size={14} />
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
-            ))}
-          </div>
-
-          {anchor && (
-            <div className={styles.scopeSelector}>
-              {SCOPE_ORDER.map((s) => (
-                <button
-                  key={s}
-                  className={`${styles.scopeButton} ${anchor.scope === s ? styles.scopeActive : ""}`}
-                  disabled={
-                    (s === "text" && initialScope !== "text") ||
-                    (s === "block" && !blockAnchor)
-                  }
-                  onClick={() => handleScopeChange(s)}
-                >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </button>
-              ))}
-            </div>
-          )}
-        </>
+            );
+          })}
+        </div>
       )}
 
-      <div className={styles.tabs}>
+      <div className={styles.textareaHeader}>
+        {mode === "create" && anchor && (
+          <div className={styles.scopeGroup} ref={scopeRef}>
+            <span className={styles.scopeLabel}>Scope:</span>
+            <button
+              type="button"
+              className={styles.scopeTrigger}
+              onClick={() => setScopeOpen((v) => !v)}
+            >
+              {anchor.scope.charAt(0).toUpperCase() + anchor.scope.slice(1)}
+              <ChevronDown size={12} className={scopeOpen ? styles.chevronOpen : ""} />
+            </button>
+            {scopeOpen && (
+              <div className={styles.scopeDropdown}>
+                {SCOPE_ORDER.map((s) => {
+                  const disabled =
+                    (s === "text" && initialScope !== "text") ||
+                    (s === "block" && !blockAnchor);
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      className={`${styles.scopeItem} ${anchor.scope === s ? styles.scopeItemActive : ""}`}
+                      disabled={disabled}
+                      onClick={() => {
+                        handleScopeChange(s);
+                        setScopeOpen(false);
+                      }}
+                    >
+                      {anchor.scope === s && <Check size={12} />}
+                      <span>{s.charAt(0).toUpperCase() + s.slice(1)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
         <button
-          className={`${styles.tab} ${activeTab === "write" ? styles.tabActive : ""}`}
-          onClick={() => setActiveTab("write")}
+          className={`${styles.previewToggle} ${activeTab === "preview" ? styles.previewToggleActive : ""}`}
+          onClick={() => setActiveTab(activeTab === "write" ? "preview" : "write")}
+          title={activeTab === "write" ? "Preview" : "Back to editing"}
         >
-          Write
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === "preview" ? styles.tabActive : ""}`}
-          onClick={() => setActiveTab("preview")}
-        >
-          Preview
+          {activeTab === "write" ? <Eye size={14} /> : <EyeOff size={14} />}
+          {activeTab === "write" ? "Preview" : "Write"}
         </button>
       </div>
 

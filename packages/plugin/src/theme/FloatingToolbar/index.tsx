@@ -11,6 +11,7 @@ import {
   findParentBlock,
   buildAnchorFromBlock,
 } from "../../client/anchorUtils";
+import { HelpCircle, Lightbulb, AlertTriangle } from "lucide-react";
 import { CommentForm } from "../CommentForm";
 import styles from "./styles.module.css";
 
@@ -213,24 +214,27 @@ export function FloatingToolbar({
       {showToolbarButtons ? (
         <div className={styles.buttons}>
           <button
-            className={styles.typeButton}
+            className={`${styles.typeButton} ${styles.typeQuestion}`}
             onClick={() => handleAddComment("question")}
             title="Add Question"
           >
+            <HelpCircle size={14} />
             Question
           </button>
           <button
-            className={styles.typeButton}
+            className={`${styles.typeButton} ${styles.typeSuggestion}`}
             onClick={() => handleAddComment("suggestion")}
             title="Add Suggestion"
           >
+            <Lightbulb size={14} />
             Suggestion
           </button>
           <button
-            className={styles.typeButton}
+            className={`${styles.typeButton} ${styles.typeIssue}`}
             onClick={() => handleAddComment("issue")}
             title="Add Issue"
           >
+            <AlertTriangle size={14} />
             Issue
           </button>
         </div>

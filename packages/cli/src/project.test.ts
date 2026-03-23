@@ -6,15 +6,21 @@ import fs from "node:fs";
 
 describe("findProjectRoot", () => {
   it("returns git root for a directory inside a git repo", () => {
-    // This test file itself is inside a git repo
-    const root = findProjectRoot(__dirname);
-    expect(root).toBeTruthy();
-    expect(fs.existsSync(path.join(root!, ".git"))).toBe(true);
+    // Pass a cwd above the git root so the search isn't bounded too early
+    const root = findProjectRoot(__dirname, "/");
+    expect(fs.existsSync(path.join(root, ".git"))).toBe(true);
   });
 
-  it("returns undefined for a directory outside any git repo", () => {
-    const root = findProjectRoot(os.tmpdir());
-    expect(root).toBeUndefined();
+  it("does not search above cwd", () => {
+    // Use a cwd that is below the actual git root so .git won't be found
+    const root = findProjectRoot(__dirname, __dirname);
+    expect(root).toBe(path.resolve(__dirname));
+  });
+
+  it("falls back to cwd when no .git exists", () => {
+    const tmp = os.tmpdir();
+    const root = findProjectRoot(tmp, tmp);
+    expect(root).toBe(path.resolve(tmp));
   });
 });
 

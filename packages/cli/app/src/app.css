@@ -7,8 +7,9 @@
   --color-muted: var(--ifm-color-emphasis-100);
   --color-muted-foreground: var(--ifm-color-emphasis-800);
   --color-primary: var(--ifm-color-primary);
+  --color-primary-light: var(--ifm-color-primary-light);
   --color-primary-foreground: #fff;
-  --color-border: var(--ifm-color-emphasis-300);
+  --color-border: var(--ifm-color-emphasis-200);
   --color-ring: var(--ifm-color-primary);
   --color-secondary: var(--ifm-color-emphasis-200);
   --color-secondary-foreground: var(--ifm-font-color-base);
@@ -21,8 +22,7 @@
   --animate-out: exit 0.2s ease;
 }
 
-/* ── Reset ── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── Reset ── (Tailwind Preflight handles box-sizing/margin/padding) */
 
 /* ── Thin scrollbar for page-level & code blocks ── */
 html {
@@ -46,10 +46,10 @@ html {
   --ifm-background-color: #ffffff;
   --ifm-background-surface-color: #ffffff;
 
-  /* Primary palette */
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lightest: #a8d5ba;
+  /* Primary palette — matches logo background #003EB7 */
+  --ifm-color-primary: #003EB7;
+  --ifm-color-primary-light: #1a5bc9;
+  --ifm-color-primary-lightest: #a3c4f3;
 
   /* Danger palette */
   --ifm-color-danger: #fa383e;
@@ -81,7 +81,7 @@ html {
   --ifm-global-shadow-md: 0 2px 12px rgba(0, 0, 0, 0.12);
 
   /* Borders */
-  --ifm-toc-border-color: var(--ifm-color-emphasis-300);
+  --ifm-toc-border-color: var(--ifm-color-emphasis-200);
 
   /* Layout */
   --ifm-navbar-height: 0px;
@@ -92,10 +92,10 @@ html {
   --ifm-background-color: #1b1b1d;
   --ifm-background-surface-color: #242526;
 
-  /* Primary palette */
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lightest: #a0f0df;
+  /* Primary palette — lighter tint for dark mode */
+  --ifm-color-primary: #4d8fef;
+  --ifm-color-primary-light: #6ba3f5;
+  --ifm-color-primary-lightest: #1a3a6b;
 
   /* Danger palette */
   --ifm-color-danger: #fa383e;
@@ -120,7 +120,7 @@ html {
   --ifm-font-color-secondary: #a8a8a8;
 
   /* Borders */
-  --ifm-toc-border-color: var(--ifm-color-emphasis-300);
+  --ifm-toc-border-color: var(--ifm-color-emphasis-200);
 }
 
 /* ── Base body styles ── */
@@ -142,14 +142,14 @@ body {
   margin: 0.67em 0;
   font-weight: 600;
   padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
 }
 .markdown-body h2 {
   font-size: 1.5em;
   margin: 1em 0 0.5em;
   font-weight: 600;
   padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
 }
 .markdown-body h3 { font-size: 1.25em; margin: 1em 0 0.5em; font-weight: 600; }
 .markdown-body h4 { font-size: 1em; margin: 1em 0 0.5em; font-weight: 600; }
@@ -203,7 +203,7 @@ body {
 }
 .markdown-body tr:nth-child(2n) { background: rgba(0, 0, 0, 0.02); }
 .markdown-body th { font-weight: 600; }
-.markdown-body a { color: #0969da; text-decoration: none; }
+.markdown-body a { color: var(--ifm-color-primary); text-decoration: none; }
 .markdown-body a:hover { text-decoration: underline; }
 .markdown-body img { max-width: 100%; }
 .markdown-body hr { border: none; border-top: 1px solid var(--ifm-color-emphasis-300); margin: 24px 0; height: 0.25em; background: var(--ifm-color-emphasis-300); }
@@ -213,5 +213,5 @@ body {
 /* ── Dark mode overrides for code blocks ── */
 [data-theme="dark"] .markdown-body pre { background: #161b22; }
 [data-theme="dark"] .markdown-body code { background: rgba(110, 118, 129, 0.4); }
-[data-theme="dark"] .markdown-body a { color: #58a6ff; }
+[data-theme="dark"] .markdown-body a { color: var(--ifm-color-primary-light); }
 [data-theme="dark"] .markdown-body tr:nth-child(2n) { background: rgba(255, 255, 255, 0.02); }

@@ -39,7 +39,6 @@ function createComment(overrides: Partial<ReviewComment> = {}): ReviewComment {
 
 describe("useHighlights", () => {
   const contentEl = document.createElement("div");
-  const contentRef = { current: contentEl };
   const onOrphanedFound = vi.fn();
   const onHighlightClick = vi.fn();
 
@@ -57,7 +56,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [createComment()],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -83,7 +82,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [createComment({ anchor: blockAnchor })],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -101,7 +100,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [createComment({ anchor: docAnchor })],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -116,7 +115,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [createComment({ status: "resolved" })],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -132,7 +131,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [createComment()],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -147,7 +146,7 @@ describe("useHighlights", () => {
         useHighlights({
           comments: [],
           hoveredCommentId: hoveredId,
-          contentRef,
+          contentEl,
           onOrphanedFound,
           onHighlightClick,
         }),
@@ -178,7 +177,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),
@@ -200,7 +199,7 @@ describe("useHighlights", () => {
       useHighlights({
         comments: [],
         hoveredCommentId: null,
-        contentRef,
+        contentEl,
         onOrphanedFound,
         onHighlightClick,
       }),

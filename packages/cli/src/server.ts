@@ -174,10 +174,26 @@ export function startServer(opts: ServerOptions): http.Server {
     }
   });
 
+  // Watch docs directory for .md/.mdx changes and broadcast via SSE
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  const watcher = fs.watch(docsPath, { recursive: true }, (_event, filename) => {
+    if (!filename || !/\.(md|mdx)$/i.test(filename)) return;
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      const relativePath = filename.replace(/\\/g, "/");
+      notifier.broadcastDocChanged(relativePath);
+    }, 300);
+  });
+
   const server = app.listen(port, () => {
     console.log(`Review server running at http://localhost:${port}`);
     console.log(`Reviewing: ${docsPath}`);
     console.log(`Reviews stored in: ${reviewsDir}`);
+  });
+
+  server.on("close", () => {
+    watcher.close();
+    if (debounceTimer) clearTimeout(debounceTimer);
   });
 
   if (!noOpen) {

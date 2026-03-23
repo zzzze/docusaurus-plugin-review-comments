@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import OriginalLayout from "@theme-init/DocItem/Layout";
 import type { WrapperProps } from "@docusaurus/types";
 import { useLocation } from "@docusaurus/router";
@@ -13,9 +13,9 @@ import { GutterButton } from "../GutterButton";
 type LayoutProps = WrapperProps<typeof OriginalLayout>;
 
 function LayoutContent({
-  contentRef,
+  contentEl,
 }: {
-  contentRef: React.RefObject<HTMLElement | null>;
+  contentEl: HTMLElement | null;
 }): null {
   const {
     comments,
@@ -64,7 +64,7 @@ function LayoutContent({
   useHighlights({
     comments,
     hoveredCommentId,
-    contentRef,
+    contentEl,
     onOrphanedFound: handleOrphanedFound,
     onHighlightClick: handleHighlightClick,
   });
@@ -77,17 +77,22 @@ export default function LayoutWrapper(
 ): React.ReactElement {
   const location = useLocation();
   const docPath = location.pathname.replace(/^\//, "") || "README";
+
+  // State-backed element for useHighlights reactivity;
+  // ref object kept for FloatingToolbar / GutterButton.
+  const [contentEl, setContentEl] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const el = document.querySelector<HTMLElement>(".theme-doc-markdown");
-    if (el) contentRef.current = el;
+    contentRef.current = el;
+    setContentEl(el);
   }, [location.pathname]);
 
   return (
     <ReviewProvider docPath={docPath}>
       <OriginalLayout {...props} />
-      <LayoutContent contentRef={contentRef} />
+      <LayoutContent contentEl={contentEl} />
       <FloatingToolbar contentRef={contentRef} />
       <GutterButton contentRef={contentRef} />
       <ReviewPanel />

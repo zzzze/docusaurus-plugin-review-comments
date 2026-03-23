@@ -178,13 +178,15 @@ export function CommentCard({
       )}
 
       {isEditing ? (
-        <CommentForm
-          mode="edit"
-          commentId={comment.id}
-          initialContent={comment.content}
-          onSubmit={() => setIsEditing(false)}
-          onCancel={() => setIsEditing(false)}
-        />
+        <div className={styles.cardSection}>
+          <CommentForm
+            mode="edit"
+            commentId={comment.id}
+            initialContent={comment.content}
+            onSubmit={() => setIsEditing(false)}
+            onCancel={() => setIsEditing(false)}
+          />
+        </div>
       ) : (
         <>
           <div
@@ -328,16 +330,18 @@ export function CommentCard({
       )}
 
       {showReplyForm && (
-        <CommentForm
-          mode="reply"
-          commentId={comment.id}
-          onSubmit={() => setShowReplyForm(false)}
-          onCancel={() => setShowReplyForm(false)}
-        />
+        <div className={styles.cardSection}>
+          <CommentForm
+            mode="reply"
+            commentId={comment.id}
+            onSubmit={() => setShowReplyForm(false)}
+            onCancel={() => setShowReplyForm(false)}
+          />
+        </div>
       )}
 
       {!isEditing && (
-      <div className={styles.cardFooter}>
+      <div className={`${styles.cardFooter} ${confirmingDelete || confirmingResolve || confirmingReopen ? styles.cardFooterVisible : ""}`}>
         {confirmingDelete ? (
           <>
             <span className={styles.confirmText}>Delete?</span>

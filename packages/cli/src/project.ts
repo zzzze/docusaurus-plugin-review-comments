@@ -4,15 +4,17 @@ import crypto from "node:crypto";
 import os from "node:os";
 
 /**
- * Walk from `startDir` upward looking for a `.git` directory.
- * Returns the directory containing `.git`, or undefined.
+ * Walk from `startDir` upward looking for a `.git` directory,
+ * but never search above `cwd`. Returns `cwd` if `.git` is not found.
  */
-export function findProjectRoot(startDir: string): string | undefined {
+export function findProjectRoot(startDir: string, cwd = process.cwd()): string {
+  const resolvedCwd = path.resolve(cwd);
   let dir = path.resolve(startDir);
   while (true) {
     if (fs.existsSync(path.join(dir, ".git"))) return dir;
+    if (dir === resolvedCwd) return resolvedCwd;
     const parent = path.dirname(dir);
-    if (parent === dir) return undefined;
+    if (parent === dir) return resolvedCwd; // filesystem root
     dir = parent;
   }
 }

@@ -161,7 +161,7 @@ async function main(): Promise<void> {
     docsPath = resolvedPath;
   }
 
-  const projectRoot = findProjectRoot(docsPath) ?? docsPath;
+  const projectRoot = findProjectRoot(docsPath);
 
   const hasMarkdown = fs.readdirSync(docsPath, { recursive: true })
     .some((f) => /\.(md|mdx)$/i.test(String(f)));
