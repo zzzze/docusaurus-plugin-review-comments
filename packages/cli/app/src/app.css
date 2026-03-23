@@ -1,7 +1,30 @@
-/* Reset */
+@import "tailwindcss";
+
+/* ── shadcn-style theme tokens mapped to Infima CSS variables ── */
+@theme inline {
+  --color-background: var(--ifm-background-color);
+  --color-foreground: var(--ifm-font-color-base);
+  --color-muted: var(--ifm-color-emphasis-100);
+  --color-muted-foreground: var(--ifm-color-emphasis-800);
+  --color-primary: var(--ifm-color-primary);
+  --color-primary-foreground: #fff;
+  --color-border: var(--ifm-color-emphasis-300);
+  --color-ring: var(--ifm-color-primary);
+  --color-secondary: var(--ifm-color-emphasis-200);
+  --color-secondary-foreground: var(--ifm-font-color-base);
+  --color-accent: var(--ifm-color-emphasis-100);
+  --color-accent-foreground: var(--ifm-font-color-base);
+  --color-destructive: var(--ifm-color-danger);
+  --color-destructive-foreground: #fff;
+  --radius: 0.5rem;
+  --animate-in: enter 0.2s ease;
+  --animate-out: exit 0.2s ease;
+}
+
+/* ── Reset ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Thin scrollbar for page-level & code blocks */
+/* ── Thin scrollbar for page-level & code blocks ── */
 html {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
@@ -17,7 +40,7 @@ html {
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
-/* Infima CSS variable fallbacks — match Docusaurus defaults so plugin components render correctly */
+/* ── Infima CSS variable fallbacks ── */
 :root {
   /* Background */
   --ifm-background-color: #ffffff;
@@ -100,7 +123,7 @@ html {
   --ifm-toc-border-color: var(--ifm-color-emphasis-300);
 }
 
-/* Base */
+/* ── Base body styles ── */
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: var(--ifm-font-size-base);
@@ -113,165 +136,7 @@ body {
   color: var(--ifm-font-color-base);
 }
 
-/* Mobile navbar — hidden on desktop */
-.mobile-navbar {
-  display: none;
-}
-
-/* Layout */
-.layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar-container {
-  flex-shrink: 0;
-  position: relative;
-}
-
-.sidebar {
-  width: 100%;
-  border-right: 1px solid var(--ifm-color-emphasis-300);
-  padding: 16px;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-}
-
-.sidebar-resize-handle {
-  position: absolute;
-  right: -2px;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  cursor: ew-resize;
-  background: transparent;
-  transition: background 0.15s ease;
-  z-index: 10;
-}
-
-.sidebar-resize-handle:hover,
-.sidebar-resize-handle:active {
-  background: var(--ifm-color-primary-light, #4dabf7);
-}
-
-.sidebar-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
-}
-
-.sidebar-category-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  color: #888;
-  padding: 8px 0 4px;
-}
-
-.sidebar-category-items {
-  padding-left: 12px;
-}
-
-.sidebar-item {
-  display: block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: inherit;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.sidebar-item:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-item.active {
-  background: var(--ifm-color-primary);
-  color: white;
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
-  min-width: 0;
-  padding: 24px 48px;
-}
-
-.doc-with-toc {
-  display: flex;
-  gap: 0;
-}
-
-.doc-with-toc .doc-viewer {
-  flex: 1;
-  min-width: 0;
-  max-width: 900px;
-}
-
-/* Table of Contents */
-.toc {
-  width: 200px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 24px;
-  align-self: flex-start;
-  max-height: calc(100vh - 48px);
-  padding-left: 24px;
-  border-left: 1px solid var(--ifm-color-emphasis-300);
-  margin-left: 24px;
-}
-
-.toc-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 8px;
-  letter-spacing: 0.05em;
-}
-
-.toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.toc-item.toc-level-2 .toc-link {
-  font-size: 0.83rem;
-  font-weight: 600;
-}
-
-.toc-item.toc-level-3 {
-  padding-left: 12px;
-}
-
-.toc-item.toc-level-3 .toc-link {
-  color: var(--ifm-color-emphasis-600, #777);
-}
-
-.toc-link {
-  display: block;
-  padding: 3px 0;
-  font-size: 0.8rem;
-  color: var(--ifm-color-emphasis-700, #555);
-  text-decoration: none;
-  line-height: 1.4;
-  transition: color 0.15s ease;
-}
-
-.toc-link:hover {
-  color: var(--ifm-color-primary);
-}
-
-.toc-link.active {
-  color: var(--ifm-color-primary);
-  font-weight: 600;
-}
-
-/* Markdown body styles — GitHub-like */
+/* ── Markdown body styles — GitHub-like ── */
 .markdown-body h1 {
   font-size: 2em;
   margin: 0.67em 0;
@@ -345,111 +210,8 @@ body {
 .markdown-body .task-list-item { list-style: none; margin-left: -1.5em; }
 .markdown-body .task-list-item input { margin-right: 0.5em; }
 
-/* Dark mode overrides for code blocks */
+/* ── Dark mode overrides for code blocks ── */
 [data-theme="dark"] .markdown-body pre { background: #161b22; }
 [data-theme="dark"] .markdown-body code { background: rgba(110, 118, 129, 0.4); }
 [data-theme="dark"] .markdown-body a { color: #58a6ff; }
 [data-theme="dark"] .markdown-body tr:nth-child(2n) { background: rgba(255, 255, 255, 0.02); }
-
-/* Loading */
-.loading-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-size: 1.1rem;
-  color: #888;
-}
-
-/* ===== Mobile (<=996px) ===== */
-@media (max-width: 996px) {
-  .mobile-navbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 48px;
-    padding: 0 16px;
-    background: var(--ifm-background-color);
-    border-bottom: 1px solid var(--ifm-color-emphasis-300);
-    z-index: 200;
-  }
-
-  .mobile-navbar-title {
-    font-weight: 700;
-    font-size: 1rem;
-  }
-
-  .menu-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-  }
-
-  .menu-button:hover {
-    background: rgba(0, 0, 0, 0.05);
-  }
-
-  .layout {
-    flex-direction: column;
-    padding-top: 48px;
-  }
-
-  /* Sidebar overlay */
-  .sidebar-container {
-    position: fixed;
-    top: 48px;
-    left: 0;
-    bottom: 0;
-    width: 260px !important;
-    z-index: 100;
-    transform: translateX(-100%);
-    transition: transform 0.25s ease-in-out;
-  }
-
-  .sidebar-resize-handle {
-    display: none;
-  }
-
-  .sidebar-container.open {
-    transform: translateX(0);
-  }
-
-  .sidebar-container .sidebar {
-    height: calc(100vh - 48px);
-    position: relative;
-    background: var(--ifm-background-color);
-  }
-
-  .sidebar-container .sidebar-title {
-    display: none;
-  }
-
-  /* Backdrop */
-  .sidebar-backdrop {
-    position: fixed;
-    inset: 0;
-    top: 48px;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 99;
-  }
-
-  /* Main content adjustments */
-  .main-content {
-    padding: 16px;
-    max-width: 100%;
-  }
-
-  .toc {
-    display: none;
-  }
-}

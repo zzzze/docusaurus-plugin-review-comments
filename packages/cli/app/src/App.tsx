@@ -1,4 +1,3 @@
-import "simplebar-react/dist/simplebar.min.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDocs } from "./hooks/useDocs";
 import { Layout } from "./components/Layout";
@@ -21,7 +20,7 @@ function findFirstDoc(tree: DocTreeEntry[]): string | null {
 function AppContent() {
   const { tree, singleFile, loading } = useDocs();
 
-  if (loading) return <div className="loading-screen">Loading documents...</div>;
+  if (loading) return <div className="flex items-center justify-center h-screen text-muted-foreground">Loading documents...</div>;
 
   const firstDoc = findFirstDoc(tree);
 
