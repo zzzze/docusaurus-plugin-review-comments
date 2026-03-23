@@ -39,49 +39,72 @@ export function useTextSelection(
   }, []);
 
   useEffect(() => {
-    const handleSelectionChange = (): void => {
-      requestAnimationFrame(() => {
-        const selection = window.getSelection();
-        if (
-          !selection ||
-          selection.isCollapsed ||
-          !selection.toString().trim()
-        ) {
-          setIsSelecting(false);
-          setToolbarPosition(null);
-          setSelectedAnchor(null);
-          setSelectedRange(null);
-          return;
+    let rafId = 0;
+
+    const processSelection = (): void => {
+      const selection = window.getSelection();
+      if (
+        !selection ||
+        selection.isCollapsed ||
+        !selection.toString().trim()
+      ) {
+        setIsSelecting(false);
+        setToolbarPosition(null);
+        setSelectedAnchor(null);
+        setSelectedRange(null);
+        return;
+      }
+
+      // Re-query the content element each time so we survive
+      // client-side navigations that replace the markdown root.
+      let contentEl = contentRef.current;
+      if (!contentEl || !contentEl.isConnected) {
+        const fresh = document.querySelector<HTMLElement>(".theme-doc-markdown");
+        if (fresh) {
+          contentRef.current = fresh;
+          contentEl = fresh;
         }
+      }
+      if (!contentEl) return;
 
-        const contentEl = contentRef.current;
-        if (!contentEl) return;
+      const anchorNode = selection.anchorNode;
+      if (!anchorNode || !contentEl.contains(anchorNode)) return;
 
-        const anchorNode = selection.anchorNode;
-        if (!anchorNode || !contentEl.contains(anchorNode)) return;
+      let anchor: ReviewAnchor | null = null;
+      try {
+        anchor = buildAnchorFromSelection(selection, contentEl);
+      } catch {
+        // fromRange can throw if the range is partially outside the root
+        return;
+      }
+      if (!anchor) return;
 
-        const anchor = buildAnchorFromSelection(selection, contentEl);
-        if (!anchor) return;
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
 
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+      const selectionTop = rect.top + window.scrollY;
+      const selectionBottom = rect.bottom + window.scrollY;
+      const left = rect.left + rect.width / 2;
 
-        const selectionTop = rect.top + window.scrollY;
-        const selectionBottom = rect.bottom + window.scrollY;
-        const left = rect.left + rect.width / 2;
-
-        setIsSelecting(true);
-        setToolbarPosition({ selectionTop, selectionBottom, left });
-        setSelectedAnchor(anchor);
-        setSelectedRange(range.cloneRange());
-      });
+      setIsSelecting(true);
+      setToolbarPosition({ selectionTop, selectionBottom, left });
+      setSelectedAnchor(anchor);
+      setSelectedRange(range.cloneRange());
     };
 
-    document.addEventListener("mouseup", handleSelectionChange);
-    document.addEventListener("keyup", handleSelectionChange);
+    const scheduleUpdate = (): void => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(processSelection);
+    };
+
+    document.addEventListener("mouseup", scheduleUpdate);
+    document.addEventListener("keyup", scheduleUpdate);
+    document.addEventListener("selectionchange", scheduleUpdate);
     return () => {
-      document.removeEventListener("mouseup", handleSelectionChange);
-      document.removeEventListener("keyup", handleSelectionChange);
+      cancelAnimationFrame(rafId);
+      document.removeEventListener("mouseup", scheduleUpdate);
+      document.removeEventListener("keyup", scheduleUpdate);
+      document.removeEventListener("selectionchange", scheduleUpdate);
     };
   }, [contentRef]);
 

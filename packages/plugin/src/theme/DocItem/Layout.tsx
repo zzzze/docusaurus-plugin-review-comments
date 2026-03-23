@@ -82,7 +82,7 @@ export default function LayoutWrapper(
   useEffect(() => {
     const el = document.querySelector<HTMLElement>(".theme-doc-markdown");
     if (el) contentRef.current = el;
-  }, []);
+  }, [location.pathname]);
 
   return (
     <ReviewProvider docPath={docPath}>
