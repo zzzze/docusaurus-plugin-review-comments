@@ -15,7 +15,7 @@
   background: var(--ifm-color-primary);
   color: #fff;
   border: none;
-  border-radius: 20px;
+  border-radius: 9999px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 500;
@@ -28,6 +28,11 @@
 .badge:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.badge:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .badge:disabled {

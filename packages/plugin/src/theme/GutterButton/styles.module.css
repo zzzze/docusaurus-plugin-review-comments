@@ -7,7 +7,7 @@
   height: 24px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--ifm-global-radius);
+  border-radius: var(--review-radius-sm);
   background: transparent;
   color: var(--ifm-color-emphasis-500);
   cursor: pointer;
@@ -20,9 +20,14 @@
 
 .gutterButton:hover {
   opacity: 1;
-  background: var(--ifm-color-emphasis-100);
+  background: var(--review-muted);
   border-color: var(--ifm-color-emphasis-300);
   color: var(--ifm-color-primary);
+}
+
+.gutterButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .formContainer {
