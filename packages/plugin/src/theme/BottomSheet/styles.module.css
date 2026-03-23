@@ -31,7 +31,7 @@
 .dragBar {
   width: 36px;
   height: 4px;
-  border-radius: 2px;
+  border-radius: 9999px;
   background: var(--ifm-color-emphasis-400);
 }
 
