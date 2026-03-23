@@ -48,18 +48,24 @@
 
 .scopeSelector {
   display: flex;
-  gap: 4px;
+  gap: 2px;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: var(--review-radius);
+  padding: 3px;
   margin-bottom: 8px;
 }
 
 .scopeButton {
+  flex: 1;
   padding: 2px 8px;
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: none;
   background: transparent;
   color: var(--ifm-font-color-secondary);
   font-size: 0.75rem;
   border-radius: var(--review-radius-sm);
   cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
 .scopeButton:disabled {
@@ -68,9 +74,10 @@
 }
 
 .scopeActive {
-  background: var(--review-btn-primary-bg, var(--ifm-color-primary));
-  color: var(--review-btn-primary-fg, #fff);
-  border-color: var(--review-btn-primary-bg, var(--ifm-color-primary));
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
 }
 
 .tabs {
@@ -106,7 +113,7 @@
 
 .textarea {
   width: 100%;
-  min-height: 72px;
+  min-height: 80px;
   max-height: 240px;
   padding: 8px;
   border: 1px solid var(--review-border);
@@ -184,6 +191,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cancelButton:hover {
+  background: var(--review-muted);
 }
 
 .cancelButton:focus-visible {
@@ -204,6 +216,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.submitButton:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .submitButton:focus-visible {

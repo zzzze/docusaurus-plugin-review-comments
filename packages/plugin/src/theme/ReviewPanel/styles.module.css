@@ -44,6 +44,11 @@
   padding-top: var(--ifm-spacing-vertical);
   gap: 8px;
   height: 100%;
+  transition: background 0.15s;
+}
+
+.collapsedStrip:hover {
+  background: var(--review-muted);
 }
 
 .badge {
@@ -62,8 +67,9 @@
 .stripIcon {
   writing-mode: vertical-rl;
   font-size: var(--ifm-font-size-small);
-  color: var(--ifm-color-secondary-darkest);
+  color: var(--review-muted-fg);
   letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 /* Header */
@@ -97,6 +103,7 @@
   color: var(--ifm-color-secondary-darkest);
   padding: 6px;
   border-radius: var(--review-radius-sm);
+  transition: background 0.15s, color 0.15s;
 }
 
 .closeButton:hover {
@@ -146,6 +153,7 @@
   padding: 6px;
   border-radius: var(--review-radius-sm);
   color: var(--ifm-color-secondary-darkest);
+  transition: background 0.15s, color 0.15s;
 }
 
 .refreshButton:hover:not(:disabled) {
@@ -189,13 +197,24 @@
 .card {
   border: 1px solid var(--review-border);
   border-radius: var(--review-radius);
-  padding: 10px 12px;
+  padding: 12px;
   margin-bottom: 8px;
   background: var(--ifm-background-color);
+  transition: border-color 0.15s;
+}
+
+.card:hover {
+  border-color: var(--ifm-color-emphasis-300);
 }
 
 .cardResolved {
   opacity: 0.55;
+}
+
+.cardResolved .commentBody,
+.cardResolved .author,
+.cardResolved .time {
+  color: var(--review-muted-fg);
 }
 
 .cardResolvedCollapsed {
@@ -221,6 +240,7 @@
   display: inline-flex;
   align-items: center;
   border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
 }
 
 .collapseButton:hover {
@@ -460,6 +480,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: background 0.15s, color 0.15s;
 }
 
 .footerButton:hover {
@@ -536,6 +557,16 @@
   background: none;
   border: 1px solid var(--ifm-color-emphasis-300);
   color: var(--ifm-font-color-base);
+  transition: background 0.15s, color 0.15s;
+}
+
+.cancelButton:hover {
+  background: var(--review-muted);
+}
+
+.cancelButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .submitButton {
@@ -621,12 +652,11 @@
   margin-top: 16px;
   border: 1px solid var(--review-border);
   border-radius: var(--review-radius);
-  padding: 8px;
-  opacity: 0.6;
+  overflow: hidden;
 }
 
 .orphanedSection:hover {
-  opacity: 0.85;
+  border-color: var(--ifm-color-emphasis-300);
 }
 
 .orphanedToggle {
@@ -634,22 +664,28 @@
   align-items: center;
   gap: 6px;
   width: 100%;
-  background: none;
+  background: var(--review-muted);
   border: none;
   cursor: pointer;
   font-size: var(--ifm-font-size-small);
   font-weight: 600;
-  color: var(--ifm-color-secondary-darkest);
-  padding: 2px 0;
+  color: var(--review-muted-fg);
+  padding: 8px 12px;
+  transition: background 0.15s;
+}
+
+.orphanedToggle:hover {
+  background: var(--ifm-color-emphasis-200);
 }
 
 .orphanedCaret {
   font-size: 0.65rem;
   margin-left: auto;
+  transition: transform 0.2s ease;
 }
 
 .orphanedList {
-  margin-top: 8px;
+  padding: 8px;
 }
 
 /* Resolved comments section */
@@ -657,12 +693,11 @@
   margin-top: 16px;
   border: 1px solid var(--review-border);
   border-radius: var(--review-radius);
-  padding: 8px;
-  opacity: 0.6;
+  overflow: hidden;
 }
 
 .resolvedSection:hover {
-  opacity: 0.85;
+  border-color: var(--ifm-color-emphasis-300);
 }
 
 .resolvedToggle {
@@ -670,17 +705,22 @@
   align-items: center;
   gap: 6px;
   width: 100%;
-  background: none;
+  background: var(--review-muted);
   border: none;
   cursor: pointer;
   font-size: var(--ifm-font-size-small);
   font-weight: 600;
-  color: var(--ifm-color-secondary-darkest);
-  padding: 2px 0;
+  color: var(--review-muted-fg);
+  padding: 8px 12px;
+  transition: background 0.15s;
+}
+
+.resolvedToggle:hover {
+  background: var(--ifm-color-emphasis-200);
 }
 
 .resolvedList {
-  margin-top: 8px;
+  padding: 8px;
 }
 
 /* Undo toast */
@@ -714,6 +754,11 @@
 
 .undoButton:hover {
   background: var(--ifm-color-primary-lightest);
+}
+
+.undoButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 .undoDismiss {

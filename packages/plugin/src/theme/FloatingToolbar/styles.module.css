@@ -7,9 +7,9 @@
   display: flex;
   gap: 2px;
   background: var(--ifm-background-surface-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: 1px solid var(--review-border);
   border-radius: var(--review-radius);
-  box-shadow: var(--ifm-global-shadow-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   padding: 4px;
 }
 
@@ -23,10 +23,17 @@
   border-radius: var(--review-radius-sm);
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
 }
 
 .typeButton:hover {
-  background: var(--ifm-color-emphasis-200);
+  background: var(--review-muted);
+  color: var(--ifm-color-primary);
+}
+
+.typeButton:focus-visible {
+  outline: 2px solid var(--review-ring);
+  outline-offset: 2px;
 }
 
 @media (max-width: 768px) {
