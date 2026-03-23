@@ -23,6 +23,7 @@ importers:
       clsx: ^2.0.0
       express: ^4.21.0
       highlight.js: ^11.11.1
+      lucide-react: ^0.468.0
       open-browsers: ^1.4.2
       react: ^19.0.0
       react-dom: ^19.0.0
@@ -54,6 +55,7 @@ importers:
       class-variance-authority: 0.7.1
       clsx: 2.1.1
       highlight.js: 11.11.1
+      lucide-react: 0.468.0_react@19.2.4
       react: 19.2.4
       react-dom: 19.2.4_react@19.2.4
       react-markdown: 9.1.0_d2vw5qqqcfk7p7wqok4lqumjlu
@@ -8312,7 +8314,6 @@ packages:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
     dependencies:
       react: 19.2.4
-    dev: false
 
   /lz-string/1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
