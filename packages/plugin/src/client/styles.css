@@ -7,6 +7,16 @@
   --review-card-border: var(--ifm-color-emphasis-300);
   --review-btn-primary-bg: var(--ifm-color-primary);
   --review-btn-primary-fg: #fff;
+
+  /* shadcn-inspired design tokens */
+  --review-radius: 0.5rem;
+  --review-radius-sm: calc(var(--review-radius) - 2px);
+  --review-ring: var(--ifm-color-primary);
+  --review-border: var(--ifm-color-emphasis-200);
+  --review-muted: var(--ifm-color-emphasis-100);
+  --review-muted-fg: var(--ifm-color-emphasis-800);
+  --review-accent: var(--ifm-color-emphasis-100);
+  --review-accent-fg: var(--ifm-color-emphasis-800);
 }
 
 [data-theme="dark"] {
