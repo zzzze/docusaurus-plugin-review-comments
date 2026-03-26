@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export function useDocContent(docPath: string | null) {
   const [content, setContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(docPath !== null);
   const [prevDocPath, setPrevDocPath] = useState(docPath);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -36,7 +36,6 @@ export function useDocContent(docPath: string | null) {
       setLoading(false);
       return;
     }
-    setLoading(true);
     fetch(`/api/docs/${docPath}`)
       .then((res) => res.json())
       .then((data) => {
