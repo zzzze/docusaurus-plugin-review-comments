@@ -10,6 +10,19 @@ function getSystemTheme(): "light" | "dark" {
 
 function applyTheme(resolved: "light" | "dark") {
   document.documentElement.setAttribute("data-theme", resolved);
+
+  const hljsStyleId = "hljs-theme";
+  let link = document.getElementById(hljsStyleId) as HTMLLinkElement | null;
+  if (!link) {
+    link = document.createElement("link");
+    link.id = hljsStyleId;
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+  link.href =
+    resolved === "dark"
+      ? new URL("highlight.js/styles/github-dark.css", import.meta.url).href
+      : new URL("highlight.js/styles/github.css", import.meta.url).href;
 }
 
 export function useTheme() {

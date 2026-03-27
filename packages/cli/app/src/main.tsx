@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-import "highlight.js/styles/github.css";
 import "./app.css";
 import "@plugin/client/styles.css";
 

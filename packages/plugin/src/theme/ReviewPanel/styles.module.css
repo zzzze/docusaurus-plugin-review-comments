@@ -356,6 +356,28 @@
 
 .commentBody code {
   font-size: 0.8em;
+  background: var(--ifm-code-background);
+  color: var(--ifm-code-color, inherit);
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+}
+
+.commentBody pre {
+  background: var(--ifm-pre-background, var(--ifm-code-background));
+  color: var(--ifm-pre-color, var(--ifm-font-color-base));
+  border-radius: var(--review-radius-sm);
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  font-size: 0.8em;
+  margin: 6px 0;
+}
+
+.commentBody pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
 }
 
 .commentBody table,
@@ -475,6 +497,32 @@
 
 .replyBody p {
   margin: 0 0 4px;
+}
+
+.replyBody code {
+  font-size: 0.8em;
+  background: var(--ifm-code-background);
+  color: var(--ifm-code-color, inherit);
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+}
+
+.replyBody pre {
+  background: var(--ifm-pre-background, var(--ifm-code-background));
+  color: var(--ifm-pre-color, var(--ifm-font-color-base));
+  border-radius: var(--review-radius-sm);
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  font-size: 0.8em;
+  margin: 6px 0;
+}
+
+.replyBody pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
 }
 
 /* Card section (generic padded area) */
