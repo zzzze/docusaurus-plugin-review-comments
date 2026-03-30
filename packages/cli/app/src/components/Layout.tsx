@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef } from "react";
-import { Menu } from "lucide-react";
+import { Menu, ChevronLeft, ChevronRight } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { ThemeToggle } from "./ThemeToggle";
+import { ScrollToTop } from "./ScrollToTop";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useTheme } from "../hooks/useTheme";
 import type { DocTreeEntry } from "../hooks/useDocs";
@@ -22,6 +23,7 @@ export function Layout({
   const [sheetOpen, setSheetOpen] = useState(false);
   const closeSheet = useCallback(() => setSheetOpen(false), []);
   const [sidebarWidth, setSidebarWidth] = useState(SIDEBAR_DEFAULT);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const dragging = useRef(false);
   const { mode, setMode } = useTheme();
 
@@ -78,17 +80,52 @@ export function Layout({
       </header>
 
       <div className="flex min-h-screen">
-        {/* Desktop sidebar */}
-        <aside className="hidden lg:block shrink-0 overflow-hidden border-r border-border/60" style={{ width: sidebarWidth }}>
-          <Sidebar tree={tree} headerExtra={<ThemeToggle mode={mode} onChange={setMode} />} />
-        </aside>
-        <div
-          className="hidden lg:block shrink-0 w-1 cursor-col-resize bg-transparent hover:bg-primary-light active:bg-primary-light transition-colors duration-150"
-          onMouseDown={onMouseDown}
-        />
-        {/* Single content area — padding adapts for mobile header */}
+        {/* Desktop sidebar — hidden when collapsed */}
+        {!sidebarCollapsed && (
+          <>
+            <aside
+              className="hidden lg:block shrink-0 overflow-hidden border-r border-border/60"
+              style={{ width: sidebarWidth }}
+            >
+              <Sidebar
+                tree={tree}
+                headerExtra={
+                  <>
+                    <ThemeToggle mode={mode} onChange={setMode} />
+                    <button
+                      onClick={() => setSidebarCollapsed(true)}
+                      className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted"
+                      aria-label="Collapse sidebar"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                  </>
+                }
+              />
+            </aside>
+            <div
+              className="hidden lg:block shrink-0 w-1 cursor-col-resize bg-transparent hover:bg-primary-light active:bg-primary-light transition-colors duration-150"
+              onMouseDown={onMouseDown}
+            />
+          </>
+        )}
+
+        {/* Expand strip — visible on desktop when sidebar is collapsed */}
+        {sidebarCollapsed && (
+          <button
+            onClick={() => setSidebarCollapsed(false)}
+            className="hidden lg:flex fixed left-0 top-1/2 -translate-y-1/2 z-40 h-12 w-5 items-center justify-center rounded-r-md border border-l-0 border-border bg-background shadow-sm hover:bg-muted"
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
+
+        {/* Content */}
         <main className="min-w-0 flex-1 px-4 pt-14 pb-6 lg:px-12 lg:pt-6">{children}</main>
       </div>
+
+      <ScrollToTop />
     </>
   );
 }
