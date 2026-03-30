@@ -180,6 +180,14 @@ export function ReviewPanel(): React.ReactElement | null {
   const [showNewForm, setShowNewForm] = useState(false);
   const isMobile = useIsMobile();
   const { width, handleRef } = usePanelResize();
+
+  useEffect(() => {
+    const effectiveWidth = isMobile ? 0 : isPanelOpen ? width : 40;
+    document.documentElement.style.setProperty("--review-panel-width", `${effectiveWidth}px`);
+    return () => {
+      document.documentElement.style.removeProperty("--review-panel-width");
+    };
+  }, [isPanelOpen, width, isMobile]);
   const { undoState, onResolved, dismissUndo, handleUndo } = useUndoResolve(
     unresolveComment,
     !resolvedExpanded,
