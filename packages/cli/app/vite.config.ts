@@ -12,7 +12,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@plugin": path.resolve(__dirname, "../../plugin/src"),
+      "@plugin": path.resolve(__dirname, "../../docusaurus-plugin/src"),
     },
   },
 });
