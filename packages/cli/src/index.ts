@@ -7,7 +7,7 @@ import net from "node:net";
 import { startServer } from "./server";
 import { findConfigFile, loadConfigFile, mergeConfigWithArgs } from "./config";
 import { findProjectRoot, getDefaultReviewsDir } from "./project";
-import type { ContextDir } from "@mdreview/plugin/types";
+import type { ContextDir } from "@mdreview/review-service/types";
 
 const DEFAULT_PORT = 4100;
 

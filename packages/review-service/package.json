@@ -1,0 +1,52 @@
+{
+  "name": "@mdreview/review-service",
+  "private": true,
+  "version": "0.0.3",
+  "description": "Review service backend for mdreview (API, agent orchestration, prompt, storage)",
+  "author": "zzzze",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicepkg/mdreview.git",
+    "directory": "packages/review-service"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./api": "./lib/api/index.js",
+    "./service": "./lib/service/index.js",
+    "./prompt": "./lib/service/prompt.js",
+    "./types": "./lib/types.js"
+  },
+  "typesVersions": {
+    "*": {
+      "api": ["lib/api/index.d.ts"],
+      "service": ["lib/service/index.d.ts"],
+      "prompt": ["lib/service/prompt.d.ts"],
+      "types": ["lib/types.d.ts"]
+    }
+  },
+  "files": ["lib"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "jsonrepair": "^3.13.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/uuid": "^10.0.0",
+    "typescript": "~5.6.2",
+    "vitest": "^3.0.0"
+  }
+}
