@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import { useReview } from "@plugin/client/ReviewContext";
 import { useDocContent } from "../hooks/useDocContent";
 import { Skeleton } from "./ui/skeleton";
 
@@ -16,7 +17,8 @@ export function DocViewer({
   contentRef?: React.Ref<HTMLElement>;
   tocContentRef?: React.Ref<HTMLElement>;
 }) {
-  const { content, loading } = useDocContent(docPath);
+  const { docChangedKey } = useReview();
+  const { content, loading } = useDocContent(docPath, docChangedKey);
 
   // Merge both refs onto the same article element
   const mergedRef = useCallback(

@@ -10,6 +10,25 @@ export interface SseNotifier {
 export function createSseNotifier(): SseNotifier {
   const clients = new Set<Response>();
 
+  function removeClient(res: Response) {
+    clients.delete(res);
+  }
+
+  function safeBroadcast(event: string, data: string) {
+    const message = `event: ${event}\ndata: ${data}\n\n`;
+    for (const res of clients) {
+      try {
+        if (res.writableEnded || res.destroyed) {
+          removeClient(res);
+          continue;
+        }
+        res.write(message);
+      } catch {
+        removeClient(res);
+      }
+    }
+  }
+
   return {
     connect(res) {
       res.setHeader("Content-Type", "text/event-stream");
@@ -17,25 +36,17 @@ export function createSseNotifier(): SseNotifier {
       res.setHeader("Connection", "keep-alive");
       res.flushHeaders();
       clients.add(res);
-      res.on("close", () => clients.delete(res));
+      res.on("close", () => removeClient(res));
+      res.on("error", () => removeClient(res));
     },
     broadcast(docPath) {
-      const data = JSON.stringify({ docPath });
-      for (const res of clients) {
-        res.write(`event: agent:done\ndata: ${data}\n\n`);
-      }
+      safeBroadcast("agent:done", JSON.stringify({ docPath }));
     },
     broadcastError(message) {
-      const data = JSON.stringify({ message });
-      for (const res of clients) {
-        res.write(`event: agent:error\ndata: ${data}\n\n`);
-      }
+      safeBroadcast("agent:error", JSON.stringify({ message }));
     },
     broadcastDocChanged(docPath) {
-      const data = JSON.stringify({ docPath });
-      for (const res of clients) {
-        res.write(`event: doc:changed\ndata: ${data}\n\n`);
-      }
+      safeBroadcast("doc:changed", JSON.stringify({ docPath }));
     },
   };
 }

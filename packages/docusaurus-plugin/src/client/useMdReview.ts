@@ -27,6 +27,8 @@ interface MdReviewState {
   refetch: () => Promise<void>;
   agentError: string | null;
   dismissAgentError: () => void;
+  /** Increments when a doc:changed SSE event fires for the current doc */
+  docChangedKey: number;
 }
 
 export function useMdReview(docPath: string): MdReviewState {
@@ -38,6 +40,7 @@ export function useMdReview(docPath: string): MdReviewState {
     new Set(),
   );
   const [agentError, setAgentError] = useState<string | null>(null);
+  const [docChangedKey, setDocChangedKey] = useState(0);
 
   const refetch = useCallback(async () => {
     if (!docPath) return;
@@ -68,6 +71,14 @@ export function useMdReview(docPath: string): MdReviewState {
       es.addEventListener("agent:error", (e: MessageEvent) => {
         const { message } = JSON.parse(e.data as string) as { message: string };
         setAgentError(message);
+      });
+      es.addEventListener("doc:changed", (e: MessageEvent) => {
+        try {
+          const { docPath: changedPath } = JSON.parse(e.data as string) as { docPath: string };
+          if (docPath && changedPath === docPath) {
+            setDocChangedKey((k) => k + 1);
+          }
+        } catch { /* ignore malformed events */ }
       });
       es.onerror = () => {
         es?.close();
@@ -177,5 +188,6 @@ export function useMdReview(docPath: string): MdReviewState {
     refetch,
     agentError,
     dismissAgentError,
+    docChangedKey,
   };
 }

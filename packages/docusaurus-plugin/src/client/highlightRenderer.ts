@@ -12,11 +12,17 @@ export function findTextInDocument(
     return findBlockElement(anchor, contentElement);
   }
 
-  return toRange(contentElement, {
-    exact: anchor.exact,
-    prefix: anchor.prefix,
-    suffix: anchor.suffix,
-  });
+  try {
+    return toRange(contentElement, {
+      exact: anchor.exact,
+      prefix: anchor.prefix,
+      suffix: anchor.suffix,
+    });
+  } catch {
+    // toRange can throw if the DOM has been re-rendered and the matched
+    // position points to a node that no longer exists.
+    return null;
+  }
 }
 
 function findBlockElement(

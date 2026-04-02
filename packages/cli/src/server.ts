@@ -61,6 +61,21 @@ export function startServer(opts: ServerOptions): http.Server {
   const { docsPath, reviewsDir, userName, agent, port, noOpen } = opts;
   const app = express();
 
+  // Request logging for API endpoints (helps debug hanging requests)
+  app.use("/api", (req, res, next) => {
+    const start = Date.now();
+    const { method, url } = req;
+    res.on("finish", () => {
+      console.log(`[http] ${method} ${url} → ${res.statusCode} (${Date.now() - start}ms)`);
+    });
+    res.on("close", () => {
+      if (!res.writableFinished) {
+        console.log(`[http] ${method} ${url} → connection closed before response (${Date.now() - start}ms)`);
+      }
+    });
+    next();
+  });
+
   // Serve pre-built SPA static files
   const distDir = path.join(__dirname, "../dist");
   if (fs.existsSync(distDir)) {
