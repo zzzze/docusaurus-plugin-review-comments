@@ -1,19 +1,9 @@
 /* mdreview - Global Styles */
 
-/* Standalone CSS variable defaults so --ifm-* references resolve without Docusaurus.
-   These are no-ops in Docusaurus (its theme CSS overrides them). */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-emphasis-100: #f0f0f0;
-  --ifm-color-emphasis-200: #dee0e3;
-  --ifm-color-emphasis-300: #dadde1;
-  --ifm-color-emphasis-800: #444950;
-  --ifm-background-color: #ffffff;
-  --ifm-background-surface-color: #1b1b1d;
-  --ifm-navbar-height: 60px;
-}
-
+/* Review-specific design tokens.
+   These reference --ifm-* variables which are provided by each consumer:
+   - Docusaurus plugin: Infima CSS framework provides them
+   - CLI app: app.css defines them */
 :root {
   --review-highlight-bg: rgba(255, 212, 0, 0.2);
   --review-highlight-hover-bg: rgba(255, 212, 0, 0.4);
