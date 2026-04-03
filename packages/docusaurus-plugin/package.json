@@ -32,10 +32,7 @@
   },
   "dependencies": {
     "@mdreview/review-service": "workspace:*",
-    "dom-anchor-text-quote": "^4.0.2",
-    "lucide-react": "^0.468.0",
-    "react-markdown": "^9.0.0",
-    "remark-gfm": "^4.0.1"
+    "@mdreview/ui": "workspace:*"
   },
   "devDependencies": {
     "@docusaurus/logger": "^3.9.2",

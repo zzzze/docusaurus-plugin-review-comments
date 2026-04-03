@@ -2,13 +2,8 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import OriginalLayout from "@theme-init/DocItem/Layout";
 import type { WrapperProps } from "@docusaurus/types";
 import { useLocation } from "@docusaurus/router";
-import { ReviewProvider } from "../../client/ReviewContext";
-import { useReview } from "../../client/ReviewContext";
-import { useHighlights } from "../../client/useHighlights";
-import { useKeyboardShortcuts } from "../../client/useKeyboardShortcuts";
-import { ReviewPanel } from "../ReviewPanel";
-import { FloatingToolbar } from "../FloatingToolbar";
-import { GutterButton } from "../GutterButton";
+import { ReviewProvider, useReview, useHighlights, useKeyboardShortcuts } from "@mdreview/ui/hooks";
+import { ReviewPanel, FloatingToolbar, GutterButton } from "@mdreview/ui/components";
 
 type LayoutProps = WrapperProps<typeof OriginalLayout>;
 

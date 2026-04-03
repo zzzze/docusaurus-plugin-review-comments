@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { ReviewAnchor } from "@mdreview/review-service/types";
-import { useGutterButtons } from "../../client/useGutterButtons";
-import { buildAnchorFromBlock } from "../../client/anchorUtils";
+import { useGutterButtons } from "../../hooks/useGutterButtons";
+import { buildAnchorFromBlock } from "../../utils/anchorUtils";
 import { CommentForm } from "../CommentForm";
 import styles from "./styles.module.css";
 

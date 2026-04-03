@@ -1,0 +1,55 @@
+{
+  "name": "@mdreview/ui",
+  "private": true,
+  "version": "0.0.3",
+  "description": "Shared React UI components for mdreview",
+  "author": "zzzze",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicepkg/mdreview.git",
+    "directory": "packages/ui"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./hooks": "./lib/hooks/index.js",
+    "./components": "./lib/components/index.js",
+    "./utils": "./lib/utils/index.js",
+    "./styles.css": "./lib/styles.css"
+  },
+  "typesVersions": {
+    "*": {
+      "hooks": ["lib/hooks/index.d.ts"],
+      "components": ["lib/components/index.d.ts"],
+      "utils": ["lib/utils/index.d.ts"]
+    }
+  },
+  "files": ["lib"],
+  "scripts": {
+    "build": "tsc && node scripts/copy-assets.js",
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mdreview/review-service": "workspace:*",
+    "dom-anchor-text-quote": "^4.0.2",
+    "lucide-react": "^0.468.0",
+    "react-markdown": "^9.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "~5.6.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}

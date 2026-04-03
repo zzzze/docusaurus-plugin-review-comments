@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Copies static assets (e.g. CSS modules) from src/ to lib/ after tsc build.
-// Also copies theme source (TSX/CSS) to lib/theme-src/ so Docusaurus webpack
+// Also copies remaining theme source (TSX/CSS) to lib/src/ so Docusaurus webpack
 // can process them instead of the CJS-compiled versions.
 const fs = require('fs');
 const path = require('path');
@@ -27,10 +27,9 @@ function copyDir(dir) {
 
 copyDir(SRC);
 
-// Copy client-side source files (theme, client, types) for Docusaurus webpack.
-// These must be raw TSX/TS — not CJS-compiled — because Docusaurus webpack processes them.
-const CLIENT_DIRS = ['theme', 'client'];
-const CLIENT_FILES = [];
+// Copy remaining theme source files for Docusaurus webpack.
+// Only DocItem, Root, and ReviewQueueBadge remain in this package.
+const CLIENT_DIRS = ['theme'];
 const SRC_MIRROR = path.join(LIB, 'src');
 
 function copyTree(srcDir, destDir) {
@@ -52,12 +51,5 @@ for (const dir of CLIENT_DIRS) {
   if (fs.existsSync(s)) {
     copyTree(s, path.join(SRC_MIRROR, dir));
     console.log(`src-mirror: ${dir}/`);
-  }
-}
-for (const file of CLIENT_FILES) {
-  const s = path.join(SRC, file);
-  if (fs.existsSync(s)) {
-    fs.copyFileSync(s, path.join(SRC_MIRROR, file));
-    console.log(`src-mirror: ${file}`);
   }
 }

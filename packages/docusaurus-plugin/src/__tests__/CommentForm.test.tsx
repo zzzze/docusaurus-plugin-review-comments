@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { CommentForm } from "../theme/CommentForm";
+import { CommentForm } from "@mdreview/ui/components";
 import type { ReviewAnchor } from "@mdreview/review-service/types";
 
 const mockReview = {
@@ -15,7 +15,7 @@ const mockReview = {
   setHoveredCommentId: vi.fn(),
 };
 
-vi.mock("../client/ReviewContext", () => ({
+vi.mock("../../../ui/src/hooks/ReviewContext", () => ({
   useReview: () => mockReview,
 }));
 
@@ -69,7 +69,10 @@ describe("CommentForm", () => {
         />,
       );
 
-      expect(screen.getByText("Text")).toBeInTheDocument();
+      // Scope is now a dropdown — click the trigger to open it
+      const trigger = screen.getByText("Text");
+      fireEvent.click(trigger);
+
       expect(screen.getByText("Block")).toBeInTheDocument();
       expect(screen.getByText("Document")).toBeInTheDocument();
     });
@@ -84,7 +87,11 @@ describe("CommentForm", () => {
         />,
       );
 
-      const textBtn = screen.getByText("Text");
+      // Open the scope dropdown first
+      const trigger = screen.getByText("Block");
+      fireEvent.click(trigger);
+
+      const textBtn = screen.getByText("Text").closest("button")!;
       expect(textBtn).toBeDisabled();
     });
 

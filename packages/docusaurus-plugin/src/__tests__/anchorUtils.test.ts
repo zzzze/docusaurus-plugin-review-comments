@@ -4,7 +4,7 @@ import {
   findParentBlock,
   countBlockIndex,
   buildAnchorFromBlock,
-} from "../client/anchorUtils";
+} from "@mdreview/ui/utils";
 
 function el(tag: string, attrs: Record<string, string>, ...children: (Node | string)[]): HTMLElement {
   const element = document.createElement(tag);

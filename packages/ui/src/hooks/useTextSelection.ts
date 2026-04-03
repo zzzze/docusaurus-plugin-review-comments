@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import type { ReviewAnchor } from "@mdreview/review-service/types";
-import { buildAnchorFromSelection } from "./anchorUtils";
+import { buildAnchorFromSelection } from "../utils/anchorUtils";
 
 interface ToolbarPosition {
   /** Document Y coordinate of the selection top edge */
@@ -55,17 +55,8 @@ export function useTextSelection(
         return;
       }
 
-      // Re-query the content element each time so we survive
-      // client-side navigations that replace the markdown root.
-      let contentEl = contentRef.current;
-      if (!contentEl || !contentEl.isConnected) {
-        const fresh = document.querySelector<HTMLElement>(".theme-doc-markdown");
-        if (fresh) {
-          contentRef.current = fresh;
-          contentEl = fresh;
-        }
-      }
-      if (!contentEl) return;
+      const contentEl = contentRef.current;
+      if (!contentEl || !contentEl.isConnected) return;
 
       const anchorNode = selection.anchorNode;
       if (!anchorNode || !contentEl.contains(anchorNode)) return;

@@ -1,6 +1,19 @@
 import { defineConfig } from "vitest/config";
+import path from "path";
+
+const uiSrc = path.resolve(__dirname, "../ui/src");
 
 export default defineConfig({
+  resolve: {
+    alias: [
+      // Map @mdreview/ui subpath imports to source .ts files so vitest can
+      // resolve, type-check, and mock them without a prior build step.
+      { find: /^@mdreview\/ui\/hooks$/, replacement: path.join(uiSrc, "hooks/index.ts") },
+      { find: /^@mdreview\/ui\/components$/, replacement: path.join(uiSrc, "components/index.ts") },
+      { find: /^@mdreview\/ui\/utils$/, replacement: path.join(uiSrc, "utils/index.ts") },
+      { find: /^@mdreview\/ui$/, replacement: path.join(uiSrc, "index.ts") },
+    ],
+  },
   test: {
     environment: "node",
     environmentMatchGlobs: [
@@ -15,5 +28,10 @@ export default defineConfig({
       ["src/__tests__/ReviewPanel.test.tsx", "happy-dom"],
     ],
     setupFiles: ["src/__tests__/setup.ts"],
+    css: {
+      modules: {
+        classNameStrategy: "non-scoped",
+      },
+    },
   },
 });

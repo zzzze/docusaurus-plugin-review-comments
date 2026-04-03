@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { fetchComments, createComment, updateComment, deleteComment } from "../client/api";
+import { fetchComments, createComment, updateComment, deleteComment } from "@mdreview/ui/utils";
 import type { ReviewFile, ReviewComment } from "@mdreview/review-service/types";
 
 const mockFetch = vi.fn();

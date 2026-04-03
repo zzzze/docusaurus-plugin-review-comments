@@ -1,6 +1,6 @@
 import { beforeEach, expect, test } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { usePanelResize } from "../theme/ReviewPanel/index";
+import { usePanelResize } from "@mdreview/ui/components";
 
 const MIN = 240;
 const MAX = 800;

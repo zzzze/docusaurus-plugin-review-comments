@@ -3,8 +3,8 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Reply, Pencil, Check, Trash2, RotateCcw, X, ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
 import type { ReviewComment } from "@mdreview/review-service/types";
-import { useReview } from "../../client/ReviewContext";
-import { scrollToHighlight } from "../../client/highlightRenderer";
+import { useReview } from "../../hooks/ReviewContext";
+import { scrollToHighlight } from "../../utils/highlightRenderer";
 import { CommentForm } from "../CommentForm";
 import styles from "./styles.module.css";
 
@@ -68,7 +68,7 @@ export function CommentCard({
   if (isResolved && !isResolvedExpanded) {
     const contentPreview =
       comment.content.length > 50
-        ? comment.content.slice(0, 50).trim() + "…"
+        ? comment.content.slice(0, 50).trim() + "\u2026"
         : comment.content;
 
     return (
@@ -106,7 +106,7 @@ export function CommentCard({
 
   const blockPreview = anchorExact
     ? anchorExact.split("\n")[0]!.trim().slice(0, 50) +
-      (anchorExact.length > 50 ? "…" : "")
+      (anchorExact.length > 50 ? "\u2026" : "")
     : null;
 
   return (
@@ -159,7 +159,7 @@ export function CommentCard({
             if (e.key === "Enter" || e.key === " ") scrollToHighlight(comment.id);
           }}
         >
-          <span className={styles.anchorScopeIcon}>¶</span> {blockPreview}
+          <span className={styles.anchorScopeIcon}>&para;</span> {blockPreview}
         </div>
       )}
 

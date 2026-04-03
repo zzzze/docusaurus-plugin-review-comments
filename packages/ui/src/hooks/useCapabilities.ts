@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchCapabilities } from "./api";
-import type { Capabilities } from "./api";
+import { fetchCapabilities } from "../utils/api";
+import type { Capabilities } from "../utils/api";
 
 let cached: Capabilities | null = null;
 

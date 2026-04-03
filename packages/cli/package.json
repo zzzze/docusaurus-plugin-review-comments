@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@mdreview/review-service": "workspace:*",
+    "@mdreview/ui": "workspace:*",
     "express": "^4.21.0",
     "open-browsers": "^1.4.2",
     "rehype-raw": "^7.0.0"

@@ -1,10 +1,6 @@
 import { useCallback } from "react";
-import { ReviewProvider, useReview } from "@plugin/client/ReviewContext";
-import { useHighlights } from "@plugin/client/useHighlights";
-import { useKeyboardShortcuts } from "@plugin/client/useKeyboardShortcuts";
-import { ReviewPanel } from "@plugin/theme/ReviewPanel";
-import { FloatingToolbar } from "@plugin/theme/FloatingToolbar";
-import { GutterButton } from "@plugin/theme/GutterButton";
+import { ReviewProvider, useReview, useHighlights, useKeyboardShortcuts } from "@mdreview/ui/hooks";
+import { ReviewPanel, FloatingToolbar, GutterButton } from "@mdreview/ui/components";
 
 function ReviewOverlay({
   contentEl,

@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import type { ReviewAnchor } from "@mdreview/review-service/types";
-import { useTextSelection } from "../../client/useTextSelection";
+import { useTextSelection } from "../../hooks/useTextSelection";
 import {
   highlightRangePerNode,
   removeHighlight,
   applyBlockHighlight,
   removeBlockHighlight,
-} from "../../client/highlightRenderer";
+} from "../../utils/highlightRenderer";
 import {
   findParentBlock,
   buildAnchorFromBlock,
-} from "../../client/anchorUtils";
+} from "../../utils/anchorUtils";
 import { HelpCircle, Lightbulb, AlertTriangle } from "lucide-react";
 import { CommentForm } from "../CommentForm";
 import styles from "./styles.module.css";

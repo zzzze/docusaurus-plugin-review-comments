@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReviewComment } from "@mdreview/review-service/types";
-import { useReview } from "../../client/ReviewContext";
+import { useReview } from "../../hooks/ReviewContext";
 import { CommentCard } from "./CommentCard";
 import { CommentForm } from "../CommentForm";
 import { BottomSheet } from "../BottomSheet";
-import * as api from "../../client/api";
-import { copyToClipboard } from "../../client/domUtils";
-import { useCapabilities, formatInterval } from "../../client/useCapabilities";
+import * as api from "../../utils/api";
+import { copyToClipboard } from "../../utils/domUtils";
+import { useCapabilities, formatInterval } from "../../hooks/useCapabilities";
 import { HintButton } from "../HintButton";
 import { RotateCcw, X } from "lucide-react";
 import styles from "./styles.module.css";

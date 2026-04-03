@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CommentCard } from "../theme/ReviewPanel/CommentCard";
+import { CommentCard } from "@mdreview/ui/components";
 import type { ReviewComment } from "@mdreview/review-service/types";
 
 const mockReview = {
@@ -16,11 +16,11 @@ const mockReview = {
   editComment: vi.fn(),
 };
 
-vi.mock("../client/ReviewContext", () => ({
+vi.mock("../../../ui/src/hooks/ReviewContext", () => ({
   useReview: () => mockReview,
 }));
 
-vi.mock("../client/highlightRenderer", () => ({
+vi.mock("../../../ui/src/utils/highlightRenderer", () => ({
   scrollToHighlight: vi.fn(),
 }));
 

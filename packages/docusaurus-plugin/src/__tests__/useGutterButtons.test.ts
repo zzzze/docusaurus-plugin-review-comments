@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useGutterButtons } from "../client/useGutterButtons";
+import { useGutterButtons } from "@mdreview/ui/hooks";
 
 function el(tag: string, text: string): HTMLElement {
   const element = document.createElement(tag);

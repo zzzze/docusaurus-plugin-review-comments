@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import { useReview } from "@plugin/client/ReviewContext";
+import { useReview } from "@mdreview/ui/hooks";
 import { useDocContent } from "../hooks/useDocContent";
 import { Skeleton } from "./ui/skeleton";
 

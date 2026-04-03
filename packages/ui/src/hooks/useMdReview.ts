@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ReviewAnchor, ReviewComment } from "@mdreview/review-service/types";
-import * as api from "./api";
+import * as api from "../utils/api";
 
 interface MdReviewState {
   docPath: string;

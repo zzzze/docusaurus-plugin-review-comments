@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
-import { useMdReview } from "../client/useMdReview";
-import * as api from "../client/api";
+import { useMdReview } from "@mdreview/ui/hooks";
+import * as api from "../../../ui/src/utils/api";
 import type { ReviewFile, ReviewComment } from "@mdreview/review-service/types";
 
-vi.mock("../client/api");
+vi.mock("../../../ui/src/utils/api");
 
 // Minimal EventSource mock
 type EventHandler = (e: { data: string }) => void;

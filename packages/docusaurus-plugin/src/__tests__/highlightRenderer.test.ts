@@ -8,7 +8,7 @@ import {
   applyBlockHighlight,
   removeBlockHighlight,
   highlightRangePerNode,
-} from "../client/highlightRenderer";
+} from "@mdreview/ui/utils";
 import type { BlockAnchor, TextAnchor } from "@mdreview/review-service/types";
 
 /**

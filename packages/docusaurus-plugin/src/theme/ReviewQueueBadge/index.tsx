@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import * as api from "../../client/api";
-import { useCapabilities, formatInterval } from "../../client/useCapabilities";
-import { HintButton } from "../HintButton";
+import * as api from "@mdreview/ui/utils";
+import { useCapabilities, formatInterval } from "@mdreview/ui/hooks";
+import { HintButton } from "@mdreview/ui/components";
 import styles from "./styles.module.css";
 
 type ActionState = "idle" | "working" | "done" | "error";

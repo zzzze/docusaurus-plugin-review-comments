@@ -6,7 +6,7 @@ import {
   HelpCircle, Lightbulb, AlertTriangle, ChevronDown,
 } from "lucide-react";
 import type { ReviewAnchor, ReviewComment } from "@mdreview/review-service/types";
-import { useReview } from "../../client/ReviewContext";
+import { useReview } from "../../hooks/ReviewContext";
 import styles from "./styles.module.css";
 
 type CommentType = ReviewComment["type"];

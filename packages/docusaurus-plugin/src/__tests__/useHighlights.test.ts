@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useHighlights } from "../client/useHighlights";
-import * as highlightRenderer from "../client/highlightRenderer";
+import { useHighlights } from "@mdreview/ui/hooks";
+import * as highlightRenderer from "../../../ui/src/utils/highlightRenderer";
 import type { ReviewComment } from "@mdreview/review-service/types";
 
-vi.mock("../client/highlightRenderer", () => ({
+vi.mock("../../../ui/src/utils/highlightRenderer", () => ({
   findTextInDocument: vi.fn(),
   applyHighlight: vi.fn(),
   highlightRangePerNode: vi.fn(),

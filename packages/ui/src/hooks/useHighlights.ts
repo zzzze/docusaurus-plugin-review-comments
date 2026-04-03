@@ -7,7 +7,7 @@ import {
   setHighlightHover,
   applyBlockHighlight,
   removeAllBlockHighlights,
-} from "./highlightRenderer";
+} from "../utils/highlightRenderer";
 
 interface UseHighlightsOptions {
   comments: ReviewComment[];

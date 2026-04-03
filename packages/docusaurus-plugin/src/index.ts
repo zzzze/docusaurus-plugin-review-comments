@@ -26,7 +26,7 @@ export default function pluginMdReview(
     },
 
     getClientModules() {
-      return [path.resolve(__dirname, "./client/styles.css")];
+      return [require.resolve("@mdreview/ui/styles.css")];
     },
 
     getPathsToWatch() {

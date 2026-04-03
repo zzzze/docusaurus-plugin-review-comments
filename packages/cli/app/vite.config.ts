@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 
+const uiSrc = path.resolve(__dirname, "../../ui/src");
+
 export default defineConfig({
   plugins: [tailwindcss(), react()],
   root: __dirname,
@@ -11,8 +13,12 @@ export default defineConfig({
     emptyOutDir: true,
   },
   resolve: {
-    alias: {
-      "@plugin": path.resolve(__dirname, "../../docusaurus-plugin/src"),
-    },
+    alias: [
+      { find: /^@mdreview\/ui\/hooks$/, replacement: path.join(uiSrc, "hooks/index.ts") },
+      { find: /^@mdreview\/ui\/components$/, replacement: path.join(uiSrc, "components/index.ts") },
+      { find: /^@mdreview\/ui\/utils$/, replacement: path.join(uiSrc, "utils/index.ts") },
+      { find: /^@mdreview\/ui\/styles\.css$/, replacement: path.join(uiSrc, "styles.css") },
+      { find: /^@mdreview\/ui$/, replacement: path.join(uiSrc, "index.ts") },
+    ],
   },
 });
