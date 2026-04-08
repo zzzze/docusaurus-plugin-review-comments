@@ -19,6 +19,7 @@ export interface ServerOptions {
   agentPromptFile?: string;
   intervalMs?: number;
   contextDirs?: ContextDir[];
+  env?: Record<string, string>;
   port: number;
   noOpen: boolean;
   singleFile?: string;
@@ -139,6 +140,7 @@ export function startServer(opts: ServerOptions): http.Server {
       agentPromptFile: opts.agentPromptFile,
       agentName,
       contextDirs,
+      env: opts.env,
       notifier,
     });
     createReviewsMiddleware(app, {

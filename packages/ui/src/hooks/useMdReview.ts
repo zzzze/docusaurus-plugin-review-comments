@@ -75,7 +75,10 @@ export function useMdReview(docPath: string): MdReviewState {
       es.addEventListener("doc:changed", (e: MessageEvent) => {
         try {
           const { docPath: changedPath } = JSON.parse(e.data as string) as { docPath: string };
-          if (docPath && changedPath === docPath) {
+          // changedPath from fs.watch includes the .md/.mdx extension,
+          // while docPath from the route may omit it — strip extensions to compare.
+          const normalize = (p: string) => p.replace(/\.(md|mdx)$/i, "");
+          if (docPath && normalize(changedPath) === normalize(docPath)) {
             setDocChangedKey((k) => k + 1);
           }
         } catch { /* ignore malformed events */ }

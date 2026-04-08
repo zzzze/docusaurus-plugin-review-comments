@@ -189,6 +189,7 @@ async function main(): Promise<void> {
       { dir: projectRoot, desc: "Project directory for the reviewed documentation" },
       ...merged.contextDirs.map((dir) => ({ dir: path.resolve(dir) })),
     ],
+    env: {},
     port,
     noOpen: merged.noOpen,
     singleFile,
